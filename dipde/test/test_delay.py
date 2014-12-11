@@ -8,7 +8,7 @@ from dipde.internals.connection import Connection as Connection
 
 
 def test_delay_singlepop():
-    
+
     # Settings:
     dt = .001
     tf = .005
