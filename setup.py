@@ -1,13 +1,61 @@
-from distutils.core import setup
+from __future__ import print_function
+from setuptools import setup
+from setuptools.command.test import test as TestCommand
+import io
+import os
+import sys
+
+import dipde
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+def read(*filenames, **kwargs):
+    encoding = kwargs.get('encoding', 'utf-8')
+    sep = kwargs.get('sep', '\n')
+    buf = []
+    for filename in filenames:
+        with io.open(filename, encoding=encoding) as f:
+            buf.append(f.read())
+    return sep.join(buf)
+
+long_description = read('README.md')
+
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+        errcode = pytest.main(self.test_args)
+        sys.exit(errcode)
+
 setup(
-  name = 'dipde',
-  packages = ['mypackage'], # this must be the same as the name above
-  version = '0.1',
-  description = 'A random test lib',
-  author = 'Peter Downs',
-  author_email = 'peterldowns@gmail.com',
-  url = 'https://github.com/peterldowns/mypackage', # use the URL to the github repo
-  download_url = 'https://github.com/peterldowns/mypackage/tarball/0.1', # I'll explain this in a second
-  keywords = ['testing', 'logging', 'example'], # arbitrary keywords
-  classifiers = [],
+    name='dipde',
+    version=dipde.__version__,
+    url=None,
+    license=None,
+    author='Nicholas Cain',
+    tests_require=['pytest'],
+    install_requires=None,
+    cmdclass={'test': PyTest},
+    author_email='nicholasc@alleninstitute.org',
+    description='Numerical solver for coupled population density equations',
+    long_description=long_description,
+    packages=['dipde'],
+    include_package_data=True,
+    platforms='any',
+    test_suite='sandman.test.test_sandman',
+    classifiers = [
+        'Programming Language :: Python',
+        'Development Status :: 4 - Beta',
+        'Natural Language :: English',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'Operating System :: OS Independent',
+        ],
+    extras_require={
+        'testing': ['pytest'],
+    }
 )

@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dipde.internals.internalpopulation &mdash; dipde  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="dipde  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dipde  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for dipde.internals.internalpopulation</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">scipy.linalg</span> <span class="kn">as</span> <span class="nn">spla</span>
+<span class="kn">import</span> <span class="nn">bisect</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">dipde.internals.probabilityvector</span> <span class="kn">import</span> <span class="n">ProbabilityVector</span>
+<span class="kn">from</span> <span class="nn">dipde.internals</span> <span class="kn">import</span> <span class="n">utilities</span> <span class="k">as</span> <span class="n">util</span>
+<span class="kn">import</span> <span class="nn">dipde.internals.simulation</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="InternalPopulation"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation">[docs]</a><span class="k">class</span> <span class="nc">InternalPopulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau_m</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span><span class="p">,</span>
+                       <span class="n">v_min</span> <span class="o">=</span> <span class="o">-.</span><span class="mi">1</span><span class="p">,</span>
+                       <span class="n">v_max</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span><span class="p">,</span>
+                       <span class="n">dv</span> <span class="o">=</span> <span class="o">.</span><span class="mo">0001</span><span class="p">,</span>
+                       <span class="n">record</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> 
+                       <span class="n">initial_firing_rate</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                       <span class="n">update_method</span> <span class="o">=</span> <span class="s">&#39;approx&#39;</span><span class="p">,</span>
+                       <span class="n">approx_order</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                       <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span>
+                       <span class="n">norm</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="c"># Store away inputs:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_m</span> <span class="o">=</span> <span class="n">tau_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span> <span class="o">=</span> <span class="n">v_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span> <span class="o">=</span> <span class="n">v_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dv</span> <span class="o">=</span> <span class="n">dv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curr_firing_rate</span> <span class="o">=</span> <span class="n">initial_firing_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_method</span> <span class="o">=</span> <span class="n">update_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">approx_order</span> <span class="o">=</span> <span class="n">approx_order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;internal&quot;</span>
+        
+        
+<span class="c">#         print self.__dict__</span>
+        
+        <span class="c"># Additional metadata:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">kwargs</span>
+        
+        <span class="c"># Defined in initialization:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pv</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">firing_rate_record</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_record</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leak_flux_matrix</span> <span class="o">=</span> <span class="bp">None</span>
+        
+<div class="viewcode-block" id="InternalPopulation.initialize_edges"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.initialize_edges">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># Voltage edges and leak matrix construction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_v_edges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leak_flux_matrix</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">leak_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_m</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="InternalPopulation.initialize_probability"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.initialize_probability">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># Delta initial probability distribution:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+         
+        <span class="n">zero_bin_list</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_zero_bin_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">zero_bin_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">zero_bin_list</span><span class="p">)</span>
+
+        <span class="c"># </span>
+<span class="c">#         self.pv = np.ones_like(self.edges[:-1])</span>
+<span class="c">#         self.pv /= len(self.pv)</span>
+
+<span class="c">#         self.pv = np.array([  3.54544577e-81,   1.35643223e-01,   5.93070331e-01,   2.71286446e-01])</span>
+        </div>
+<div class="viewcode-block" id="InternalPopulation.initialize_firing_rate_recorder"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_firing_rate_recorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># Set up firing rate recorder:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">firing_rate_record</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_firing_rate</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_record</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        </div>
+<div class="viewcode-block" id="InternalPopulation.initialize_total_input_dict"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_total_input_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="c"># Aggregate input for each connection distribution:        </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_connection_list</span><span class="p">:</span>
+            <span class="n">curr_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_input</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="n">curr_delayed_firing_rate</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">nsyn</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">semi_implicit</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+
+            <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_flux_matrix</span><span class="p">()</span>
+            <span class="n">tmp_pv</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">approx_update_method_tol</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">)</span>
+
+            <span class="n">flux_vector</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">threshold_flux_vector</span><span class="o">*</span><span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">firing_rate_first_step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">flux_vector</span><span class="p">,</span> <span class="n">tmp_pv</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="InternalPopulation.initialize_implicit"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.initialize_implicit">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_implicit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_step</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_connection_list</span><span class="p">:</span>
+            <span class="n">curr_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_input</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">firing_rate_first_step</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">nsyn</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_input</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">firing_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">nsyn</span>
+
+        <span class="c"># These are actually initialized as switched, so put them in proper order:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span>
+        
+        <span class="c"># Prediction is same as midpoint for this one step:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_2dt</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_2dt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            
+</div>
+<div class="viewcode-block" id="InternalPopulation.get_total_flux_matrix"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_flux_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">flux_matrix</span><span class="o">*</span><span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">leak_flux_matrix</span>
+</div>
+<div class="viewcode-block" id="InternalPopulation.update_total_input_dict"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict">[docs]</a>    <span class="k">def</span> <span class="nf">update_total_input_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">semi_implicit</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_step</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+
+                <span class="c"># Rotate:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_2dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_2dt</span>  
+                
+                <span class="c"># Initialize to zero:</span>
+                <span class="k">for</span> <span class="n">curr_connection_distribution</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">curr_connection_distribution</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c"># Result from last time step:</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_connection_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span><span class="o">.</span><span class="n">curr_delayed_firing_rate</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">nsyn</span>
+                
+                <span class="c"># Prediction:</span>
+                <span class="k">for</span> <span class="n">cd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">[</span><span class="n">cd</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">cd</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_dt</span><span class="p">[</span><span class="n">cd</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict_2dt</span><span class="p">[</span><span class="n">cd</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span> 
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">first_step</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="c"># Initialize to zero:</span>
+            <span class="k">for</span> <span class="n">curr_connection_distribution</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">[</span><span class="n">curr_connection_distribution</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_connection_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">connection_distribution</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span><span class="o">.</span><span class="n">curr_delayed_firing_rate</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">nsyn</span>
+
+    </div>
+<div class="viewcode-block" id="InternalPopulation.update_propability_mass"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.update_propability_mass">[docs]</a>    <span class="k">def</span> <span class="nf">update_propability_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+<span class="c">#         print s.total_input_dict</span>
+        
+        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_flux_matrix</span><span class="p">()</span>
+        
+<span class="c">#         t0 = time.time()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_method</span> <span class="o">==</span> <span class="s">&#39;exact&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pv</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">exact_update_method</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+            
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_method</span> <span class="o">==</span> <span class="s">&#39;approx&#39;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_order</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pv</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">approx_update_method_tol</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pv</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">approx_update_method_order</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span> <span class="n">approx_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">approx_order</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Unrecognized population update method: &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_method</span><span class="p">)</span>
+        
+<span class="c">#         print time.time() - t0</span>
+<span class="c">#         spla.solve(np.eye(J.shape[0]) - self.simulation.dt*J, self.pv)</span>
+        
+        </div>
+<div class="viewcode-block" id="InternalPopulation.update_firing_rate"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate">[docs]</a>    <span class="k">def</span> <span class="nf">update_firing_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="c"># Compute flux:</span>
+        <span class="n">flux_vector</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">threshold_flux_vector</span><span class="o">*</span><span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curr_firing_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">flux_vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">)</span> 
+        </div>
+<div class="viewcode-block" id="InternalPopulation.update_firing_rate_recorder"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder">[docs]</a>    <span class="k">def</span> <span class="nf">update_firing_rate_recorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">firing_rate_record</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_firing_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_record</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_record</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="InternalPopulation.source_connection_list"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.source_connection_list">[docs]</a>    <span class="k">def</span> <span class="nf">source_connection_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">connection_list</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="InternalPopulation.n_bins"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.n_bins">[docs]</a>    <span class="k">def</span> <span class="nf">n_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="InternalPopulation.n_edges"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.n_edges">[docs]</a>    <span class="k">def</span> <span class="nf">n_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="InternalPopulation.plot_probability_distribution"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">plot_probability_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        
+        <span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+        
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span>
+        </div>
+<div class="viewcode-block" id="InternalPopulation.dump"><a class="viewcode-back" href="../../../dipde.internals.internalpopulation.html#dipde.internals.internalpopulation.InternalPopulation.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dump_file_name</span><span class="p">):</span>
+        
+        <span class="kn">import</span> <span class="nn">h5py</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dump_file_name</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">[</span><span class="s">&#39;leak_flux_matrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leak_flux_matrix</span>
+        <span class="n">f</span><span class="p">[</span><span class="s">&#39;probability_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pv</span>
+        <span class="n">f</span><span class="p">[</span><span class="s">&#39;edges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span>
+        <span class="n">connection_distribution_group</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&#39;connection_distributions&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">cd_group</span> <span class="o">=</span> <span class="n">connection_distribution_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">))</span>
+            <span class="n">cd_group</span><span class="p">[</span><span class="s">&#39;total_input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fr</span>
+            <span class="n">cd_group</span><span class="p">[</span><span class="s">&#39;flux_matrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">flux_matrix</span>
+            <span class="n">cd_group</span><span class="p">[</span><span class="s">&#39;threshold_vector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">threshold_flux_vector</span>
+        
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             
+<span class="c"># Junk code for implementing a delta_fr stepper, doesn&#39;t seem to provide much benefit </span>
+<span class="c">#         if self.update_method == &#39;approx_dev&#39;:</span>
+<span class="c">#             self.previous_J = self.leak_flux_matrix*self.simulation.dt</span>
+<span class="c"># </span>
+<span class="c">#     elif self.update_method == &#39;approx_dev&#39;:</span>
+<span class="c"># </span>
+<span class="c"># for connection_distribution, new_total_input in self.total_input_dict.items():</span>
+<span class="c">#     old_total_input = self.previous_firing_rate[connection_distribution]</span>
+<span class="c">#     delta_input = new_total_input - old_total_input</span>
+<span class="c">#     self.previous_J += connection_distribution.flux_matrix*delta_input*self.simulation.dt</span>
+<span class="c">#     self.previous_firing_rate[connection_distribution] = new_total_input</span>
+<span class="c"># </span>
+<span class="c"># A = reduce(np.add, [key.flux_matrix*val for key, val in self.total_input_dict.items()])</span>
+<span class="c"># </span>
+<span class="c">#             </span>
+<span class="c">#         if self.update_method == &#39;approx_dev&#39;:</span>
+<span class="c">#             self.previous_firing_rate = dict((key,val) for key, val in self.total_input_dict.items())</span>
+<span class="c">#             for connection_distribution, total_input in self.previous_firing_rate.items():</span>
+<span class="c">#                 self.previous_J += connection_distribution.flux_matrix*total_input*self.simulation.dt</span>
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dipde  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

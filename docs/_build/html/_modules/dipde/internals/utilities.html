@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dipde.internals.utilities &mdash; dipde  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="dipde  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dipde  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for dipde.internals.utilities</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.linalg</span> <span class="kn">as</span> <span class="nn">spla</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">sps</span>
+<span class="kn">import</span> <span class="nn">scipy.integrate</span> <span class="kn">as</span> <span class="nn">spi</span>
+<span class="kn">import</span> <span class="nn">bisect</span>
+
+<span class="c"># np.set_printoptions(2, linewidth=200, suppress=True)</span>
+
+<div class="viewcode-block" id="fraction_overlap"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.fraction_overlap">[docs]</a><span class="k">def</span> <span class="nf">fraction_overlap</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate the fractional overlap between range (a1,a2) and (b1,b2)</span>
+<span class="sd">    fraction relative to length of (a1,a2)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">a1</span> <span class="o">&gt;=</span> <span class="n">b1</span><span class="p">:</span>    <span class="c"># range of A starts after B starts</span>
+        <span class="k">if</span> <span class="n">a2</span> <span class="o">&lt;=</span> <span class="n">b2</span><span class="p">:</span>    
+            <span class="k">return</span> <span class="mi">1</span>       <span class="c"># A is within B</span>
+        <span class="k">if</span> <span class="n">a1</span> <span class="o">&gt;=</span> <span class="n">b2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>       <span class="c"># A is after B</span>
+        <span class="c"># overlap is from a1 to b2</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">b2</span> <span class="o">-</span> <span class="n">a1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">a2</span> <span class="o">-</span> <span class="n">a1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>            <span class="c"># start of A is before start of B</span>
+        <span class="k">if</span> <span class="n">a2</span> <span class="o">&lt;=</span> <span class="n">b1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>       <span class="c"># A is completely before B</span>
+        <span class="k">if</span> <span class="n">a2</span> <span class="o">&gt;=</span> <span class="n">b2</span><span class="p">:</span>
+            <span class="c"># B is subsumed in A, but fraction relative to |A|</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">b2</span> <span class="o">-</span> <span class="n">b1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">a2</span> <span class="o">-</span> <span class="n">a1</span><span class="p">)</span>
+        <span class="c"># overlap is from b1 to a2</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">a2</span> <span class="o">-</span> <span class="n">b1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">a2</span> <span class="o">-</span> <span class="n">a1</span><span class="p">)</span> 
+    
+</div>
+<div class="viewcode-block" id="redistribute_probability_mass"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.redistribute_probability_mass">[docs]</a><span class="k">def</span> <span class="nf">redistribute_probability_mass</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;takes two &#39;edge&#39; vectors and returns a 2D matrix mapping each &#39;bin&#39; in B</span>
+<span class="sd">    to overlapping bins in A</span>
+<span class="sd">    function assumes that A and B contain monotonically increasing edge values</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">newL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">newR</span> <span class="o">=</span> <span class="n">newL</span>
+    
+    <span class="c"># Matrix is mostly zeros -- concentrate on overlapping sections</span>
+    <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        
+        <span class="c"># Advance to the start of the overlap</span>
+        <span class="k">while</span> <span class="n">newL</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="n">B</span><span class="p">[</span><span class="n">newL</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">A</span><span class="p">[</span><span class="n">L</span><span class="p">]:</span>
+            <span class="n">newL</span> <span class="o">=</span> <span class="n">newL</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">newL</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newL</span> <span class="o">=</span> <span class="n">newL</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">newR</span> <span class="o">=</span> <span class="n">newL</span>
+        
+        <span class="c"># Find end of overlap</span>
+        <span class="k">while</span> <span class="n">newR</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="n">B</span><span class="p">[</span><span class="n">newR</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">A</span><span class="p">[</span><span class="n">L</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">newR</span> <span class="o">=</span> <span class="n">newR</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">newR</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+            <span class="n">newR</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c"># Calculate and store remapping weights</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">newL</span><span class="p">,</span> <span class="n">newR</span><span class="p">):</span>
+            <span class="n">mapping</span><span class="p">[</span><span class="n">L</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">fraction_overlap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">L</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">L</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">mapping</span>
+</div>
+<div class="viewcode-block" id="leak_matrix"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.leak_matrix">[docs]</a><span class="k">def</span> <span class="nf">leak_matrix</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    
+    <span class="n">zero_bin_ind_list</span> <span class="o">=</span> <span class="n">get_zero_bin_list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    
+    <span class="c"># Initialize:</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c"># Positive leak:</span>
+    <span class="n">delta_w_ind</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">source_ind</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">zero_bin_ind_list</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">target_ind</span> <span class="o">=</span> <span class="n">source_ind</span> <span class="o">+</span> <span class="n">delta_w_ind</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">source_ind</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="n">source_ind</span><span class="p">]</span>
+        <span class="n">bump_rate</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">source_ind</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">source_ind</span><span class="p">,</span> <span class="n">source_ind</span><span class="p">]</span> <span class="o">-=</span> <span class="n">bump_rate</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">target_ind</span><span class="p">,</span> <span class="n">source_ind</span><span class="p">]</span> <span class="o">+=</span> <span class="n">bump_rate</span>
+    
+    <span class="c"># Negative leak:</span>
+    <span class="n">delta_w_ind</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">source_ind</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">zero_bin_ind_list</span><span class="p">)):</span>
+        <span class="n">target_ind</span> <span class="o">=</span> <span class="n">source_ind</span> <span class="o">+</span> <span class="n">delta_w_ind</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">source_ind</span><span class="p">]</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="n">target_ind</span><span class="p">]</span>
+        <span class="n">bump_rate</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">source_ind</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">dv</span><span class="p">)</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">source_ind</span><span class="p">,</span> <span class="n">source_ind</span><span class="p">]</span> <span class="o">-=</span> <span class="n">bump_rate</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">target_ind</span><span class="p">,</span> <span class="n">source_ind</span><span class="p">]</span> <span class="o">+=</span> <span class="n">bump_rate</span>
+        
+    <span class="k">return</span> <span class="n">A</span>
+    </div>
+<div class="viewcode-block" id="flux_matrix"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.flux_matrix">[docs]</a><span class="k">def</span> <span class="nf">flux_matrix</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    
+    <span class="n">zero_bin_ind_list</span> <span class="o">=</span> <span class="n">get_zero_bin_list</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    
+    <span class="c"># Flow back into zero bin:</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        
+        <span class="c"># Outflow:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="n">p</span>
+        
+        <span class="c"># Inflow:</span>
+        <span class="n">A</span> <span class="o">+=</span> <span class="n">redistribute_probability_mass</span><span class="p">(</span><span class="n">v</span><span class="o">+</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="n">p</span>
+
+        <span class="c"># Threshold:</span>
+        <span class="n">flux_to_zero_vector</span> <span class="o">=</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">curr_zero_ind</span> <span class="ow">in</span> <span class="n">zero_bin_ind_list</span><span class="p">:</span>
+            <span class="n">A</span><span class="p">[</span><span class="n">curr_zero_ind</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">flux_to_zero_vector</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">zero_bin_ind_list</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Outflow:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="n">p</span>
+        
+        <span class="c"># Inflow:</span>
+        <span class="n">A</span> <span class="o">+=</span> <span class="n">redistribute_probability_mass</span><span class="p">(</span><span class="n">v</span><span class="o">+</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">lam</span><span class="o">*</span><span class="n">p</span>
+        
+        
+        <span class="n">missing_flux</span> <span class="o">=</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">+=</span> <span class="n">missing_flux</span>
+        
+        <span class="n">flux_to_zero_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">flux_to_zero_vector</span><span class="p">,</span> <span class="n">A</span>
+</div>
+<div class="viewcode-block" id="get_zero_bin_list"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.get_zero_bin_list">[docs]</a><span class="k">def</span> <span class="nf">get_zero_bin_list</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+
+    <span class="c"># Cast here to avoid mistakes:    </span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">zero_edge_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">zero_edge_ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">zero_edge_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_edge_ind</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="get_steady_state"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.get_steady_state">[docs]</a><span class="k">def</span> <span class="nf">get_steady_state</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">spla</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+    
+    <span class="k">return</span> <span class="n">x</span>
+    
+    </div>
+<div class="viewcode-block" id="get_v_edges"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.get_v_edges">[docs]</a><span class="k">def</span> <span class="nf">get_v_edges</span><span class="p">(</span><span class="n">v_min</span><span class="p">,</span> <span class="n">v_max</span><span class="p">,</span> <span class="n">dv</span><span class="p">):</span>
+    
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">v_min</span><span class="p">,</span> <span class="n">v_max</span><span class="p">,</span> <span class="n">dv</span><span class="p">),</span> <span class="p">[</span><span class="n">v_max</span><span class="p">]</span> <span class="p">))</span>
+    
+    <span class="n">edges</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">return</span> <span class="n">edges</span>
+</div>
+<div class="viewcode-block" id="assert_probability_mass_conserved"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.assert_probability_mass_conserved">[docs]</a><span class="k">def</span> <span class="nf">assert_probability_mass_conserved</span><span class="p">(</span><span class="n">pv</span><span class="p">):</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mf">1e-12</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Probability mass below threshold: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        
+
+</div>
+<div class="viewcode-block" id="descretize"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.descretize">[docs]</a><span class="k">def</span> <span class="nf">descretize</span><span class="p">(</span><span class="n">distribution</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[]):</span>
+ 
+    <span class="n">x_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">rv</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">expon</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x_list</span><span class="p">):</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">yl_yr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
+        <span class="n">yl</span><span class="p">,</span> <span class="n">yr</span> <span class="o">=</span> <span class="n">yl_yr</span>
+        <span class="n">height</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span> <span class="o">-</span> <span class="n">rv</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">yl</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">mu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">rv</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">mean</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">spi</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">yl</span><span class="p">,</span> <span class="n">yr</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">/</span><span class="n">height</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+        
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">height</span>
+ </div>
+<div class="viewcode-block" id="exact_update_method"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.exact_update_method">[docs]</a><span class="k">def</span> <span class="nf">exact_update_method</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">dt</span><span class="o">=.</span><span class="mo">0001</span><span class="p">):</span>
+    
+    <span class="c"># Exact computation of propogation method, matrix exponential:</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">spla</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="n">J</span><span class="o">*</span><span class="n">dt</span><span class="p">),</span> <span class="n">pv</span><span class="p">)</span>
+    <span class="n">assert_probability_mass_conserved</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pv</span>
+</div>
+<div class="viewcode-block" id="approx_update_method_tol"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.approx_update_method_tol">[docs]</a><span class="k">def</span> <span class="nf">approx_update_method_tol</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span> <span class="n">dt</span><span class="o">=.</span><span class="mo">0001</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    
+    <span class="c"># No order specified:</span>
+    <span class="n">J</span> <span class="o">*=</span> <span class="n">dt</span>
+    <span class="n">curr_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">curr_del</span> <span class="o">=</span> <span class="n">pv</span>
+    <span class="n">pv_new</span> <span class="o">=</span> <span class="n">pv</span>
+    
+    <span class="k">while</span> <span class="n">curr_err</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">curr_del</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">curr_del</span><span class="p">)</span><span class="o">/</span><span class="n">counter</span>
+        <span class="n">pv_new</span> <span class="o">+=</span> <span class="n">curr_del</span>
+        <span class="n">curr_err</span> <span class="o">=</span> <span class="n">spla</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">curr_del</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">assert_probability_mass_conserved</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Probabiltiy mass error (p_sum=</span><span class="si">%s</span><span class="s">) at tol=</span><span class="si">%s</span><span class="s">; consider higher order, decrease dt, or increase dv&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">tol</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">pv_new</span>
+</div>
+<div class="viewcode-block" id="approx_update_method_order"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.approx_update_method_order">[docs]</a><span class="k">def</span> <span class="nf">approx_update_method_order</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">pv</span><span class="p">,</span> <span class="n">dt</span><span class="o">=.</span><span class="mo">0001</span><span class="p">,</span> <span class="n">approx_order</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    
+    <span class="c"># Iterate to a specific order:</span>
+    <span class="n">coeff</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">curr_del</span> <span class="o">=</span> <span class="n">pv</span>
+    <span class="n">pv_new</span> <span class="o">=</span> <span class="n">pv</span>
+    <span class="k">for</span> <span class="n">curr_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_order</span><span class="p">):</span>
+        <span class="n">coeff</span> <span class="o">*=</span> <span class="n">curr_order</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">curr_del</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">curr_del</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">pv_new</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">coeff</span><span class="p">)</span><span class="o">*</span><span class="n">curr_del</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">assert_probability_mass_conserved</span><span class="p">(</span><span class="n">pv_new</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Probabiltiy mass error (p_sum=</span><span class="si">%s</span><span class="s">) at approx_order=</span><span class="si">%s</span><span class="s">; consider higher order, decrease dt, or increase dv&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">approx_order</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">pv_new</span>
+</div>
+<div class="viewcode-block" id="cheb"><a class="viewcode-back" href="../../../dipde.internals.utilities.html#dipde.internals.utilities.cheb">[docs]</a><span class="k">def</span> <span class="nf">cheb</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    
+    <span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">N</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">c</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dX</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">-</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">D</span>  <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">dX</span><span class="o">+</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">D</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="n">D</span><span class="p">,</span><span class="n">x</span>
+    </div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dipde  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

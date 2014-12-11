@@ -2,7 +2,7 @@ import scipy.linalg as spla
 import bisect
 import numpy as np
 from dipde.internals.probabilityvector import ProbabilityVector
-import dipde.internals.utilities as util 
+from dipde.internals import utilities as util
 import dipde.internals.simulation
 import time
 

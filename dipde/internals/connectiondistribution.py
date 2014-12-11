@@ -1,5 +1,5 @@
 import numpy as np
-import dipde.internals.utilities as util
+from dipde.internals import utilities as util
 
 class ConnectionDistribution(object):
     
