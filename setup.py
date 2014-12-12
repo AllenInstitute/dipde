@@ -5,8 +5,6 @@ import io
 import os
 import sys
 
-import dipde
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 def read(*filenames, **kwargs):
@@ -31,9 +29,10 @@ class PyTest(TestCommand):
         errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
+import version
 setup(
     name='dipde',
-    version=dipde.__version__,
+    version=version.version,
     url=None,
     license=None,
     author='Nicholas Cain',
