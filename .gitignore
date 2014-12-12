@@ -1,3 +1,5 @@
+htmlcov
+.coverage
 result.xml
 dipde.egg-info
 .settings
