@@ -1,18 +1,16 @@
 from dipde.internals.connectiondistributioncollection import ConnectionDistributionCollection
-import numpy as np
 import time
 
 class Simulation(object):
     
-    def __init__(self, dt=.001, tf=.1, network=None, verbose=True, semi_implicit=False):
+    def __init__(self, dt=.001, tf=.1, network=None, verbose=True):
         
         self.dt = dt
         self.tf = tf
         self.network = network
         self.verbose = verbose
-        self.semi_implicit = semi_implicit
         
-    def initialize(self, aggregate=False, t0=0):
+    def initialize(self, t0=0):
         
         # Initialize:
         self.connection_distribution_collection = ConnectionDistributionCollection()
@@ -32,11 +30,11 @@ class Simulation(object):
         # Initialize network:
         self.network.initialize()
         
-    def run(self, aggregate=False):
+    def run(self):
         
         # Initialize:
         t0 = time.time()
-        self.initialize(aggregate=aggregate)
+        self.initialize()
         self.initialization_time = time.time() - t0
         
         # Run
@@ -46,7 +44,6 @@ class Simulation(object):
             self.t += self.dt
             if self.verbose: print 'time: %s' % self.t
             
-            
             for p in self.network.internal_population_list:
                 p.update_total_input_dict()
                 p.update_propability_mass()
@@ -55,9 +52,9 @@ class Simulation(object):
             for p in self.network.population_list:
                 if p.record == True: p.update_firing_rate_recorder()
                 
-            
             for c in self.network.connection_list:
                 c.update_delay_queue()
+                
         self.run_time = time.time() - t0
 
         

@@ -23,11 +23,6 @@ class Network(object):
         for p in self.internal_population_list:
             p.initialize_total_input_dict()
             
-        if self.simulation.semi_implicit == True:
-            for p in self.internal_population_list:
-                p.initialize_implicit()
-                
-            
     @property
     def external_population_list(self):
         return [p for p in self.population_list if p.type == 'external']
@@ -35,16 +30,6 @@ class Network(object):
     @property
     def internal_population_list(self):
         return [p for p in self.population_list if p.type == 'internal']
-            
-    def replace_population(self, old, new):
-        self.population_list.remove(old)
-        self.population_list.append(new)
-        
-        for c in self.connection_list:
-            if c.source == old:
-                c.source = new
-            if c.target == old:
-                c.target = new
             
                 
     

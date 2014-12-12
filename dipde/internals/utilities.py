@@ -4,8 +4,6 @@ import scipy.stats as sps
 import scipy.integrate as spi
 import bisect
 
-# np.set_printoptions(2, linewidth=200, suppress=True)
-
 def fraction_overlap(a1, a2, b1, b2):
     '''calculate the fractional overlap between range (a1,a2) and (b1,b2)
     fraction relative to length of (a1,a2)
