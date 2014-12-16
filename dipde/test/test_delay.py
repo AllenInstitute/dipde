@@ -1,4 +1,3 @@
-import pylab as pl
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
