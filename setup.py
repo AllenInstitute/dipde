@@ -1,5 +1,5 @@
 from __future__ import print_function
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 import io
 import os
@@ -18,6 +18,17 @@ def read(*filenames, **kwargs):
 
 #long_description = read('README.md')
 
+def prepend_find_packages(*roots):
+    ''' Recursively traverse nested packages under the root directories
+    '''
+    packages = []
+    
+    for root in roots:
+        packages += [root]
+        packages += [root + '.' + s for s in find_packages(root)]
+        
+    return packages
+
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -29,10 +40,10 @@ class PyTest(TestCommand):
         errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
-import version
+from dipde import version
 setup(
     name='dipde',
-    version=version.version,
+    version=version,
     url='https://github.com/AllenBrainAtlas/DiPDE',
     author='Nicholas Cain',
     tests_require=['pytest'],
@@ -41,8 +52,9 @@ setup(
     author_email='nicholasc@alleninstitute.org',
     description='Numerical solver for coupled population density equations',
     long_description='',
-    packages=['dipde'],
+    packages=prepend_find_packages('dipde'),
     include_package_data=True,
+    package_data={'':['*.md', '*.txt', '*.cfg']},
     platforms='any',
     test_suite='sandman.test.test_sandman',
     classifiers = [
