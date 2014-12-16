@@ -32,12 +32,17 @@ def prepend_find_packages(*roots):
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = ['--junitxml=result.xml', '--cov=dipde', '--cov-report=term', '--cov-report=html']
+        self.test_args = ['--junitxml=result.xml']
+        self.test_args_cov = self.test_args + ['--cov=dipde', '--cov-report=term', '--cov-report=html']
         self.test_suite = True
 
     def run_tests(self):
         import pytest
-        errcode = pytest.main(self.test_args)
+        
+        try:
+            errcode = pytest.main(self.test_args_cov)
+        except:
+            errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
 from dipde import version
