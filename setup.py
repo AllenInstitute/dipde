@@ -29,10 +29,10 @@ class PyTest(TestCommand):
         errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
-import version
+from dipde import version
 setup(
     name='dipde',
-    version=version.version,
+    version=version,
     url='https://github.com/AllenBrainAtlas/DiPDE',
     author='Nicholas Cain',
     tests_require=['pytest'],
