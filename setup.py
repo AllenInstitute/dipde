@@ -16,7 +16,7 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
-long_description = read('README.md')
+#long_description = read('README.md')
 
 class PyTest(TestCommand):
     def finalize_options(self):
@@ -33,21 +33,21 @@ import version
 setup(
     name='dipde',
     version=version.version,
-    url=None,
-    license=None,
+    url='https://github.com/AllenBrainAtlas/DiPDE',
     author='Nicholas Cain',
     tests_require=['pytest'],
-    install_requires=None,
+    install_requires=[],
     cmdclass={'test': PyTest},
     author_email='nicholasc@alleninstitute.org',
     description='Numerical solver for coupled population density equations',
-    long_description=long_description,
+    long_description='',
     packages=['dipde'],
     include_package_data=True,
     platforms='any',
     test_suite='sandman.test.test_sandman',
     classifiers = [
         'Programming Language :: Python',
+        'License :: Apache Software License :: 2.0',
         'Development Status :: 4 - Beta',
         'Natural Language :: English',
         'Environment :: Web Environment',
