@@ -1,8 +1,12 @@
+set -o verbose
+
+# Set up
 PYTHONPATH=''
-CONDA_DIR=`pwd`/dipde
+CONDA_DIR=/tmp/dipde_test
+
 conda create --file requirements.txt --prefix=$CONDA_DIR -y
-source activate dipde_test
-#py.test
-python setup.py test
-source deactivate
+	source activate $CONDA_DIR
+	python setup.py test
+	source deactivate
 conda remove --all --prefix=$CONDA_DIR -y
+
