@@ -46,8 +46,7 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 from dipde import version
-import dipde
-print(dipde, 'klajshfdlkasjdfhlaksjdfhlaksjdfhlaskjdfhalksjdfhlkasjdfhlkasjdhflaksjdhflkasjhfdlaskjf')
+
 setup(
     name='dipde',
     version=version,
