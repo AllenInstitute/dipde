@@ -1,5 +1,5 @@
 PYTHONPATH=''
-conda create -n dipde_test --file requirements.txt
+conda create -n dipde_test --file requirements.txt --prefix=`pwd`
 source activate dipde_test
 #py.test
 python setup.py test
