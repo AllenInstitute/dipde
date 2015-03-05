@@ -14,7 +14,7 @@ class ConnectionDistribution(object):
         
         # Not implemented yet
         if reversal_potential != None:
-            assert NotImplementedError
+            assert NotImplementedError  # pragma: no cover
         
         # Must be probabilty distribution
         assert np.sum(probs) == 1.

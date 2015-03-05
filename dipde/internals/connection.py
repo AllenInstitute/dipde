@@ -40,7 +40,7 @@ class Connection(object):
                 self.delay_queue[ii] = self.source.firing_rate(self.simulation.t - self.simulation.dt*ii)
                 self.delay_queue = self.delay_queue[::-1]
         else:
-            raise Exception('Unrecognized source type: "%s"' % self.source.type)
+            raise Exception('Unrecognized source type: "%s"' % self.source.type)    # pragma: no cover
         
     def update_delay_queue(self):
         self.delay_queue[0] = self.source.curr_firing_rate

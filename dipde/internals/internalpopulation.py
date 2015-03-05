@@ -111,7 +111,7 @@ class InternalPopulation(object):
                 self.pv = util.approx_update_method_order(J, self.pv, approx_order=self.approx_order, dt=self.simulation.dt)
         
         else:
-            raise Exception('Unrecognized population update method: "%s"' % self.update_method)
+            raise Exception('Unrecognized population update method: "%s"' % self.update_method) # pragma: no cover
         
         
     def update_firing_rate(self):

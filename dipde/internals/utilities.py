@@ -130,13 +130,6 @@ def get_zero_bin_list(v):
     else:
         return [bisect.bisect_right(v, 0) - 1]
     
-def get_steady_state(A):
-    
-    x = spla.solve(A+np.ones_like(A), np.ones_like(A.sum(axis=0)))
-    
-    return x
-    
-    
 def get_v_edges(v_min, v_max, dv):
     
     edges = np.concatenate(( np.arange(v_min, v_max, dv), [v_max] ))
@@ -149,8 +142,8 @@ def assert_probability_mass_conserved(pv):
     
     try:
         assert np.abs(np.abs(pv).sum() - 1) < 1e-12
-    except:
-        raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))
+    except:                                                                                 # pragma: no cover
+        raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))    # pragma: no cover
         
 
 
@@ -202,8 +195,8 @@ def approx_update_method_tol(J, pv, tol=np.finfo(float).eps, dt=.0001, norm='inf
     
     try:
         assert_probability_mass_conserved(pv)
-    except:
-        raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))
+    except:                                                                                                                                                     # pragma: no cover
+        raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
     
     return pv_new
 
@@ -220,26 +213,8 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
     
     try:
         assert_probability_mass_conserved(pv_new)
-    except:
-        raise Exception("Probabiltiy mass error (p_sum=%s) at approx_order=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), approx_order))
+    except:                                                                                                                                                             # pragma: no cover
+        raise Exception("Probabiltiy mass error (p_sum=%s) at approx_order=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), approx_order))  # pragma: no cover
 
     return pv_new
-
-def cheb(N):
-    
-    if N == 0:
-        return 0,1
-    else:
-        
-        x = np.matrix([np.cos(np.pi*np.arange(N+1)/N)]).T
-        c = np.matrix([np.ones(N+1)]).T
-        c[0,:] = 2
-        c[-1,:] = 2
-        c[1::2,:] *= -1
-        X = np.tile(x,(1,N+1))
-        dX = (X-X.T)
-        D  = (c*(1./c).T)/(dX+(np.eye(N+1)))
-        D -= np.diag(np.array(np.sum(D.T, axis=0)).squeeze())
-        
-        return D,x
     

@@ -17,7 +17,11 @@ class ExternalPopulation(object):
         self.metadata = kwargs
         
     def firing_rate(self, t):
-        return self.closure(t)
+        curr_firing_rate = self.closure(t)
+        if curr_firing_rate < 0:
+            raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.symbolic_function, t)) # pragma: no cover
+        
+        return curr_firing_rate
     
     def initialize_firing_rate_recorder(self):
         

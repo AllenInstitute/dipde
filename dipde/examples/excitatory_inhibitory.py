@@ -1,13 +1,9 @@
-import time
 import pylab as pl
-import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
-
-np.set_printoptions(suppress=True)
 
 def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
     '''
@@ -30,7 +26,7 @@ def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact'
     return simulation
 
 
-if __name__ == "__main__":
+def example(show=True):
 
     # Settings:
     dt = .0001
@@ -42,13 +38,13 @@ if __name__ == "__main__":
     approx_order = None
     tol = 1e-14
     simulation = get_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
-    t0 = time.time()
     simulation.run()
     i1 = simulation.network.population_list[1]
-    print simulation.run_time, i1.firing_rate_record[-1]
     pl.plot(i1.t_record, i1.firing_rate_record)
     pl.xlim([0,tf])
-#     i1.plot_probability_distribution()
-#     pl.xlim([-.02,.02])
 
-    pl.show()
+    if show == True: pl.show()
+    
+    return i1.t_record, i1.firing_rate_record
+    
+if __name__ == "__main__": example()        # pragma: no cover

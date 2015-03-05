@@ -115,3 +115,17 @@ def test_leak_matrix():
                        [   0.,    0.,    0.,    0.,    0.,    0.,    0., -200.]])
     
     np.testing.assert_array_almost_equal_nulp(L, L_true)
+    
+def test_fraction_overlap():
+    assert util.fraction_overlap(0, 1, .5, 1.5) == .5
+    assert util.fraction_overlap(0, 1, 2, 3) == 0
+    assert util.fraction_overlap(0, 1, .5, .7) == .19999999999999996
+    assert util.fraction_overlap(0, 1, -.5, 1.5) == 1.
+
+if __name__ == "__main__":      # pragma: no cover
+    test_get_zero_bin_list()    # pragma: no cover
+    test_leak_matrix()          # pragma: no cover
+    test_flux_ex_inh()          # pragma: no cover
+    test_flux_ex_inh_border()   # pragma: no cover
+    test_flux_ex()              # pragma: no cover
+    test_fraction_overlap()     # pragma: no cover

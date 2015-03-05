@@ -57,10 +57,6 @@ class Simulation(object):
                 
         self.run_time = time.time() - t0
 
-        
-    def apply_connection(self):
-        pass
-
 
 
 
