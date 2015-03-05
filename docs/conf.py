@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # dipde documentation build configuration file, created by
-# sphinx-quickstart on Thu Dec 11 05:00:09 2014.
+# sphinx-quickstart on Thu Dec 18 21:48:56 2014.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.

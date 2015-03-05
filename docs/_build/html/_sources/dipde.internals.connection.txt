@@ -1,4 +1,4 @@
-connection module
+dipde.internals.connection module
 =================================
 
 .. automodule:: dipde.internals.connection

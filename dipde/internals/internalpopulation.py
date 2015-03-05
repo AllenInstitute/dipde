@@ -2,6 +2,21 @@ import numpy as np
 from dipde.internals import utilities as util
 
 class InternalPopulation(object):
+    """
+    This class does something.
+    
+    Blah
+    
+    - **parameters**, **types**, **return** and **return types**::
+
+      :param arg1: description
+      :param arg2: description
+      :type arg1: type description
+      :type arg1: type description
+      :return: return description
+      :rtype: the return type description
+    
+    """
     
     def __init__(self, tau_m = .02,
                        v_min = -.1,

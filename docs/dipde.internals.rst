@@ -6,13 +6,12 @@ Submodules
 
 .. toctree::
 
-   connection
+   dipde.internals.connection
    dipde.internals.connectiondistribution
    dipde.internals.connectiondistributioncollection
    dipde.internals.externalpopulation
    dipde.internals.internalpopulation
    dipde.internals.network
-   dipde.internals.probabilityvector
    dipde.internals.simulation
    dipde.internals.utilities
 

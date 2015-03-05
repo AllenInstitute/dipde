@@ -9,13 +9,6 @@ Subpackages
     dipde.examples
     dipde.internals
 
-Submodules
-----------
-
-.. toctree::
-
-   dipde.tmp
-
 Module contents
 ---------------
 

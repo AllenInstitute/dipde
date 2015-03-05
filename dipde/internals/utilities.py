@@ -148,7 +148,7 @@ def get_v_edges(v_min, v_max, dv):
 def assert_probability_mass_conserved(pv):
     
     try:
-        assert np.abs(pv).sum() - 1 < 1e-12
+        assert np.abs(np.abs(pv).sum() - 1) < 1e-12
     except:
         raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))
         
@@ -184,7 +184,7 @@ def exact_update_method(J, pv, dt=.0001):
     assert_probability_mass_conserved(pv)
     return pv
 
-def approx_update_method_tol(J, pv, tol=1e-14, dt=.0001, norm=2):
+def approx_update_method_tol(J, pv, tol=np.finfo(float).eps, dt=.0001, norm='inf'):
     
     # No order specified:
     J *= dt
