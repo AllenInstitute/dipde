@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dipde.internals package &mdash; dipde 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="dipde 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="dipde package" href="dipde.html" />
+    <link rel="prev" title="dipde.examples package" href="dipde.examples.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dipde.examples.html" title="dipde.examples package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">dipde 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="dipde.html" accesskey="U">dipde package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dipde-internals-package">
+<h1>dipde.internals package<a class="headerlink" href="#dipde-internals-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dipde.internals.connection">
+<span id="dipde-internals-connection-module"></span><h2>dipde.internals.connection module<a class="headerlink" href="#module-dipde.internals.connection" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.connection.Connection">
+<em class="property">class </em><tt class="descclassname">dipde.internals.connection.</tt><tt class="descname">Connection</tt><big>(</big><em>source</em>, <em>target</em>, <em>nsyn</em>, <em>weights=None</em>, <em>probs=None</em>, <em>delay=0</em>, <em>distribution=None</em>, <em>N=None</em>, <em>scale=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dipde.internals.connection.Connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="dipde.internals.connection.Connection.curr_delayed_firing_rate">
+<tt class="descname">curr_delayed_firing_rate</tt><a class="headerlink" href="#dipde.internals.connection.Connection.curr_delayed_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.initialize_connection_distribution">
+<tt class="descname">initialize_connection_distribution</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.connection.Connection.initialize_connection_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.initialize_delay_queue">
+<tt class="descname">initialize_delay_queue</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.connection.Connection.initialize_delay_queue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.update_delay_queue">
+<tt class="descname">update_delay_queue</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.connection.Connection.update_delay_queue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.connectiondistribution">
+<span id="dipde-internals-connectiondistribution-module"></span><h2>dipde.internals.connectiondistribution module<a class="headerlink" href="#module-dipde.internals.connectiondistribution" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution">
+<em class="property">class </em><tt class="descclassname">dipde.internals.connectiondistribution.</tt><tt class="descname">ConnectionDistribution</tt><big>(</big><em>edges</em>, <em>weights</em>, <em>probs</em>, <em>reversal_potential=None</em>, <em>sparse=True</em><big>)</big><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution.signature">
+<tt class="descname">signature</tt><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution.signature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.connectiondistributioncollection">
+<span id="dipde-internals-connectiondistributioncollection-module"></span><h2>dipde.internals.connectiondistributioncollection module<a class="headerlink" href="#module-dipde.internals.connectiondistributioncollection" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection">
+<em class="property">class </em><tt class="descclassname">dipde.internals.connectiondistributioncollection.</tt><tt class="descname">ConnectionDistributionCollection</tt><a class="headerlink" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution">
+<tt class="descname">add_connection_distribution</tt><big>(</big><em>cd</em><big>)</big><a class="headerlink" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.externalpopulation">
+<span id="dipde-internals-externalpopulation-module"></span><h2>dipde.internals.externalpopulation module<a class="headerlink" href="#module-dipde.internals.externalpopulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation">
+<em class="property">class </em><tt class="descclassname">dipde.internals.externalpopulation.</tt><tt class="descname">ExternalPopulation</tt><big>(</big><em>firing_rate</em>, <em>record=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate">
+<tt class="descname">curr_firing_rate</tt><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.firing_rate">
+<tt class="descname">firing_rate</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder">
+<tt class="descname">initialize_firing_rate_recorder</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder">
+<tt class="descname">update_firing_rate_recorder</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.internalpopulation">
+<span id="dipde-internals-internalpopulation-module"></span><h2>dipde.internals.internalpopulation module<a class="headerlink" href="#module-dipde.internals.internalpopulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.internalpopulation.InternalPopulation">
+<em class="property">class </em><tt class="descclassname">dipde.internals.internalpopulation.</tt><tt class="descname">InternalPopulation</tt><big>(</big><em>tau_m=0.02</em>, <em>v_min=-0.1</em>, <em>v_max=0.02</em>, <em>dv=0.0001</em>, <em>record=True</em>, <em>initial_firing_rate=0</em>, <em>update_method='approx'</em>, <em>approx_order=None</em>, <em>tol=1e-12</em>, <em>norm=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix">
+<tt class="descname">get_total_flux_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_edges">
+<tt class="descname">initialize_edges</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder">
+<tt class="descname">initialize_firing_rate_recorder</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_probability">
+<tt class="descname">initialize_probability</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_probability" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict">
+<tt class="descname">initialize_total_input_dict</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.n_bins">
+<tt class="descname">n_bins</tt><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.n_bins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.n_edges">
+<tt class="descname">n_edges</tt><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.n_edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution">
+<tt class="descname">plot_probability_distribution</tt><big>(</big><em>ax=None</em><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.source_connection_list">
+<tt class="descname">source_connection_list</tt><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.source_connection_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate">
+<tt class="descname">update_firing_rate</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder">
+<tt class="descname">update_firing_rate_recorder</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_propability_mass">
+<tt class="descname">update_propability_mass</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_propability_mass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict">
+<tt class="descname">update_total_input_dict</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.network">
+<span id="dipde-internals-network-module"></span><h2>dipde.internals.network module<a class="headerlink" href="#module-dipde.internals.network" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.network.Network">
+<em class="property">class </em><tt class="descclassname">dipde.internals.network.</tt><tt class="descname">Network</tt><big>(</big><em>population_list=[]</em>, <em>connection_list=[]</em><big>)</big><a class="headerlink" href="#dipde.internals.network.Network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="dipde.internals.network.Network.external_population_list">
+<tt class="descname">external_population_list</tt><a class="headerlink" href="#dipde.internals.network.Network.external_population_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.network.Network.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.network.Network.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.network.Network.internal_population_list">
+<tt class="descname">internal_population_list</tt><a class="headerlink" href="#dipde.internals.network.Network.internal_population_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.simulation">
+<span id="dipde-internals-simulation-module"></span><h2>dipde.internals.simulation module<a class="headerlink" href="#module-dipde.internals.simulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.simulation.Simulation">
+<em class="property">class </em><tt class="descclassname">dipde.internals.simulation.</tt><tt class="descname">Simulation</tt><big>(</big><em>dt=0.001</em>, <em>tf=0.1</em>, <em>network=None</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="dipde.internals.simulation.Simulation.apply_connection">
+<tt class="descname">apply_connection</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation.apply_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.simulation.Simulation.initialize">
+<tt class="descname">initialize</tt><big>(</big><em>t0=0</em><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.simulation.Simulation.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.utilities">
+<span id="dipde-internals-utilities-module"></span><h2>dipde.internals.utilities module<a class="headerlink" href="#module-dipde.internals.utilities" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dipde.internals.utilities.approx_update_method_order">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">approx_update_method_order</tt><big>(</big><em>J</em>, <em>pv</em>, <em>dt=0.0001</em>, <em>approx_order=2</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.approx_update_method_tol">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">approx_update_method_tol</tt><big>(</big><em>J</em>, <em>pv</em>, <em>tol=1e-14</em>, <em>dt=0.0001</em>, <em>norm=2</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_tol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.assert_probability_mass_conserved">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">assert_probability_mass_conserved</tt><big>(</big><em>pv</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.assert_probability_mass_conserved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.cheb">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">cheb</tt><big>(</big><em>N</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.cheb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.descretize">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">descretize</tt><big>(</big><em>distribution</em>, <em>N</em>, <em>loc=0</em>, <em>scale=1</em>, <em>shape=[]</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.descretize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.exact_update_method">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">exact_update_method</tt><big>(</big><em>J</em>, <em>pv</em>, <em>dt=0.0001</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.exact_update_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.flux_matrix">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">flux_matrix</tt><big>(</big><em>v</em>, <em>w</em>, <em>lam</em>, <em>p=1</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.flux_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.fraction_overlap">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">fraction_overlap</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.fraction_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the fractional overlap between range (a1,a2) and (b1,b2)
+fraction relative to length of (a1,a2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.get_steady_state">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">get_steady_state</tt><big>(</big><em>A</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.get_steady_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.get_v_edges">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">get_v_edges</tt><big>(</big><em>v_min</em>, <em>v_max</em>, <em>dv</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.get_v_edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.get_zero_bin_list">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">get_zero_bin_list</tt><big>(</big><em>v</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.get_zero_bin_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.leak_matrix">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">leak_matrix</tt><big>(</big><em>v</em>, <em>tau</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.leak_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.redistribute_probability_mass">
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">redistribute_probability_mass</tt><big>(</big><em>A</em>, <em>B</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.redistribute_probability_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes two &#8216;edge&#8217; vectors and returns a 2D matrix mapping each &#8216;bin&#8217; in B
+to overlapping bins in A
+function assumes that A and B contain monotonically increasing edge values</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dipde.internals" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">dipde.internals package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connection">dipde.internals.connection module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connectiondistribution">dipde.internals.connectiondistribution module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connectiondistributioncollection">dipde.internals.connectiondistributioncollection module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.externalpopulation">dipde.internals.externalpopulation module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.internalpopulation">dipde.internals.internalpopulation module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.network">dipde.internals.network module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.simulation">dipde.internals.simulation module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.utilities">dipde.internals.utilities module</a></li>
+<li><a class="reference internal" href="#module-dipde.internals">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dipde.examples.html"
+                        title="previous chapter">dipde.examples package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dipde.internals.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dipde.examples.html" title="dipde.examples package"
+             >previous</a> |</li>
+        <li><a href="index.html">dipde 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="dipde.html" >dipde package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Allen Institute for Brain Science.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

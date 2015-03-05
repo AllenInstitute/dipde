@@ -138,10 +138,10 @@ class InternalPopulation(object):
     
     def plot_probability_distribution(self, ax=None):
         
-        import pylab as pl
+        import matplotlib.pyplot as plt
         
         if ax == None:
-            fig = pl.figure()
+            fig = plt.figure()
             ax = fig.add_subplot(1,1,1)
             
         ax.plot(self.edges[:-1], self.pv)

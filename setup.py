@@ -1,6 +1,7 @@
 from __future__ import print_function
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
+import dipde
 import io
 import os
 import sys
@@ -45,11 +46,11 @@ class PyTest(TestCommand):
             errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
-from dipde import version
+
 
 setup(
     name='dipde',
-    version=version,
+    version=dipde.__version__,
     url='https://github.com/AllenBrainAtlas/DiPDE',
     author='Nicholas Cain',
     tests_require=['pytest'],
@@ -64,13 +65,12 @@ setup(
     platforms='any',
     test_suite='sandman.test.test_sandman',
     classifiers = [
-        'Programming Language :: Python',
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Science/Research',
         'License :: Apache Software License :: 2.0',
-        'Development Status :: 4 - Beta',
         'Natural Language :: English',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
         ],
     extras_require={
         'testing': ['pytest'],

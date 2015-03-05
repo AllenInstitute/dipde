@@ -1,4 +1,4 @@
-import pylab as pl
+import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
@@ -32,9 +32,9 @@ def example(show=True):
     simulation = get_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
     simulation.run()
     i1 = simulation.network.population_list[1]
-    pl.plot(i1.t_record, i1.firing_rate_record)
+    plt.plot(i1.t_record, i1.firing_rate_record)
 
-    if show == True: pl.show()
+    if show == True: plt.show()
     return i1.t_record, i1.firing_rate_record
     
 if __name__ == "__main__": example()        # pragma: no cover
