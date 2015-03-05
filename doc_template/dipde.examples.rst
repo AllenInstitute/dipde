@@ -42,7 +42,7 @@ dipde.examples.singlepop_sine module
 .. automodule:: dipde.examples.singlepop_sine
     :members:
     :undoc-members:
-    :show-inheritance:
+    :show-inheritance: 
 
 dipde.examples.twopop module
 ----------------------------

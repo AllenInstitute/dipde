@@ -152,6 +152,20 @@
 <dt id="dipde.internals.internalpopulation.InternalPopulation">
 <em class="property">class </em><tt class="descclassname">dipde.internals.internalpopulation.</tt><tt class="descname">InternalPopulation</tt><big>(</big><em>tau_m=0.02</em>, <em>v_min=-0.1</em>, <em>v_max=0.02</em>, <em>dv=0.0001</em>, <em>record=True</em>, <em>initial_firing_rate=0</em>, <em>update_method='approx'</em>, <em>approx_order=None</em>, <em>tol=1e-12</em>, <em>norm=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class does something.</p>
+<p>Blah</p>
+<ul>
+<li><p class="first"><strong>parameters</strong>, <strong>types</strong>, <strong>return</strong> and <strong>return types</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>:param arg1: description
+:param arg2: description
+:type arg1: type description
+:type arg1: type description
+:return: return description
+:rtype: the return type description
+</pre></div>
+</div>
+</li>
+</ul>
 <dl class="method">
 <dt id="dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix">
 <tt class="descname">get_total_flux_matrix</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix" title="Permalink to this definition">¶</a></dt>
@@ -251,11 +265,6 @@
 <em class="property">class </em><tt class="descclassname">dipde.internals.simulation.</tt><tt class="descname">Simulation</tt><big>(</big><em>dt=0.001</em>, <em>tf=0.1</em>, <em>network=None</em>, <em>verbose=True</em><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
-<dt id="dipde.internals.simulation.Simulation.apply_connection">
-<tt class="descname">apply_connection</tt><big>(</big><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation.apply_connection" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="dipde.internals.simulation.Simulation.initialize">
 <tt class="descname">initialize</tt><big>(</big><em>t0=0</em><big>)</big><a class="headerlink" href="#dipde.internals.simulation.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -277,17 +286,12 @@
 
 <dl class="function">
 <dt id="dipde.internals.utilities.approx_update_method_tol">
-<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">approx_update_method_tol</tt><big>(</big><em>J</em>, <em>pv</em>, <em>tol=1e-14</em>, <em>dt=0.0001</em>, <em>norm=2</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_tol" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">approx_update_method_tol</tt><big>(</big><em>J</em>, <em>pv</em>, <em>tol=2.2204460492503131e-16</em>, <em>dt=0.0001</em>, <em>norm='inf'</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_tol" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="dipde.internals.utilities.assert_probability_mass_conserved">
 <tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">assert_probability_mass_conserved</tt><big>(</big><em>pv</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.assert_probability_mass_conserved" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="dipde.internals.utilities.cheb">
-<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">cheb</tt><big>(</big><em>N</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.cheb" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -311,11 +315,6 @@
 <dd><p>calculate the fractional overlap between range (a1,a2) and (b1,b2)
 fraction relative to length of (a1,a2)</p>
 </dd></dl>
-
-<dl class="function">
-<dt id="dipde.internals.utilities.get_steady_state">
-<tt class="descclassname">dipde.internals.utilities.</tt><tt class="descname">get_steady_state</tt><big>(</big><em>A</em><big>)</big><a class="headerlink" href="#dipde.internals.utilities.get_steady_state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="function">
 <dt id="dipde.internals.utilities.get_v_edges">
