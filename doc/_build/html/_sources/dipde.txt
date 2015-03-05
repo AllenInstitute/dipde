@@ -1,13 +1,10 @@
-dipde package
+Packages
 =============
-
-Subpackages
------------
 
 .. toctree::
 
-    dipde.examples
     dipde.internals
+    dipde.examples
 
 Module contents
 ---------------

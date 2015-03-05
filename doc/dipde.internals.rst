@@ -1,34 +1,7 @@
-dipde.internals package
+Core functionality (dipde.internals)
 =======================
 
-Submodules
-----------
-
-dipde.internals.connection module
----------------------------------
-
-.. automodule:: dipde.internals.connection
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-dipde.internals.connectiondistribution module
----------------------------------------------
-
-.. automodule:: dipde.internals.connectiondistribution
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-dipde.internals.connectiondistributioncollection module
--------------------------------------------------------
-
-.. automodule:: dipde.internals.connectiondistributioncollection
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-dipde.internals.externalpopulation module
+External Population
 -----------------------------------------
 
 .. automodule:: dipde.internals.externalpopulation
@@ -36,7 +9,7 @@ dipde.internals.externalpopulation module
     :undoc-members:
     :show-inheritance:
 
-dipde.internals.internalpopulation module
+Internal Population
 -----------------------------------------
 
 .. automodule:: dipde.internals.internalpopulation
@@ -44,7 +17,31 @@ dipde.internals.internalpopulation module
     :undoc-members:
     :show-inheritance:
 
-dipde.internals.network module
+Connection
+---------------------------------
+
+.. automodule:: dipde.internals.connection
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Connection Distribution
+---------------------------------------------
+
+.. automodule:: dipde.internals.connectiondistribution
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Connection Distribution Collection
+-------------------------------------------------------
+
+.. automodule:: dipde.internals.connectiondistributioncollection
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Network
 ------------------------------
 
 .. automodule:: dipde.internals.network
@@ -52,7 +49,7 @@ dipde.internals.network module
     :undoc-members:
     :show-inheritance:
 
-dipde.internals.simulation module
+Simulation
 ---------------------------------
 
 .. automodule:: dipde.internals.simulation
@@ -60,19 +57,10 @@ dipde.internals.simulation module
     :undoc-members:
     :show-inheritance:
 
-dipde.internals.utilities module
+Utilities
 --------------------------------
 
 .. automodule:: dipde.internals.utilities
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: dipde.internals
     :members:
     :undoc-members:
     :show-inheritance:

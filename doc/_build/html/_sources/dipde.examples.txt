@@ -1,34 +1,15 @@
-dipde.examples package
+Examples (dipde.examples)
 ======================
 
-Submodules
-----------
-
-dipde.examples.excitatory_inhibitory module
--------------------------------------------
-
-.. automodule:: dipde.examples.excitatory_inhibitory
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-dipde.examples.singlepop module
+Singlepop
 -------------------------------
 
 .. automodule:: dipde.examples.singlepop
     :members:
     :undoc-members:
     :show-inheritance:
-
-dipde.examples.singlepop_exponential_distribution module
---------------------------------------------------------
-
-.. automodule:: dipde.examples.singlepop_exponential_distribution
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-dipde.examples.singlepop_recurrent module
+    
+Singlepop (recurrent)
 -----------------------------------------
 
 .. automodule:: dipde.examples.singlepop_recurrent
@@ -36,7 +17,7 @@ dipde.examples.singlepop_recurrent module
     :undoc-members:
     :show-inheritance:
 
-dipde.examples.singlepop_sine module
+Singlepop (sine)
 ------------------------------------
 
 .. automodule:: dipde.examples.singlepop_sine
@@ -44,7 +25,15 @@ dipde.examples.singlepop_sine module
     :undoc-members:
     :show-inheritance:
 
-dipde.examples.twopop module
+Singlepop (exponential)
+--------------------------------------------------------
+
+.. automodule:: dipde.examples.singlepop_exponential_distribution
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Twopop
 ----------------------------
 
 .. automodule:: dipde.examples.twopop
@@ -52,11 +41,10 @@ dipde.examples.twopop module
     :undoc-members:
     :show-inheritance:
 
+Excitatory/Inhibitory
+-------------------------------------------
 
-Module contents
----------------
-
-.. automodule:: dipde.examples
+.. automodule:: dipde.examples.excitatory_inhibitory
     :members:
     :undoc-members:
     :show-inheritance:

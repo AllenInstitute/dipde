@@ -11,7 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
-   dipde 
+   user
+   dipde
 
 
 Indices and tables
