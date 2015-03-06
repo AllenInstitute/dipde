@@ -1,41 +1,50 @@
 User Guide
 ==========
-This guide is a resource for using the Allen Wrench package.
+This guide is a resource for installing the dipde package.
 It is maintained by the `Allen Institute for Brain Science <http://www.alleninstitute.org/>`_.
 
-Quick Start Install Using Pip (Linux)
+Quick Start Install Using Pip
 -------------------------------------
 
  #. Pip install for a single user.
-    ::
-        pip install http://bamboo.corp.alleninstitute.org/browse/MAT-AWBS/latestSuccessful/artifact/shared/tgz/allen_wrench-|version|.tar.gz --user
+    
+    .. code-block:: bash
+     
+    	pip install dipde --user
+    	
 
 
 Install Using Setup Tools
 -------------------------
 
  #. Download the distribution.
-    ::
-        wget http://bamboo.corp.alleninstitute.org/browse/MAT-AWBS/latestSuccessful/artifact/shared/tgz/allen_wrench-|version|.tar.gz
+ 
+    .. code-block:: bash
+     
+    	TODO
+ 
  #. Unpack the distribution.
-    ::
-        tar xvzf allen_wrench-|version|.tar.gz
+     
+    .. code-block:: bash
+     
+    	tar xvzf dipde-|version|.tar.gz
+
  #. Install using setuptools
-    ::
-        cd allen_wrench-|version|
-        python setup.py install --user
+     
+    .. code-block:: bash
+     
+    	cd dipde-|version| python setup.py install --user
         
 Uninstall
 ---------
 
  #. Simply use pip.
-    ::
-        pip uninstall allen_wrench
-       
-Other Distribution Formats
---------------------------
+      
+    .. code-block:: bash
+     
+    	pip uninstall dipde
 
- .. include:: links.rst
+       
 
  		 
 Required Dependencies
@@ -44,12 +53,4 @@ Required Dependencies
  * `NumPy <http://wiki.scipy.org/Tentative_NumPy_Tutorial>`_
  * `SciPy <http://www.scipy.org/>`_
  * `MatPlotLib <http://matplotlib.org/>`_ 
- 
-
-Optional Dependencies
----------------------
-
- * `NEURON <http://www.neuron.yale.edu/neuron>`_
- * `pandas <http://pandas.pydata.org>`_ and `pytables <http://www.pytables.org/moin>`_ for loading and saving configuration tables. 
- * `mpi4py <http://mpi4pi.scipy.org>`_ is a message passing interface for distributed processing
- * `nose <https://nose.readthedocs.org/en/latest>`_ is nicer testing for python
+ * `SymPy <http://www.sympy.org/>`_

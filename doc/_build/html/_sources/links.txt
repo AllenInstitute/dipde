@@ -1,3 +1,0 @@
- * `allen_wrench-0.1.1.tar.gz <http://bamboo.corp.alleninstitute.org/browse/MAT-AWBS/latestSuccessful/artifact/shared/tgz/allen_wrench-0.1.1.tar.gz>`_
- * `allen_wrench-0.1.1.tar.bz2 <http://bamboo.corp.alleninstitute.org/browse/MAT-AWBS/latestSuccessful/artifact/shared/tgz/allen_wrench-0.1.1.tar.bz2>`_
- * `allen_wrench-0.1.1.zip <http://bamboo.corp.alleninstitute.org/browse/MAT-AWBS/latestSuccessful/artifact/shared/tgz/allen_wrench-0.1.1.zip>`_

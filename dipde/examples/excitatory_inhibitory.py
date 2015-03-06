@@ -6,12 +6,7 @@ from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 
 def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
-    '''
-    .. function:: foo(x)
-              foo(y, z)
-   :module: some.module.name
-
-   Return a line of text input from the user.
+    '''ahhh
     '''
 
 
@@ -22,7 +17,7 @@ def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact'
     b1_i1_2 = Connection(b1, i1, 1, weights=[-.005], probs=[1.], delay=0.0)
     network = Network(population_list=[b1, i1], connection_list = [b1_i1, b1_i1_2])
     simulation = Simulation(dt=dt, tf=tf, network=network, verbose=verbose)
-
+    
     return simulation
 
 

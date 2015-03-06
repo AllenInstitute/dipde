@@ -27,8 +27,6 @@ doc: clean
 	sphinx-apidoc -d 4 -H "$(PROJECTNAME)" -A "Allen Institute for Brain Science" -V $(VERSION) -R $(VERSION).$(RELEASE).${REVISION} --full -o doc $(PROJECTNAME)
 	cp doc_template/*.rst doc_template/conf.py doc	
 	sed -ie "s/|version|/${VERSION}.${RELEASE}.${REVISION}/g" doc/user.rst
-	sed -ie "s/|version|/${VERSION}.${RELEASE}.${REVISION}/g" doc/developer.rst
-	sed -ie "s/|version|/${VERSION}.${RELEASE}.${REVISION}/g" doc/links.rst
 	cd doc && make html || true
 
 clean:

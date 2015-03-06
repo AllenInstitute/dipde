@@ -3,7 +3,9 @@ from dipde.internals import utilities as util
 from dipde.internals import ConnectionDistribution
 
 class Connection(object):
-    
+    '''Connection also 2
+    '''
+        
     def __init__(self, source, target, nsyn, weights=None, probs=None, delay=0, distribution=None, N=None, scale=None, **kwargs):
 
         if weights != None or probs != None:
