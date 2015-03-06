@@ -1,3 +1,4 @@
+import numpy as np
 
 def test_singlepop():
     from dipde.examples.singlepop import example
@@ -10,7 +11,7 @@ def test_twopop():
     t, y1, y2 = example(show=False)
     
     assert t[5] == 0.0005
-    assert y1[5] == 0.0016196734665460703
+    np.testing.assert_almost_equal(y1[5], 0.0016196734665460703)
     assert y2[500] == 4.8713503006780812
     
 def test_singlepop_sine():
@@ -32,14 +33,14 @@ def test_singlepop_exponential_distribution():
     t, y = example(show=False)
 
     assert t[-1] == 0.10000000000000184
-    assert y[-1] == 21.300801986164682
+    np.testing.assert_almost_equal(y[-1], 21.300801986164682)
     
 def test_excitatory_inhibitory():
     from dipde.examples.excitatory_inhibitory import example
     t, y = example(show=False)
 
     assert t[-1] == 0.20009999999999428
-    assert y[-1] == 0.90670046727316733
+    np.testing.assert_almost_equal(y[-1], 0.90670046727316733)
     
 
 if __name__ == "__main__":                      # pragma: no cover
