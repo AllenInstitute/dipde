@@ -20,16 +20,16 @@ class InternalPopulation(object):
     
     """
     
-    def __init__(self, tau_m = .02,
-                       v_min = -.1,
-                       v_max = .02,
-                       dv = .0001,
-                       record = True, 
-                       initial_firing_rate = 0,
-                       update_method = 'approx',
-                       approx_order = None,
-                       tol = 1e-12,
-                       norm = None,
+    def __init__(self, tau_m=.02,
+                       v_min=-.1,
+                       v_max=.02,
+                       dv=.0001,
+                       record=True, 
+                       initial_firing_rate=0,
+                       update_method='approx',
+                       approx_order=None,
+                       tol=1e-12,
+                       norm=None,
                        **kwargs):
         
         # Store away inputs:
@@ -54,6 +54,18 @@ class InternalPopulation(object):
         self.firing_rate_record = None
         self.t_record = None
         self.leak_flux_matrix = None
+        
+    def initialize(self):
+            self.initialize_edges()
+            self.initialize_probability() # TODO: different initialization options
+            self.initialize_total_input_dict()
+            if self.record == True: self.initialize_firing_rate_recorder()
+            
+    def update(self):
+        self.update_total_input_dict()
+        self.update_propability_mass()
+        self.update_firing_rate()
+        if self.record == True: self.update_firing_rate_recorder()
         
     def initialize_edges(self):
 
@@ -80,12 +92,23 @@ class InternalPopulation(object):
         # Aggregate input for each connection distribution:        
         self.total_input_dict = {}
         for c in self.source_connection_list:
-            curr_input = self.total_input_dict.setdefault(c.connection_distribution, 0)
+            try:
+                curr_input = self.total_input_dict.setdefault(c.connection_distribution, 0)
+            except:
+                c.initialize_connection_distribution()
+                curr_input = self.total_input_dict.setdefault(c.connection_distribution, 0)
             self.total_input_dict[c.connection_distribution] = curr_input + c.curr_delayed_firing_rate*c.nsyn
-            
 
     def get_total_flux_matrix(self):
-        return reduce(np.add, [key.flux_matrix*val for key, val in self.total_input_dict.items()]) + self.leak_flux_matrix
+        
+        total_flux_matrix = self.leak_flux_matrix.copy()
+        for key, val in self.total_input_dict.items():
+            try:
+                total_flux_matrix += key.flux_matrix*val
+            except:  
+                key.initialize()
+                total_flux_matrix += key.flux_matrix*val
+        return total_flux_matrix
 
     def update_total_input_dict(self):
                     
@@ -128,7 +151,7 @@ class InternalPopulation(object):
         
     @property
     def source_connection_list(self):
-        return [c for c in self.simulation.network.connection_list if c.target == self]
+        return [c for c in self.simulation.connection_list if c.target == self]
     
     @property
     def n_bins(self):

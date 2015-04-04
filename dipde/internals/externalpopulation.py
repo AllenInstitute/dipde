@@ -26,7 +26,6 @@ class ExternalPopulation(object):
 
     '''
     
-    
     def __init__(self, firing_rate, record=False, **kwargs):
         
         self.firing_rate_string = str(firing_rate)
@@ -44,6 +43,12 @@ class ExternalPopulation(object):
             raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.firing_rate_string, t)) # pragma: no cover
         
         return curr_firing_rate
+    
+    def initialize(self):
+        if self.record == True: self.initialize_firing_rate_recorder()
+        
+    def update(self):
+        if self.record == True: self.update_firing_rate_recorder()
     
     def initialize_firing_rate_recorder(self):
         

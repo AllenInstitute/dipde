@@ -1,7 +1,6 @@
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Network
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 
@@ -17,8 +16,7 @@ def test_delay_singlepop():
     b1 = ExternalPopulation('Heaviside(t)*100')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
     b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=2*dt)
-    network = Network(population_list=[b1, i1], connection_list = [b1_i1])
-    simulation = Simulation(dt=dt, tf=tf, network=network, verbose=verbose)
+    simulation = Simulation([b1, i1], [b1_i1], dt=dt, tf=tf, verbose=verbose)
     simulation.run()
     
     true_ans = np.array([0, 0.0, 0.0, 0.00066516669656511084, 0.025842290308637855, 0.08117342489138904])
@@ -41,8 +39,7 @@ def test_delay_doublepop():
     i1_i2 = Connection(i1, i2, 20, weights=[.005], probs=[1.], delay=2*dt)
     
     # Create and run simulation:
-    network = Network(population_list=[b1, i1, i2], connection_list = [b1_i1, i1_i2])
-    simulation = Simulation(dt=dt, tf=tf, network=network, verbose=verbose)
+    simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], dt=dt, tf=tf, verbose=verbose)
     simulation.run()
     
     

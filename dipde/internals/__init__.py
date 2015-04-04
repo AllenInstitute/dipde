@@ -5,5 +5,4 @@ from connection import Connection
 from connectiondistributioncollection import ConnectionDistributionCollection
 from externalpopulation import ExternalPopulation
 from internalpopulation import InternalPopulation
-from network import Network
 from simulation import Simulation

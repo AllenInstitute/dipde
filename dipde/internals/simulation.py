@@ -3,12 +3,19 @@ import time
 
 class Simulation(object):
     
-    def __init__(self, dt=.001, tf=.1, network=None, verbose=True):
+    def __init__(self, 
+                 population_list, 
+                 connection_list, 
+                 dt=.001, 
+                 tf=.1, 
+                 verbose=True):
         
         self.dt = dt
         self.tf = tf
-        self.network = network
         self.verbose = verbose
+        
+        self.population_list = population_list
+        self.connection_list = [c for c in connection_list if c.nsyn != 0]
         
     def initialize(self, t0=0):
         
@@ -16,19 +23,21 @@ class Simulation(object):
         self.connection_distribution_collection = ConnectionDistributionCollection()
         self.t = t0
         
-        # Network needs access to the simulation
-        self.network.simulation = self
-        
         # Monkey-patch dt to the populations:
-        for p in self.network.population_list:
+        for p in self.population_list:
             p.simulation = self
             
         # Each connection needs access to t:
-        for c in self.network.connection_list:
+        for c in self.connection_list:
             c.simulation = self
         
-        # Initialize network:
-        self.network.initialize()
+        # Initialize populations:
+        for p in self.population_list:
+            p.initialize()
+        
+        # Initialize connections:    
+        for c in self.connection_list:
+            c.initialize()
         
     def run(self):
         
@@ -44,16 +53,11 @@ class Simulation(object):
             self.t += self.dt
             if self.verbose: print 'time: %s' % self.t
             
-            for p in self.network.internal_population_list:
-                p.update_total_input_dict()
-                p.update_propability_mass()
-                p.update_firing_rate()
-            
-            for p in self.network.population_list:
-                if p.record == True: p.update_firing_rate_recorder()
+            for p in self.population_list:
+                p.update()
                 
-            for c in self.network.connection_list:
-                c.update_delay_queue()
+            for c in self.connection_list:
+                c.update()
                 
         self.run_time = time.time() - t0
 

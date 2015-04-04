@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Network
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 
@@ -17,8 +16,7 @@ def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact'
     i1_i2 = Connection(i1, i2, 20, weights=[.005], probs=[1.], delay=delay)
     
     # Create and run simulation:
-    network = Network(population_list=[b1, i1, i2], connection_list = [b1_i1, i1_i2])
-    simulation = Simulation(dt=dt, tf=tf, network=network, verbose=verbose)
+    simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], dt=dt, tf=tf, verbose=verbose)
     
     return simulation
 
@@ -34,8 +32,8 @@ def example(show=True):
     simulation.run()
     
     # Plot results:
-    i1 = simulation.network.population_list[1]
-    i2 = simulation.network.population_list[2]
+    i1 = simulation.population_list[1]
+    i2 = simulation.population_list[2]
     plt.plot(i1.t_record, i1.firing_rate_record)
     plt.plot(i2.t_record, i2.firing_rate_record, 'g')
     
