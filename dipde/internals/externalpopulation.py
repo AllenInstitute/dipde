@@ -36,8 +36,12 @@ class ExternalPopulation(object):
     ----------
     self.firing_rate_string : str
         String representation of firing_rate input parameter
-    self.closure : function
-        A function returns the firing rate at a given time
+    self.metadata : dict
+        Dictonary of metadata, constructed by kwargs not parsed during construction
+    self.firing_rate_record : list
+        List of firing rates recorded during Simulation
+    self.t_record : list
+        List of times that firing rates were recorded during Simulation
 
     '''
     
@@ -53,6 +57,8 @@ class ExternalPopulation(object):
         self.metadata = kwargs
         
     def firing_rate(self, t):
+        '''Firing rate of the population at time t (Hz).''' 
+        
         curr_firing_rate = self.closure(t)
         if curr_firing_rate < 0:
             raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.firing_rate_string, t)) # pragma: no cover
@@ -60,21 +66,52 @@ class ExternalPopulation(object):
         return curr_firing_rate
     
     def initialize(self):
+        '''Initialize the population at the beginning of a simulation.
+        
+        Calling this method resets the recorder that tracks firing rate during 
+        a simulation. This method is called by the Simulation object (
+         initialization method), but can also be called by a user when defining 
+         an alternative time stepping loop.
+        '''
+        
         if self.record == True: self.initialize_firing_rate_recorder()
         
     def update(self):
+        '''Update the population one time step.
+        
+        This method is called by the Simulation object to update the population 
+        one time step.  In turn, this method calls the 
+        update_firing_rate_recorder method to register the current firing rate 
+        with the recorder.
+        '''
+        
         if self.record == True: self.update_firing_rate_recorder()
     
     def initialize_firing_rate_recorder(self):
+        '''Initialize recorder at the beginning of a simulation.
+        
+        This method is typically called by the initialize method rather than on 
+        its own.  It resets the lists that track the firing rate during 
+        execution of the simulation.
+        '''
         
         # Set up firing rate recorder:
         self.firing_rate_record = [self.curr_firing_rate]
         self.t_record = [0]
     
     def update_firing_rate_recorder(self):
+        '''Record current time and firing rate, if record==True.
+        
+        This method is called once per time step.  If record is True, calling 
+        this method will append the current time and firing rate to the firing 
+        rate recorder.
+        '''
+        
         self.firing_rate_record.append(self.curr_firing_rate)
         self.t_record.append(self.t_record[-1]+self.simulation.dt)
     
     @property
     def curr_firing_rate(self):
+        '''Property that accesses the current firing rate of the population.'''
+        
         return float(self.firing_rate(self.simulation.t))

@@ -18,36 +18,46 @@ from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
-import scipy.stats as sps
 
 def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='approx', approx_order=None, tol=1e-8):
+    import scipy.stats as sps
 
     # Create simulation:
-    b1 = ExternalPopulation(1000)
+    b1 = ExternalPopulation(100)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    b1_i1 = Connection(b1, i1, 1, delay=0.0, distribution=sps.expon, N=21, scale=.001)
+    b1_i1 = Connection(b1, i1, 1, delay=0.0, distribution=sps.expon, N=201, scale=.005)
     simulation = Simulation([b1, i1], [b1_i1], dt=dt, tf=tf, verbose=verbose)
 
     return simulation
 
 
-def example(show=True):
+def example(show=True, save=False):
 
     # Settings:
     dt = .0001
     dv = .0001
     tf = .1
-    verbose = False
-    
+    verbose = True
     update_method = 'approx'
-    approx_order = None
+    approx_order = 1
     tol = 1e-14
+    
+    # Run simulation:
     simulation = get_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
     simulation.run()
+    
+    # Visualize:
+    plt.figure(figsize=(3,3))
     i1 = simulation.population_list[1]
     plt.plot(i1.t_record, i1.firing_rate_record)
+    plt.plot([tf],[8.6687760498], 'r*')
     plt.xlim([0,tf])
+    plt.ylim(ymin=0, ymax=10)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Firing Rate (Hz)')
+    plt.tight_layout()
     
+    if save == True: plt.savefig('./singlepop_exponential_distribution.png')
     if show == True: plt.show()
     
     return i1.t_record, i1.firing_rate_record

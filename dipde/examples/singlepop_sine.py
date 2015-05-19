@@ -22,7 +22,7 @@ from dipde.internals.connection import Connection as Connection
 def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
 
     # Create simulation:
-    b1 = ExternalPopulation('500*abs(sin(20*t))')
+    b1 = ExternalPopulation('100+50*abs(sin(40*t))')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=0.0)
     simulation = Simulation([b1, i1], [b1_i1], dt=dt, tf=tf, verbose=verbose)
@@ -30,23 +30,32 @@ def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact'
     return simulation
 
 
-def example(show=True):
+def example(show=True, save=False):
 
     # Settings:
     dt = .0001
     dv = .0001
-    tf = .2
-    verbose = False
-    
+    tf = .1
+    verbose = True
     update_method = 'approx'
-    approx_order = None
+    approx_order = 1
     tol = 1e-14
+    
+    # Run simulation:
     simulation = get_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
     simulation.run()
+    
+    # Visualize
     i1 = simulation.population_list[1]
+    plt.figure(figsize=(3,3))
     plt.plot(i1.t_record, i1.firing_rate_record)
     plt.xlim([0,tf])
+    plt.ylim(ymin=0)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Firing Rate (Hz)')
+    plt.tight_layout()
 
+    if save == True: plt.savefig('./singlepop_sine.png')
     if show == True: plt.show()
     
     return i1.t_record, i1.firing_rate_record
