@@ -4,6 +4,7 @@ RELEASE = 1
 REVISION = 1
 DISTDIR = dist
 BUILDDIR = build
+STATIC = _static
 RELEASEDIR = $(PROJECTNAME)-$(VERSION).$(RELEASE).$(REVISION)
 EGGINFODIR = $(PROJECTNAME).egg-info
 DOCDIR = doc
@@ -23,12 +24,20 @@ distutils_build: clean
 sdist: distutils_build
 	python setup.py sdist
 	
-doc: clean
+doc: FORCE
 	sphinx-apidoc -d 4 -H "$(PROJECTNAME)" -A "Allen Institute for Brain Science" -V $(VERSION) -R $(VERSION).$(RELEASE).${REVISION} --full -o doc $(PROJECTNAME)
 	cp doc_template/*.rst doc_template/conf.py doc
 	cp dipde/examples/*.png doc	
 	sed -ie "s/|version|/${VERSION}.${RELEASE}.${REVISION}/g" doc/user.rst
+	cp -R doc_template/aibs_sphinx/static/* doc/_static
+	cp -R doc_template/aibs_sphinx/templates/* doc/_templates
+	sed -ie "s/\/external_assets/${STATIC}\/external_assets/g" doc/_templates/layout.html	
+	sed -ie "s/\/external_assets/${STATIC}\/external_assets/g" doc/_templates/portalHeader.html
+	sed -ie "s/\/external_assets/${STATIC}\/external_assets/g" doc/_static/external_assets/javascript/portal.js
 	cd doc && make html || true
+	cp doc_template/.nojekyll doc/_build/html
+
+FORCE:
 
 clean:
 	rm -rf $(DISTDIR)

@@ -78,7 +78,6 @@ setup(
     include_package_data=True,
     package_data={'':['*.md', '*.txt', '*.cfg']},
     platforms='any',
-    test_suite='sandman.test.test_sandman',
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
