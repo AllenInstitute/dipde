@@ -67,7 +67,9 @@ def test_singlepop_tol():
     simulation.run()
     i1 = simulation.population_list[1]
     
-    true_ans = np.array([0, 0.31558861561894364, 1.2360741904265171, 2.366683926394197, 3.2901664317642489])
+    true_ans = np.array([ 0. , 0.315585208781, 1.236075196516, 2.366689504131, 3.290166855815])
     np.testing.assert_almost_equal(i1.firing_rate_record[0::5], true_ans, 12)
-    
+
+if __name__ == "__main__":  # pragma: no cover
+    test_singlepop_tol()    # pragma: no cover
 

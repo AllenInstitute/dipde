@@ -1,3 +1,5 @@
+.. _ref-examples:
+
 Examples (dipde.examples)
 =========================
 
@@ -35,6 +37,8 @@ Setting verbose to True causes the Simulation to print the current time after th
 Singlepop
 -------------------------------
 
+:download:`Download singlepop.py <../dipde/examples/singlepop.py>`
+
 The singlepop simulation provides a simple feedforward topology that uses every major class in the core library.
 A single 100 Hz External population population (here specified as a string, although a floating point or integer specification will work also) provides excitatory input.
 This is connected to an Internal population (modeled as a population density pde) via a delta-distributed synaptic weight distribution, with 5 mV strength.  
@@ -59,6 +63,8 @@ The mean firing rate of the Internal population resulting from this simulation a
 Singlepop (recurrent)
 -----------------------------------------
 
+:download:`Download singlepop_recurrent.py <../dipde/examples/singlepop_recurrent.py>`
+
 The next example is identical to the singlepop example, with the exception of an additional recurrent connection from the internal population to itself.
 This demonstrates that the Connection object is used to connect both Internal and External population sources to an Internal target population.
 Attempting to create a Connection with an External population as a target will result in an AttributeError. 
@@ -74,6 +80,8 @@ The additional excitatory input resulting from the extra recurrent connection re
 Excitatory/Inhibitory
 -------------------------------------------
 
+:download:`Download excitatory_inhibitory.py <../dipde/examples/excitatory_inhibitory.py>`
+
 Inhibitory connections are formed the same as excitatory connections, except the sign of the connection weight distribution is changed.
 In this example, the background External population is connected to the Internal population with two connections, one excitatory and one inhibitory.
 Because of this negative input, negative voltage values are possible, requiring that v_min<0. 
@@ -87,6 +95,8 @@ Because of this negative input, negative voltage values are possible, requiring 
 
 Singlepop (sine)
 ------------------------------------
+
+:download:`Download singlepop_sine.py <../dipde/examples/singlepop_sine.py>`
 
 By modifying the argument to the ExternalPopulation constructor, we can define a time-varying external input.
 This input is parsed by Sympy using the lambdify module; any lambdify-able expression with the independent variable "t" is acceptable.
@@ -102,6 +112,8 @@ Negative values of the firing rate function will throw an Exception.
 
 Singlepop (exponential)
 --------------------------------------------------------
+
+:download:`Download singlepop_exponential_distribution.py <../dipde/examples/singlepop_exponential_distribution.py>`
 
 Up until now, each connection object was defined with a single synaptic weight.
 However, connection objects are fundamentally defined by synaptic weight distributions (See Iyer et al. 2013 [#]_). 

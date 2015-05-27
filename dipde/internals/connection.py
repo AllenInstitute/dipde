@@ -28,21 +28,23 @@ class Connection(object):
     Handles delay information via a delay queue that is rolled on each timestep,
     and reuses connection information by using a ConnectionDistribution object
     with a specific signature to avoid duplication among identical connections.
+    
+    Parameters
+    ----------
+     source : InternalPopulation or ExternalPopulation
+         Source population for connection 
+     target : InternalPopulation
+         Target population for connection
+     nsyn : int
+         In-degree of connectivity from source to target
+     weights : list 
+         Weights defining synaptic distribution (np.ndarray)
+     probs : list (same length as weights, and sums to 1) 
+         Probabilities corresponding to weights
+     delay: float (default=0) 
+         Transmission delay (units: sec)
 
-     Attributes:
-         source: source population (InternalPopulation or ExternalPopulation
-
-         target: target population (InternalPopulation)
-
-         nsyn: in-degree of connectivity (int)
-
-         weights: weights defining synaptic distribution (np.ndarray)
-
-         probs: probabilities corresponding to weights (np.ndarray)
-
-         delay: transmission delay (float)
-
-         metadata: connection metadata, all other kwargs
+     metadata: Connection metadata, all other kwargs
     '''
 
     def __init__(self,
@@ -54,9 +56,9 @@ class Connection(object):
         self.source = source
         self.target = target
         self.nsyn = nsyn
-        self.weights = kwargs.get('weights', None)
-        self.probs = kwargs.get('probs', None)
-        self.delay = float(kwargs.get('delay', 0))
+        self.weights = kwargs.pop('weights', None)
+        self.probs = kwargs.pop('probs', None)
+        self.delay = float(kwargs.pop('delay', 0))
         self.metadata = kwargs
 
         if self.weights != None or self.probs != None:
@@ -73,6 +75,19 @@ class Connection(object):
         self.simulation = None
 
     def initialize(self):
+        '''Initialize the connection at the beginning of a simulation.
+        
+        Calling this method: 
+        
+            1) Initializes a delay queue used to store values of inputs in a last-in-first-out rolling queue  
+            
+            2) Creates a connection_distribution object for the connection, if a suitable object is not already registered with the  simulation-level connection distribution collection
+        
+        This method is called by the Simulation object (initialization method),
+        but can also be called by a user when defining an alternative time
+        stepping loop.
+        '''
+        
         self.initialize_delay_queue()
         self.initialize_connection_distribution() 
 

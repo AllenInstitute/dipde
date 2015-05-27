@@ -6,11 +6,11 @@ It is maintained by the `Allen Institute for Brain Science <http://www.alleninst
 Quick Start Install Using Pip
 -------------------------------------
 
- #. Pip install for a single user.
+ #. Pip install for a single user:
     
     .. code-block:: bash
      
-    	pip install dipde --user
+    	pip install git+http://stash.corp.alleninstitute.org/scm/~nicholasc/dipde2.git --user
     	
 
 

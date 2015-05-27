@@ -1,7 +1,12 @@
+Hello 2
+
 Packages
 =============
 
+Hello
+
 .. toctree::
 
-    dipde.internals
     dipde.examples
+    dipde.internals
+

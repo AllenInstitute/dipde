@@ -29,28 +29,34 @@ class ConnectionDistribution(object):
     possible, a ConnectionDistribution object is reused for multiple connections
     with identical signatures, to reduce memory consumption.
     
-    Attributes:
-        edges: voltage descretization of target population (np.ndarray)
+    Parameters
+    ----------
+    edges: np.ndarray
+        Voltage bin discretization of target population 
+     weights: np.ndarray 
+        Weights defining the discrete synaptic distribution 
+    probs : np.ndarray
+        Probabilities corresponding to weights 
         
-         weights: weights defining synaptic distribution (np.ndarray)
-
-         probs: probabilities corresponding to weights (np.ndarray)
-         
-         threshold_flux_vector: vector used to compute over-threshold flux (np.ndarray)
-         
-         flux_matrix: matrix used to propagate voltage distribution
+    Attributes
+    ----------
+    self.threshold_flux_vector : np.ndarray
+        Vector used to compute over-threshold flux
+    self.flux_matrix : np.ndarray
+        Matrix used to propagate voltage distribution
     '''
     
-    def __init__(self, edges, weights, probs, reversal_potential=None, sparse=True):
+    def __init__(self, edges, weights, probs, sparse=True):
         
         # Assign inputs:
         self.edges = edges
         self.weights = weights
         self.probs = probs
-        self.reversal_potential = reversal_potential
+        
         
         # Not implemented yet
-        if reversal_potential != None:
+        self.reversal_potential = None
+        if self.reversal_potential != None:
             assert NotImplementedError  # pragma: no cover
         
         # Must be probabilty distribution

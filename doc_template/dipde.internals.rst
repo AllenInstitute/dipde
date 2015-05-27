@@ -1,3 +1,5 @@
+.. _ref-internals:
+
 Core functionality (dipde.internals)
 ====================================
 
@@ -37,14 +39,6 @@ Connection Distribution Collection
 -------------------------------------------------------
 
 .. automodule:: dipde.internals.connectiondistributioncollection
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Network
-------------------------------
-
-.. automodule:: dipde.internals.network
     :members:
     :undoc-members:
     :show-inheritance:

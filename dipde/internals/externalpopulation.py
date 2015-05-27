@@ -21,7 +21,8 @@ from sympy.abc import t as sym_t
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations
     
-    This class provides a background drive to internal population.  It is used as the source argument to a connection, in order to provide background drive.
+    This class provides a background drive to internal population.  
+    It is used as the source argument to a connection, in order to provide background drive.
 
     Parameters
     ----------
@@ -42,7 +43,6 @@ class ExternalPopulation(object):
         List of firing rates recorded during Simulation
     self.t_record : list
         List of times that firing rates were recorded during Simulation
-
     '''
     
     def __init__(self, firing_rate, record=False, **kwargs):
@@ -68,10 +68,10 @@ class ExternalPopulation(object):
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
         
-        Calling this method resets the recorder that tracks firing rate during 
-        a simulation. This method is called by the Simulation object (
-         initialization method), but can also be called by a user when defining 
-         an alternative time stepping loop.
+        Calling this method resets the recorder that tracks firing rate during a
+        simulation. This method is called by the Simulation object (
+        initialization method), but can also be called by a user when defining
+        an alternative time stepping loop.
         '''
         
         if self.record == True: self.initialize_firing_rate_recorder()
@@ -112,6 +112,6 @@ class ExternalPopulation(object):
     
     @property
     def curr_firing_rate(self):
-        '''Property that accesses the current firing rate of the population.'''
+        '''Property that accesses the current firing rate of the population (Hz).'''
         
         return float(self.firing_rate(self.simulation.t))
