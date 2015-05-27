@@ -7,6 +7,7 @@ from dipde.internals.connection import Connection as Connection
 def test_singlepop():
     
     # Settings:
+    t0 = 0.
     dt = .001
     dv = .001
     v_min = -.01
@@ -20,8 +21,8 @@ def test_singlepop():
     i1 = InternalPopulation(v_min=v_min, v_max=v_max, dv=dv, update_method='exact')
     b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.])
     b2_i1 = Connection(b2, i1, 1, weights=[.005], probs=[1.])
-    simulation = Simulation([b1, b2, i1], [b1_i1, b2_i1], dt=dt, tf=tf, verbose=verbose)
-    simulation.run()
+    simulation = Simulation([b1, b2, i1], [b1_i1, b2_i1], verbose=verbose)
+    simulation.run(dt=dt, tf=tf, t0=t0)
     
     np.testing.assert_almost_equal(i1.t_record[-1], .2, 15)
     np.testing.assert_almost_equal(i1.firing_rate_record[-1], 5.3550005434746355, 12)

@@ -17,16 +17,18 @@ from dipde.internals.connectiondistributioncollection import ConnectionDistribut
 import time
 
 class Simulation(object):
+    '''Initialize and run a dipde simulation
+    
+    The Simulation class handles the initialization of population and connection
+    objects, and provides a convenience time stepping loop to drive a network  
+    '''
+    
     
     def __init__(self, 
                  population_list, 
                  connection_list, 
-                 dt=.001, 
-                 tf=.1, 
                  verbose=True):
         
-        self.dt = dt
-        self.tf = tf
         self.verbose = verbose
         
         self.population_list = population_list
@@ -54,15 +56,18 @@ class Simulation(object):
         for c in self.connection_list:
             c.initialize()
         
-    def run(self):
+    def run(self, t0=0., dt=.001, tf=.1):
+        
+        self.dt = dt
+        self.tf = tf
         
         # Initialize:
-        t0 = time.time()
-        self.initialize()
-        self.initialization_time = time.time() - t0
+        start_time = time.time()
+        self.initialize(t0=t0)
+        self.initialization_time = time.time() - start_time
         
         # Run
-        t0 = time.time()
+        start_time = time.time()
         while self.t < self.tf:
             
             self.t += self.dt
@@ -74,7 +79,7 @@ class Simulation(object):
             for c in self.connection_list:
                 c.update()
                 
-        self.run_time = time.time() - t0
+        self.run_time = time.time() - start_time
 
 
 

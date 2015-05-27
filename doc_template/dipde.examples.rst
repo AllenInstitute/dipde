@@ -21,6 +21,7 @@ Each of the example simulations below use the same general settings:
 .. code-block:: python
 
     # Settings:
+    t0 = 0.
     dt = .0001
     dv = .0001
     tf = .1
@@ -48,7 +49,7 @@ No negative bins (i.e. v_min < 0) are required here, because no negative synapti
 
 .. literalinclude:: ../dipde/examples/singlepop.py
 	:dedent: 4
-	:lines: 24-28, 45
+	:lines: 24-28, 46
 
 The mean firing rate of the Internal population resulting from this simulation are plotted below, along with the code used to generate the plot:
 
@@ -57,7 +58,7 @@ The mean firing rate of the Internal population resulting from this simulation a
 
 .. literalinclude:: ../dipde/examples/singlepop.py
 	:dedent: 4
-	:lines: 47-54
+	:lines: 48-55
 
     
 Singlepop (recurrent)
@@ -72,7 +73,7 @@ The additional excitatory input resulting from the extra recurrent connection re
 
 .. literalinclude:: ../dipde/examples/singlepop_recurrent.py
 	:dedent: 4
-	:lines: 24-29, 47
+	:lines: 24-29, 48
 	
 .. image:: singlepop_recurrent.png
 	:width: 45%
@@ -88,7 +89,7 @@ Because of this negative input, negative voltage values are possible, requiring 
 
 .. literalinclude:: ../dipde/examples/excitatory_inhibitory.py
 	:dedent: 4
-	:lines: 25-29, 47
+	:lines: 25-29, 48
 	
 .. image:: excitatory_inhibitory.png
 	:width: 45%
@@ -104,7 +105,7 @@ Negative values of the firing rate function will throw an Exception.
 
 .. literalinclude:: ../dipde/examples/singlepop_sine.py
 	:dedent: 4
-	:lines: 24-29, 47
+	:lines: 24-29, 48
 	
 .. image:: singlepop_sine.png
 	:width: 45%
@@ -124,7 +125,7 @@ Discrete distributions can be specified directly, and will be used exactly.
 
 .. literalinclude:: ../dipde/examples/singlepop_exponential_distribution.py
 	:dedent: 4
-	:lines: 23-29, 47
+	:lines: 23-29, 48
 	
 .. image:: singlepop_exponential_distribution.png
 	:width: 45%

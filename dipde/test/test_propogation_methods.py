@@ -4,19 +4,20 @@ from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 
-def get_singlepop_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
+def get_singlepop_simulation(dv=.001, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
 
     # Create simulation:
     b1 = ExternalPopulation('100')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=0.0)
-    simulation = Simulation([b1, i1], [b1_i1], dt=dt, tf=tf, verbose=verbose)
+    simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
 
     return simulation
 
 def test_singlepop_approx_order_1():
 
     # Settings:
+    t0 = 0.
     dt = .001
     dv = .001
     tf = .02
@@ -24,8 +25,8 @@ def test_singlepop_approx_order_1():
     
     update_method = 'approx'
     approx_order = 1
-    simulation = get_singlepop_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order)
-    simulation.run()
+    simulation = get_singlepop_simulation(dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order)
+    simulation.run(dt=dt, tf=tf, t0=t0)
     i1 = simulation.population_list[1]    
     
     true_ans = np.array([0, 0.27175000000000016, 1.1897988210156254, 2.4418818034709062, 3.395794139471406])
@@ -36,6 +37,7 @@ def test_singlepop_approx_order_2():
 
 
     # Settings:
+    t0 = 0.
     dt = .001
     dv = .001
     tf = .02
@@ -43,8 +45,8 @@ def test_singlepop_approx_order_2():
     
     update_method = 'approx'
     approx_order = 2
-    simulation = get_singlepop_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order)
-    simulation.run()
+    simulation = get_singlepop_simulation(dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order)
+    simulation.run(dt=dt, tf=tf, t0=t0)
     i1 = simulation.population_list[1]
     
     
@@ -56,6 +58,7 @@ def test_singlepop_approx_order_2():
 def test_singlepop_tol():
 
     # Settings:
+    t0 = 0.
     dt = .001
     dv = .001
     tf = .02
@@ -63,8 +66,8 @@ def test_singlepop_tol():
     
     update_method = 'approx'
     tol = 1e-5
-    simulation = get_singlepop_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, tol=tol)
-    simulation.run()
+    simulation = get_singlepop_simulation(dv=dv, verbose=verbose, update_method=update_method, tol=tol)
+    simulation.run(dt=dt, tf=tf, t0=t0)
     i1 = simulation.population_list[1]
     
     true_ans = np.array([ 0. , 0.315585208781, 1.236075196516, 2.366689504131, 3.290166855815])

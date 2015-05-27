@@ -173,7 +173,7 @@ class InternalPopulation(object):
 
         # Set up firing rate recorder:
         self.firing_rate_record = [self.curr_firing_rate]
-        self.t_record = [0]
+        self.t_record = [self.simulation.t]
         
     def initialize_total_input_dict(self):
         '''Initialize dictionary of presynaptic inputs at beginning of simulation
@@ -251,7 +251,7 @@ class InternalPopulation(object):
         '''
         
         self.firing_rate_record.append(self.curr_firing_rate)
-        self.t_record.append(self.t_record[-1] + self.simulation.dt)
+        self.t_record.append(self.simulation.t)
         
     @property
     def source_connection_list(self):

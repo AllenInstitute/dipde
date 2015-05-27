@@ -97,7 +97,7 @@ class ExternalPopulation(object):
         
         # Set up firing rate recorder:
         self.firing_rate_record = [self.curr_firing_rate]
-        self.t_record = [0]
+        self.t_record = [self.simulation.t]
     
     def update_firing_rate_recorder(self):
         '''Record current time and firing rate, if record==True.
@@ -108,7 +108,7 @@ class ExternalPopulation(object):
         '''
         
         self.firing_rate_record.append(self.curr_firing_rate)
-        self.t_record.append(self.t_record[-1]+self.simulation.dt)
+        self.t_record.append(self.simulation.t)
     
     @property
     def curr_firing_rate(self):
