@@ -20,7 +20,19 @@ class Simulation(object):
     '''Initialize and run a dipde simulation
     
     The Simulation class handles the initialization of population and connection
-    objects, and provides a convenience time stepping loop to drive a network  
+    objects, and provides a convenience time stepping loop to drive a network
+    simulation.  Typical usage involves the create of populations and
+    connections, construction of a simulation object, and then call to
+    simulation.run()
+    
+    Parameters
+    ----------
+    population_list : list of ExternalPopulation, InternalPopulation objects
+        List of populations to include in simulation
+    connection_list : list of Connection objects
+        List of connections to include in simulation
+    verbose : bool (default=True)
+        Setting True prints current time-step at each update evaluation
     '''
     
     
@@ -34,7 +46,17 @@ class Simulation(object):
         self.population_list = population_list
         self.connection_list = [c for c in connection_list if c.nsyn != 0]
         
-    def initialize(self, t0=0):
+    def initialize(self, t0=0.):
+        '''Initialize simulation, populations, and connections
+        
+        This function is typically called by the self.run() method, however can
+        be called independently if defining a new time stepping loop.
+        
+        Parameters
+        ----------
+        t0 : float (default=0.)
+            Simulation start time (unit=seconds)
+        '''
         
         # Initialize:
         self.connection_distribution_collection = ConnectionDistributionCollection()
@@ -57,6 +79,22 @@ class Simulation(object):
             c.initialize()
         
     def run(self, t0=0., dt=.001, tf=.1):
+        '''Main iteration control loop for simulation
+        
+        The time step selection must be approximately of the same order as dv
+        for the internal populations, if the 'approx' time stepping method is
+        selected.
+        
+        Parameters
+        ----------
+        t0 : float (default=0.)
+            Simulation start time (unit=seconds), passed to initialize call
+        tf : float (default=.1)
+            Simulation end time (unit=seconds)
+        dt : float (default=0.001)
+            Time step (unit=seconds)
+        '''
+        
         
         self.dt = dt
         self.tf = tf

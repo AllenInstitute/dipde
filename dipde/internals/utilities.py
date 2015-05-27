@@ -20,8 +20,10 @@ import scipy.integrate as spi
 import bisect
 
 def fraction_overlap(a1, a2, b1, b2):
-    '''calculate the fractional overlap between range (a1,a2) and (b1,b2)
-    fraction relative to length of (a1,a2)
+    '''Calculate the fractional overlap between range (a1,a2) and (b1,b2).
+    
+    Used to compute a reallocation of probability mass from one set of bins to
+    another, assuming linear interpolation.
     '''
     if a1 >= b1:    # range of A starts after B starts
         if a2 <= b2:    
@@ -41,9 +43,8 @@ def fraction_overlap(a1, a2, b1, b2):
     
 
 def redistribute_probability_mass(A, B):
-    '''takes two 'edge' vectors and returns a 2D matrix mapping each 'bin' in B
-    to overlapping bins in A
-    function assumes that A and B contain monotonically increasing edge values
+    '''Takes two 'edge' vectors and returns a 2D matrix mapping each 'bin' in B
+    to overlapping bins in A. Assumes that A and B contain monotonically increasing edge values.
     '''
     
     mapping = np.zeros((len(A)-1, len(B)-1))
@@ -73,6 +74,7 @@ def redistribute_probability_mass(A, B):
     return mapping
 
 def leak_matrix(v, tau):
+    'Given a list of edges, construct a leak matrix with time constant tau.'
     
     zero_bin_ind_list = get_zero_bin_list(v)
     
@@ -100,6 +102,7 @@ def leak_matrix(v, tau):
     return A
     
 def flux_matrix(v, w, lam, p=1):
+    'Compute a flux matrix for voltage bins v, weight w, firing rate lam, and probability p.'
     
     zero_bin_ind_list = get_zero_bin_list(v)
     
@@ -132,6 +135,7 @@ def flux_matrix(v, w, lam, p=1):
     return flux_to_zero_vector, A
 
 def get_zero_bin_list(v):
+    'Return a list of indices that map flux back to the zero bin.'
 
     # Cast here to avoid mistakes:    
     v = np.array(v)
@@ -146,6 +150,7 @@ def get_zero_bin_list(v):
         return [bisect.bisect_right(v, 0) - 1]
     
 def get_v_edges(v_min, v_max, dv):
+    'Construct voltage edegs, linear discretization.'
     
     edges = np.concatenate(( np.arange(v_min, v_max, dv), [v_max] ))
     
@@ -154,6 +159,7 @@ def get_v_edges(v_min, v_max, dv):
     return edges
 
 def assert_probability_mass_conserved(pv):
+    'Assert that probability mass in control nodes sums to 1.'
     
     try:
         assert np.abs(np.abs(pv).sum() - 1) < 1e-12
@@ -163,6 +169,7 @@ def assert_probability_mass_conserved(pv):
 
 
 def descretize(distribution, N, loc=0, scale=1, shape=[]):
+    'Compute a discrete approzimation to a scipy.stats continuous distribution.'
  
     x_list = np.linspace(0,1,N+1)
     
@@ -186,13 +193,15 @@ def descretize(distribution, N, loc=0, scale=1, shape=[]):
     return a, height
  
 def exact_update_method(J, pv, dt=.0001):
+    'Given a flux matrix, pdate probabilty vector by computing the matrix exponential.'
     
     # Exact computation of propogation method, matrix exponential:
     pv = np.dot(spla.expm(J*dt), pv)
     assert_probability_mass_conserved(pv)
     return pv
 
-def approx_update_method_tol(J, pv, tol=np.finfo(float).eps, dt=.0001, norm='inf'):
+def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
+    'Approximate the effect of a matrix exponential, with residual smaller than tol.'
     
     # No order specified:
     J *= dt
@@ -216,6 +225,7 @@ def approx_update_method_tol(J, pv, tol=np.finfo(float).eps, dt=.0001, norm='inf
     return pv_new
 
 def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
+    'Approximate the effect of a matrix exponential, truncating Taylor series at order "approx_order".'
     
     # Iterate to a specific order:
     coeff = 1.
