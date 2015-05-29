@@ -27,13 +27,21 @@ Contents:
 
    user
    dipde
-   
-Indices and tables
+  
+dipde Team:
+==================
+
+DiPDE is developed by the Modeling, Analysis and Theory group at the Allen Institute, with contributions from Nicholas Cain, Ram Iyer, Vilas Menon, Michael Buice, Tim Fliss, Keith Godfrey, David Feng, and Stefan Mihalas. 
+  
+Indices and tables:
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Citations:
+==================
    
 .. [#] Knigh, t N.W., Manin, D., & Sirovich, L. (1996) Dynamical models of interacting neuron populations in visual cortex. Symposium on Robotics and Cybernetics; Computational Engineering in Systems Application: 1–5.
 .. [#] Omurtag, A., Knight, B.W., & Sirovich, L. (2000) On the Simulation of Large Populations of Neurons. *Journal of Computational Neuroscience* 8: 51–63.
@@ -46,7 +54,6 @@ dipde Manuscripts and Posters:
 .. [#] Cain, N., Fliss, T., Menon, V., Iyer, R., Koch, C., & Mihalas, S. (2014) Simulations of the statistics of firing activity of neuronal populations in the entire mouse brain. Program No. 160.02/GG10. 2013 Neuroscience Meeting Planner. Washington, DC: Society for Neuroscience, 2014. Online. 
 .. [#] Iyer, R., Menon, V., Buice, M., Koch, C., & Mihalas, S. (2013). The Influence of Synaptic Weight Distribution on Neuronal Population Dynamics. *PLoS Computational Biology*, 9(10), e1003248. doi:10.1371/journal.pcbi.1003248
 .. [#] Iyer, R., Cain, N., & Mihalas, S. (2014). Dynamics of excitatory-inhibitory neuronal networks with exponential synaptic weight distributions. Cosyne Abstracts 2014, Salt Lake City USA.
-
 
 
 
