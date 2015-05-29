@@ -123,7 +123,7 @@ for row_ind, layer in enumerate([23, 4, 5, 6]):
 
     axes[row_ind].set_xlim([0,tf])
     axes[row_ind].set_ylim(ymin=0)
-    axes[row_ind].set_ylabel('Layer %s' % y_label_dict[layer])
+    axes[row_ind].set_ylabel('Layer %s\nfiring rate (Hz)' % y_label_dict[layer])
     if layer == 5: axes[row_ind].legend(['Excitatory', 'Inhibitory'], prop={'size':10}, loc=4)
 
 axes[3].set_xlabel('Time (seconds)')
