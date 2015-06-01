@@ -31,8 +31,8 @@ Each of the example simulations below use the same general settings:
     verbose = True
 
 Here dt defines the time step of the simulation (in seconds), dv defines the granularity of the voltage domain of the Internal populations (in volts), and tf defines the total duration of the simulation (in seconds).
-the update method allows the user to change the time-stepping method for the forward evolution of the time domain of each Internal population.
-The approx_order and tol options fine-tune the time stepping, to provide a tradeoff between simulation time and numerical precision when the time evolution method is 'approx', as opposed to 'exact'.
+The update method allows the user to change the time-stepping method for the forward evolution of the time domain of each Internal population.
+The approx_order and tol options fine-tune the time stepping, to provide a tradeoff between simulation time and numerical precision when the time evolution method is 'approx,' as opposed to 'exact.'
 Setting verbose to True causes the Simulation to print the current time after the evaluation of each time step.
 
 Singlepop
@@ -45,13 +45,14 @@ A single 100 Hz External population population (here specified as a string, alth
 This is connected to an Internal population (modeled as a population density pde) via a delta-distributed synaptic weight distribution, with 5 mV strength.  
 The in-degree (nsyn) of this Connection is set to 1 for this example; in general, this serves as a multiplier of the input firing rate of the source population.
 The internal population has a linearly binned voltage domain from v_min to v_max.  
-No negative bins (i.e. v_min < 0) are required here, because no negative synaptic inputs ("weights" in the Connection object) are defined. 
+No negative bins (i.e. v_min < 0) are required here, because no negative synaptic inputs ('weights' in the Connection object) are defined. 
 
 .. literalinclude:: ../dipde/examples/singlepop.py
 	:dedent: 4
 	:lines: 24-28, 46
 
-The mean firing rate of the Internal population resulting from this simulation are plotted below, along with the code used to generate the plot:
+The mean firing rate of the Internal population resulting from this simulation is
+ plotted below, along with the code used to generate the plot:
 
 .. image:: singlepop.png
 	:width: 45%
@@ -100,7 +101,7 @@ Singlepop (sine)
 :download:`Download singlepop_sine.py <../dipde/examples/singlepop_sine.py>`
 
 By modifying the argument to the ExternalPopulation constructor, we can define a time-varying external input.
-This input is parsed by Sympy using the lambdify module; any lambdify-able expression with the independent variable "t" is acceptable.
+This input is parsed by Sympy using the lambdify module; any lambdify-able expression with the independent variable 't' is acceptable.
 Negative values of the firing rate function will throw an Exception.
 
 .. literalinclude:: ../dipde/examples/singlepop_sine.py
@@ -118,9 +119,9 @@ Singlepop (exponential)
 
 Up until now, each connection object was defined with a single synaptic weight.
 However, connection objects are fundamentally defined by synaptic weight distributions (See Iyer et al. 2013 [#]_). 
-Here we consider the effect of an exponentially distributed synaptic weight distribution with mean equal t0 5 mV.
+Here we consider the effect of an exponentially distributed synaptic weight distribution with mean equal to 5 mV.
 The steady state firing rate under this stimulus is significantly higher than the delta-distributed example (singlepop, above).
-In general, any Continuous synaptic weight distribution can be defined using scipy.stats module, however it wil be discretized into a finite set of input weights.
+In general, any Continuous synaptic weight distribution can be defined using scipy.stats module; however it will be discretized into a finite set of input weights.
 Discrete distributions can be specified directly, and will be used exactly.  
 
 .. literalinclude:: ../dipde/examples/singlepop_exponential_distribution.py
@@ -130,9 +131,9 @@ Discrete distributions can be specified directly, and will be used exactly.
 .. image:: singlepop_exponential_distribution.png
 	:width: 45%
 	
-In general, the special case of exponentially distributed synaptic weights admits an analytical steady-state firing rate solution (See Richardson and Swarbrick, 2010 [#]_, and Iyer et al. 2014 [#]_). 
-The figure above includes the mean firing rate computed for the internal population, as well as a "*" indicating a semi-analytic prediction (~8.669 Hz) of the steady-state firing rate for the model. 
-This steady state prediction is computed with the code below, plotted above with an "*".
+In general, the special case of exponentially distributed synaptic weights admits an analytical steady-state firing rate solution (see Richardson and Swarbrick, 2010 [#]_, and Iyer et al. 2014 [#]_). 
+The figure above includes the mean firing rate computed for the internal population, as well as a '*' indicating a semi-analytic prediction (~8.669 Hz) of the steady-state firing rate for the model. 
+This steady state prediction is computed with the code below, plotted above with an '*'.
 
 .. code-block:: python
 

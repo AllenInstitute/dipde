@@ -22,7 +22,7 @@ from dipde.internals import ConnectionDistribution
 class Connection(object):
     '''Class that connects dipde source population to dipde target population.
 
-    The connection class handles all of the details of propogating connection
+    The Connection class handles all of the details of propogating connection
     information between a source population (dipde ExtermalPopulation or
     InternalPopulation) and a target population (dipde InternalPopulation).
     Handles delay information via a delay queue that is rolled on each timestep,
@@ -32,18 +32,17 @@ class Connection(object):
     Parameters
     ----------
      source : InternalPopulation or ExternalPopulation
-         Source population for connection 
+         Source population for connection.
      target : InternalPopulation
-         Target population for connection
+         Target population for connection.
      nsyn : int
-         In-degree of connectivity from source to target
+         In-degree of connectivity from source to target.
      weights : list 
-         Weights defining synaptic distribution (np.ndarray)
+         Weights defining synaptic distribution (np.ndarray).
      probs : list (same length as weights, and sums to 1) 
-         Probabilities corresponding to weights
+         Probabilities corresponding to weights.
      delay: float (default=0) 
-         Transmission delay (units: sec)
-
+         Transmission delay (units: sec).
      metadata: Connection metadata, all other kwargs
     '''
 
@@ -79,9 +78,9 @@ class Connection(object):
         
         Calling this method: 
         
-            1) Initializes a delay queue used to store values of inputs in a last-in-first-out rolling queue  
+            1) Initializes a delay queue used to store values of inputs in a last-in-first-out rolling queue.
             
-            2) Creates a connection_distribution object for the connection, if a suitable object is not already registered with the  simulation-level connection distribution collection
+            2) Creates a connection_distribution object for the connection, if a suitable object is not already registered with the  simulation-level connection distribution collection.
         
         This method is called by the Simulation object (initialization method),
         but can also be called by a user when defining an alternative time
@@ -139,7 +138,7 @@ class Connection(object):
         """Current firing rate of the source (float).
 
         Property that accesses the firing rate at the top of the delay queue,
-        from the source population
+        from the source population.
         """
         
         try:

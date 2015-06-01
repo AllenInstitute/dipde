@@ -30,7 +30,7 @@ class InternalPopulation(object):
     Parameters
     ----------
     tau_m : float (default=.02)
-        Time constant (unit: 1/sec) of neuronal population
+        Time constant (unit: 1/sec) of neuronal population.
     v_min : float (default=-.1)
         Minimum of voltage domain (unit: volt).
     v_max : float (default=.02)
@@ -40,30 +40,30 @@ class InternalPopulation(object):
     record : bool (default=False)
         If True, a history of the output firing rate is recorded (firing_rate_record attribute).
     curr_firing_rate : float (default=0.0
-        Initial/Current firing rate of the population (unit: Hz)
+        Initial/Current firing rate of the population (unit: Hz).
     update_method : str 'approx' or 'exact' (default='approx')
-        Method to update pv (exact can be quite slow)
+        Method to update pv (exact can be quite slow).
     approx_order : int or None (default=None)
-        Maximum Taylor series expansion order to use when computing update to pv
+        Maximum Taylor series expansion order to use when computing update to pv.
     tol : float (default=1e-12)
-        Error tolerance used when computing update to pv
+        Error tolerance used when computing update to pv.
     norm : non-zero int, np.inf, -np.inf, or 'fro' (default=np.inf)
         Vector norm used in computation of tol.
     **kwargs
-        Any additional keyword args are stored as metadata (metadata attribute)
+        Any additional keyword args are stored as metadata (metadata attribute).
     
     Attributes
     ----------
     self.edges : np.array
-        Vector defining the boundaries of voltage bins
+        Vector defining the boundaries of voltage bins.
     self.pv : np.array
-        Vector defining the probability mass in each voltage bin (self.pv.sum() = 1)
+        Vector defining the probability mass in each voltage bin (self.pv.sum() = 1).
     self.firing_rate_record : list
-        List of firing rates recorded during Simulation
+        List of firing rates recorded during Simulation.
     self.t_record : list
-        List of times that firing rates were recorded during Simulation
+        List of times that firing rates were recorded during Simulation.
     self.leak_flux_matrix : np.array
-        Matrix that defines the flux between voltage bins
+        Matrix that defines the flux between voltage bins.
     """
     
     def __init__(self, tau_m=.02,
@@ -104,13 +104,13 @@ class InternalPopulation(object):
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
         
-        Calling this method: 
+        In turn, this method:
         
-            1) Initializes the voltage edges (self.edges) and probability mass in each bin (self.pv)  
+            1) initializes the voltage edges (self.edges) and probability mass in each bin (self.pv),
             
-            2) Creates an initial dictionary of inputs into the population, and
+            2) creates an initial dictionary of inputs into the population,
              
-            3) resets the recorder that tracks firing rate during a simulation
+            3) resets the recorder that tracks firing rate during a simulation.
         
         This method is called by the Simulation object (initialization method),
         but can also be called by a user when defining an alternative time
@@ -128,7 +128,7 @@ class InternalPopulation(object):
         This method is called by the Simulation object to update the population 
         one time step.  In turn, this method:
             
-            1) calls the update_total_input_dict method to gather the current strengths of presynaptic input populations
+            1) calls the update_total_input_dict method to gather the current strengths of presynaptic input populations,
             
             2) calls the update_propability_mass method to propagate self.pv one time-step,
             
@@ -143,7 +143,7 @@ class InternalPopulation(object):
         if self.record == True: self.update_firing_rate_recorder()
         
     def initialize_edges(self):
-        '''Initialize self.edges and self.leak_flux_matrix attributes
+        '''Initialize self.edges and self.leak_flux_matrix attributes.
         
         This method initializes the self.edges attribute based on the v_min,
         v_max, and dv settings, and creates a corresponding leak flux matrix
@@ -155,7 +155,7 @@ class InternalPopulation(object):
         self.leak_flux_matrix = util.leak_matrix(self.edges, self.tau_m)
     
     def initialize_probability(self):
-        '''Initialize self.pv to delta-distribution at v=0'''
+        '''Initialize self.pv to delta-distribution at v=0.'''
 
         # Delta initial probability distribution:
         self.pv = np.zeros_like(self.edges[:-1])
@@ -193,7 +193,7 @@ class InternalPopulation(object):
             self.total_input_dict[c.connection_distribution] = curr_input + c.curr_delayed_firing_rate * c.nsyn
 
     def get_total_flux_matrix(self):
-        '''Create a total flux matrix by summing presynaptic inputs and the leak matrix'''
+        '''Create a total flux matrix by summing presynaptic inputs and the leak matrix.'''
         
         total_flux_matrix = self.leak_flux_matrix.copy()
         for key, val in self.total_input_dict.items():
@@ -205,7 +205,7 @@ class InternalPopulation(object):
         return total_flux_matrix
 
     def update_total_input_dict(self):
-        '''Update the input dictionary based on the current firing rates of presynaptic populations'''
+        '''Update the input dictionary based on the current firing rates of presynaptic populations.'''
                     
         # Initialize to zero:
         for curr_connection_distribution in self.total_input_dict.keys():
@@ -216,7 +216,7 @@ class InternalPopulation(object):
 
     
     def update_propability_mass(self):
-        """Create a total flux matrix, and propogate self.pv one time-step"""
+        """Create a total flux matrix, and propogate self.pv one time-step."""
         
         J = self.get_total_flux_matrix()
         
@@ -236,7 +236,7 @@ class InternalPopulation(object):
         
         
     def update_firing_rate(self):
-        '''Update curr_firing_rate attribute based on the total flux of probability mass across threshold'''
+        '''Update curr_firing_rate attribute based on the total flux of probability mass across threshold.'''
         
         # Compute flux:
         flux_vector = reduce(np.add, [key.threshold_flux_vector * val for key, val in self.total_input_dict.items()])
@@ -255,19 +255,19 @@ class InternalPopulation(object):
         
     @property
     def source_connection_list(self):
-        '''List of all connections that are a source for this population'''
+        '''List of all connections that are a source for this population.'''
 
         return [c for c in self.simulation.connection_list if c.target == self]
     
     @property
     def n_bins(self):
-        '''Number of probability mass bins'''
+        '''Number of probability mass bins.'''
         
         return len(self.edges) - 1
     
     @property
     def n_edges(self):
-        '''Number of probability mass bin edges'''
+        '''Number of probability mass bin edges.'''
         
         return len(self.edges)
     

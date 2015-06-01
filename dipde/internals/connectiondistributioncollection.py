@@ -14,7 +14,7 @@
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
 class ConnectionDistributionCollection(dict):
-    '''Container that organizes connection components for a simulation, to reduce redundancy
+    '''Container that organizes connection components for a simulation, to reduce redundancy.
     
     In a simulation, connections that share the same weights and probabilities,
     as well as the same target bin edges, can make use of the same flux_matrix
@@ -26,7 +26,7 @@ class ConnectionDistributionCollection(dict):
     '''
 
     def add_connection_distribution(self, cd):
-        '''Try and add a ConnectionDistribution object, if signature not already used'''
+        '''Try and add a ConnectionDistribution object, if signature not already used.'''
         
         if not cd.signature in self.keys():
             self[cd.signature] = cd

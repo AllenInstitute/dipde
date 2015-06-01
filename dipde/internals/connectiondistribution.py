@@ -32,18 +32,18 @@ class ConnectionDistribution(object):
     Parameters
     ----------
     edges: np.ndarray
-        Voltage bin discretization of target population 
+        Voltage bin discretization of target population.
      weights: np.ndarray 
-        Weights defining the discrete synaptic distribution 
+        Weights defining the discrete synaptic distribution. 
     probs : np.ndarray
-        Probabilities corresponding to weights 
+        Probabilities corresponding to weights.
         
     Attributes
     ----------
     self.threshold_flux_vector : np.ndarray
-        Vector used to compute over-threshold flux
+        Vector used to compute over-threshold flux.
     self.flux_matrix : np.ndarray
-        Matrix used to propagate voltage distribution
+        Matrix used to propagate voltage distribution.
     '''
     
     def __init__(self, edges, weights, probs, sparse=True):

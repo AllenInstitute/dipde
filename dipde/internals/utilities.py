@@ -225,7 +225,7 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     return pv_new
 
 def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
-    'Approximate the effect of a matrix exponential, truncating Taylor series at order "approx_order".'
+    'Approximate the effect of a matrix exponential, truncating Taylor series at order \'approx_order\'.'
     
     # Iterate to a specific order:
     coeff = 1.

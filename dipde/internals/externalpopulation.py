@@ -19,7 +19,7 @@ from sympy.abc import t as sym_t
 
 
 class ExternalPopulation(object):
-    '''External (i.e. background) source for connections to Internal Populations
+    '''External (i.e. background) source for connections to Internal Populations.
     
     This class provides a background drive to internal population.  
     It is used as the source argument to a connection, in order to provide background drive.
@@ -31,18 +31,18 @@ class ExternalPopulation(object):
     record : bool (default=False)
         If True, a history of the output firing rate is recorded (firing_rate_record attribute).
     **kwargs
-        Any additional keyword args are stored as metadata (metadata attribute)
+        Any additional keyword args are stored as metadata (metadata attribute).
         
     Attributes
     ----------
     self.firing_rate_string : str
-        String representation of firing_rate input parameter
+        String representation of firing_rate input parameter.
     self.metadata : dict
-        Dictonary of metadata, constructed by kwargs not parsed during construction
+        Dictonary of metadata, constructed by kwargs not parsed during construction.
     self.firing_rate_record : list
-        List of firing rates recorded during Simulation
+        List of firing rates recorded during Simulation.
     self.t_record : list
-        List of times that firing rates were recorded during Simulation
+        List of times that firing rates were recorded during Simulation.
     '''
     
     def __init__(self, firing_rate, record=False, **kwargs):

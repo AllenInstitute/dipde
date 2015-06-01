@@ -17,7 +17,7 @@ from dipde.internals.connectiondistributioncollection import ConnectionDistribut
 import time
 
 class Simulation(object):
-    '''Initialize and run a dipde simulation
+    '''Initialize and run a dipde simulation.
     
     The Simulation class handles the initialization of population and connection
     objects, and provides a convenience time stepping loop to drive a network
@@ -28,11 +28,11 @@ class Simulation(object):
     Parameters
     ----------
     population_list : list of ExternalPopulation, InternalPopulation objects
-        List of populations to include in simulation
+        List of populations to include in simulation.
     connection_list : list of Connection objects
-        List of connections to include in simulation
+        List of connections to include in simulation.
     verbose : bool (default=True)
-        Setting True prints current time-step at each update evaluation
+        Setting True prints current time-step at each update evaluation.
     '''
     
     
@@ -47,7 +47,7 @@ class Simulation(object):
         self.connection_list = [c for c in connection_list if c.nsyn != 0]
         
     def initialize(self, t0=0.):
-        '''Initialize simulation, populations, and connections
+        '''Initialize simulation, populations, and connections.
         
         This function is typically called by the self.run() method, however can
         be called independently if defining a new time stepping loop.
@@ -55,7 +55,7 @@ class Simulation(object):
         Parameters
         ----------
         t0 : float (default=0.)
-            Simulation start time (unit=seconds)
+            Simulation start time (unit=seconds).
         '''
         
         # Initialize:
@@ -88,11 +88,11 @@ class Simulation(object):
         Parameters
         ----------
         t0 : float (default=0.)
-            Simulation start time (unit=seconds), passed to initialize call
+            Simulation start time (unit=seconds), passed to initialize call.
         tf : float (default=.1)
-            Simulation end time (unit=seconds)
+            Simulation end time (unit=seconds).
         dt : float (default=0.001)
-            Time step (unit=seconds)
+            Time step (unit=seconds).
         '''
         
         
