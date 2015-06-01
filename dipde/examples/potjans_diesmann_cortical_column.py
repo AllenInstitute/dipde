@@ -73,9 +73,10 @@ internal_population_settings = {'v_min': -.03,
 
 # Simulation settings:
 t0 = 0.
-dt = .0001
+dt = .0002
 tf = .1
 verbose = True
+save = False
 
 # Create populations:
 background_population_dict = {}
@@ -128,5 +129,8 @@ for row_ind, layer in enumerate([23, 4, 5, 6]):
 
 axes[3].set_xlabel('Time (seconds)')
 fig.tight_layout()
+
+if save == True: plt.savefig('./cortical_column.png')
+
 plt.show()
 
