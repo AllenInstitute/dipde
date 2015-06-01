@@ -106,11 +106,11 @@ class InternalPopulation(object):
         
         In turn, this method:
         
-            1) initializes the voltage edges (self.edges) and probability mass in each bin (self.pv),
+            1) Initializes the voltage edges (self.edges) and probability mass in each bin (self.pv),
             
-            2) creates an initial dictionary of inputs into the population,
+            2) Creates an initial dictionary of inputs into the population, and
              
-            3) resets the recorder that tracks firing rate during a simulation.
+            3) Resets the recorder that tracks firing rate during a simulation.
         
         This method is called by the Simulation object (initialization method),
         but can also be called by a user when defining an alternative time
@@ -128,13 +128,13 @@ class InternalPopulation(object):
         This method is called by the Simulation object to update the population 
         one time step.  In turn, this method:
             
-            1) calls the update_total_input_dict method to gather the current strengths of presynaptic input populations,
+            1) Calls the update_total_input_dict method to gather the current strengths of presynaptic input populations,
             
-            2) calls the update_propability_mass method to propagate self.pv one time-step,
+            2) Calls the update_propability_mass method to propagate self.pv one time-step,
             
-            3) calls the update_firing_rate method to compute the firing rate of the population based on flux over threshold,
+            3) Calls the update_firing_rate method to compute the firing rate of the population based on flux over threshold, and
             
-            4) calls the update_firing_rate_recorder method to register the current firing rate with the recorder.
+            4) Calls the update_firing_rate_recorder method to register the current firing rate with the recorder.
         '''
         
         self.update_total_input_dict()
