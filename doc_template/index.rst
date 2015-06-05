@@ -22,8 +22,8 @@ Details on the classes used to define a dipde simulation can be found in :ref:`r
 Contents:
 ==================
 
-.. image:: singlepop.png
-	:width: 45%
+.. image:: Dipde_Nick_final.png
+	:width: 40%
 	:align: right
 
 .. toctree::

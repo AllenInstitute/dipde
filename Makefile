@@ -28,6 +28,7 @@ doc: FORCE
 	sphinx-apidoc -d 4 -H "$(PROJECTNAME)" -A "Allen Institute for Brain Science" -V $(VERSION) -R $(VERSION).$(RELEASE).${REVISION} --full -o doc $(PROJECTNAME)
 	cp doc_template/*.rst doc_template/conf.py doc
 	cp dipde/examples/*.png doc	
+	cp doc_template/*.png doc
 	sed -ie "s/|version|/${VERSION}.${RELEASE}.${REVISION}/g" doc/user.rst
 	cp -R doc_template/aibs_sphinx/static/* doc/_static
 	cp -R doc_template/aibs_sphinx/templates/* doc/_templates
@@ -36,6 +37,7 @@ doc: FORCE
 	sed -ie "s/\/external_assets/${STATIC}\/external_assets/g" doc/_static/external_assets/javascript/portal.js
 	cd doc && make html || true
 	cp doc_template/.nojekyll doc/_build/html
+	
 
 FORCE:
 
