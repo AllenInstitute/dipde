@@ -1,0 +1,1 @@
+rsync -av --progress  ../dipde_doc_dev/ ./ --exclude update.sh --exclude .git

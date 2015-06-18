@@ -1,0 +1,7 @@
+matplotlib>=1.4.3
+numpy>=1.9.1
+pytest>=2.6.4
+setuptools>=7.0
+scipy>=0.14.0
+sympy>=0.7.6
+pip>=1.5.2

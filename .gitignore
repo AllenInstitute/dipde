@@ -1,0 +1,17 @@
+update.sh
+doc
+.DS_Store
+/dipde/__init__.py.bak
+conda_test.sh~
+.eggs
+/build
+/dist
+htmlcov
+.coverage
+result.xml
+dipde.egg-info
+.settings
+.gitignore~
+.project
+.pydevproject
+*.pyc
