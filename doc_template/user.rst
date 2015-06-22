@@ -10,42 +10,13 @@ Quick Start Install Using Pip
     
     .. code-block:: bash
      
-    	pip install git+http://stash.corp.alleninstitute.org/scm/~nicholasc/dipde2.git --user
+    	pip install git+https://github.com/AllenInstitute/dipde.git --user
     	
-
-
-Install Using Setup Tools
--------------------------
-
- #. Download the distribution.
+ #. Uninstalling:
  
     .. code-block:: bash
-     
-    	TODO
- 
- #. Unpack the distribution.
-     
-    .. code-block:: bash
-     
-    	tar xvzf dipde-|version|.tar.gz
-
- #. Install using setuptools
-     
-    .. code-block:: bash
-     
-    	cd dipde-|version| python setup.py install --user
-        
-Uninstall
----------
-
- #. Simply use pip.
-      
-    .. code-block:: bash
-     
+    	
     	pip uninstall dipde
-
-       
-
  		 
 Required Dependencies
 ---------------------
