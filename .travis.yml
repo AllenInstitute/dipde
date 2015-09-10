@@ -10,6 +10,7 @@ before_install:
 
 # Command to install dependencies:
 install: 
+  - sudo apt-get install gfortran g77
   - sudo apt-get -y install libatlas-base-dev libatlas-dev lib{blas,lapack}-dev
   - conda update --yes conda
   - conda config --add channels soft-matter
