@@ -9,7 +9,16 @@ before_install:
   - export PATH=/home/travis/mc/bin:$PATH
 
 # Command to install dependencies:
-install: "pip install -r requirements.txt"
+install: 
+  - conda update --yes conda
+  - conda config --add channels soft-matter
+  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
+  - source activate testenv
+  - echo $PATH
+  - which python
+  - conda info
+  - conda list
+  - "pip install -r requirements.txt"
 
 # Command to run tests:
 script: "py.test ."
