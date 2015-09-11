@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 
 def test_singlepop():
     from dipde.examples.singlepop import example
