@@ -16,7 +16,7 @@ def test_delay_singlepop():
     # Create simulation:
     b1 = ExternalPopulation('Heaviside(t)*100')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
-    b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=2*dt)
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delay=2*dt)
     simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
     
@@ -37,8 +37,8 @@ def test_delay_doublepop():
     i2 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
     
     # Create connections:
-    b1_i1 = Connection(b1, i1, 2, weights=[.005], probs=[1.])
-    i1_i2 = Connection(i1, i2, 20, weights=[.005], probs=[1.], delay=2*dt)
+    b1_i1 = Connection(b1, i1, 2, weights=.005)
+    i1_i2 = Connection(i1, i2, 20, weights=.005, delay=2*dt)
     
     # Create and run simulation:
     simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], verbose=verbose)

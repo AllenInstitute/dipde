@@ -73,7 +73,7 @@ internal_population_settings = {'v_min': -.03,
 
 # Simulation settings:
 t0 = 0.
-dt = .0002
+dt = .0001
 tf = .1
 verbose = True
 save = False
@@ -94,7 +94,7 @@ for layer, celltype in itertools.product([23, 4, 5, 6], ['e', 'i']):
         background_delay = .005
     else:
         background_delay = 0.
-    curr_connection = Connection(source_population, target_population, nsyn_background[layer, celltype], weights=[conn_weights['e']], probs=[1.], delay=background_delay) 
+    curr_connection = Connection(source_population, target_population, nsyn_background[layer, celltype], weights=conn_weights['e'], delay=background_delay) 
     connection_list.append(curr_connection)
 
 # Create recurrent connections:
@@ -104,7 +104,7 @@ for source_layer, source_celltype in itertools.product([23, 4, 5, 6], ['e', 'i']
         target_population = internal_population_dict[target_layer, target_celltype]
         nsyn = connection_probabilities[(source_layer, source_celltype), (target_layer, target_celltype)]*internal_population_sizes[source_layer, source_celltype]
         weight = conn_weights[source_celltype]
-        curr_connection = Connection(source_population, target_population, nsyn, weights=[weight], probs=[1.], delay=0)
+        curr_connection = Connection(source_population, target_population, nsyn, weights=weight, delay=0.0005)
         connection_list.append(curr_connection)
 
 # Create simulation:

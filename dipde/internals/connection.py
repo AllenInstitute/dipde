@@ -38,10 +38,8 @@ class Connection(object):
          Target population for connection.
      nsyn : int
          In-degree of connectivity from source to target.
-     weights : list 
-         Weights defining synaptic distribution (np.ndarray).
-     probs : list (same length as weights, and sums to 1) 
-         Probabilities corresponding to weights.
+     weights : 
+         Weights defining synaptic distribution.
      delay: float (default=0) 
          Transmission delay (units: sec).
      metadata: Connection metadata, all other kwargs
@@ -56,18 +54,10 @@ class Connection(object):
         self.source = source
         self.target = target
         self.nsyn = nsyn
-        self.weights = kwargs.pop('weights', None)
-        self.probs = kwargs.pop('probs', None)
+        self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('weights', None))
         self.delay = float(kwargs.pop('delay', 0))
         self.metadata = kwargs
-
-        if self.weights != None or self.probs != None:
-            assert len(self.weights) == len(self.probs)
-        else:
-            self.weights, self.probs = util.descretize(kwargs.get('distribution', None),
-                                                       kwargs.get('N', None),
-                                                       scale=kwargs.get('scale', None))
-        assert np.abs(self.probs).sum() == 1
+        self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
 
         # Defined at runtime:
         self.delay_queue = None

@@ -24,7 +24,7 @@ def get_simulation(dv=.001, verbose=False, update_method='exact', approx_order=N
     # Create simulation:
     b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=0.0)
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delay=0.0)
     simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
 
     return simulation

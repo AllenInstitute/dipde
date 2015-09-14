@@ -1,6 +1,7 @@
 import numpy as np
 import dipde.internals.utilities as util
 import scipy.linalg as spla
+import scipy.stats as sps
 
 def test_get_zero_bin_list():
     
@@ -13,7 +14,7 @@ def test_flux_ex():
     # Flux example 1:
     v_min = 0
     v_max = .02
-    tau=.02
+    tau=sps.rv_discrete(values=(.02,1))
     w = .005
     dv_n = 500
     dv = .005/dv_n
@@ -36,7 +37,7 @@ def test_flux_ex_inh_border():
     # Flux example 2:
     v_min = 0
     v_max = .02
-    tau=.02
+    tau=sps.rv_discrete(values=(.02,1))
     w = .005
     dv_n = 500
     dv = .005/dv_n
@@ -63,7 +64,7 @@ def test_flux_ex_inh():
     # Flux example 2:
     v_min = -.02
     v_max = .02
-    tau=.02
+    tau=sps.rv_discrete(values=(.02,1))
     w = .005
     dv_n = 500
     dv = .005/dv_n
@@ -90,7 +91,7 @@ def test_leak_matrix():
     # Leak example 1:
     v_min = 0
     v_max = .02
-    tau = .02
+    tau = sps.rv_discrete(values=(.02,1))
     dv_n = 1    
     dv = .005/dv_n
     v = np.arange(v_min, v_max+dv, dv)

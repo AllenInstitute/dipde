@@ -79,7 +79,7 @@ class InternalPopulation(object):
                        **kwargs):
         
         # Store away inputs:
-        self.tau_m = tau_m
+        self.tau_m = util.discretize_if_needed(tau_m)
         self.v_min = v_min
         self.v_max = v_max
         self.dv = dv

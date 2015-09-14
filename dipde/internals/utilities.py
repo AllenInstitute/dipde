@@ -18,6 +18,7 @@ import scipy.linalg as spla
 import scipy.stats as sps
 import scipy.integrate as spi
 import bisect
+import warnings
 
 def fraction_overlap(a1, a2, b1, b2):
     '''Calculate the fractional overlap between range (a1,a2) and (b1,b2).
@@ -75,29 +76,34 @@ def redistribute_probability_mass(A, B):
 
 def leak_matrix(v, tau):
     'Given a list of edges, construct a leak matrix with time constant tau.'
-    
+
     zero_bin_ind_list = get_zero_bin_list(v)
     
     # Initialize:
     A = np.zeros((len(v)-1,len(v)-1))
-
-    # Positive leak:
-    delta_w_ind = -1
-    for source_ind in np.arange(max(zero_bin_ind_list)+1, len(v)-1):
-        target_ind = source_ind + delta_w_ind
-        dv = v[source_ind+1]-v[source_ind]
-        bump_rate = v[source_ind+1]/(tau*dv)
-        A[source_ind, source_ind] -= bump_rate
-        A[target_ind, source_ind] += bump_rate
+    for curr_tau, curr_prob in zip(tau.xk, tau.pk):
     
-    # Negative leak:
-    delta_w_ind = 1
-    for source_ind in np.arange(0, min(zero_bin_ind_list)):
-        target_ind = source_ind + delta_w_ind
-        dv = v[source_ind]-v[target_ind]
-        bump_rate = v[source_ind]/(tau*dv)
-        A[source_ind, source_ind] -= bump_rate
-        A[target_ind, source_ind] += bump_rate
+        A_tmp = np.zeros((len(v)-1,len(v)-1))
+
+        # Positive leak:
+        delta_w_ind = -1
+        for source_ind in np.arange(max(zero_bin_ind_list)+1, len(v)-1):
+            target_ind = source_ind + delta_w_ind
+            dv = v[source_ind+1]-v[source_ind]
+            bump_rate = v[source_ind+1]/(curr_tau*dv)
+            A_tmp[source_ind, source_ind] -= bump_rate
+            A_tmp[target_ind, source_ind] += bump_rate
+        
+        # Negative leak:
+        delta_w_ind = 1
+        for source_ind in np.arange(0, min(zero_bin_ind_list)):
+            target_ind = source_ind + delta_w_ind
+            dv = v[source_ind]-v[target_ind]
+            bump_rate = v[source_ind]/(curr_tau*dv)
+            A_tmp[source_ind, source_ind] -= bump_rate
+            A_tmp[target_ind, source_ind] += bump_rate
+        
+        A += curr_prob*A_tmp
         
     return A
     
@@ -166,14 +172,49 @@ def assert_probability_mass_conserved(pv):
     except:                                                                                 # pragma: no cover
         raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))    # pragma: no cover
         
+def discretize_if_needed(input):
+    
+    if isinstance(input, (sps._distn_infrastructure.rv_frozen,)):
+        vals, probs = descretize(input)
+    elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(input[1], (int,)):
+        vals, probs = descretize(input[0], N=input[1])
+    elif isinstance(input, (float, )):
+        vals, probs = [input], [1]
+    elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (tuple, list)) and isinstance(input[1], (tuple, list)):
+        vals, probs = input
+    elif isinstance(input, (sps._distn_infrastructure.rv_discrete, )):
+        return input
+    else:
+        raise ValueError("Unrecognized input format: input=%s" % (input,)) # pragma: no cover
+        
+    # Double-check inputs with more helpful error messages:
+    try:
+        for val in probs:
+            assert val >= 0
+    except:                                                                         # pragma: no cover
+        raise ValueError("Probability values must be positive: probs=%s" % (probs,))# pragma: no cover
+    
+    try:
+        sum = np.sum(probs)
+        assert np.abs(1.-sum) < 1e-15
+    except:                                                                         # pragma: no cover
+        raise ValueError("Probability must sum to 1.: probs=%s (%s)" % (probs,sum)) # pragma: no cover
+    
+    try:
+        assert len(vals) == len(probs)
+    except:                                                                         # pragma: no cover
+        raise ValueError("Length of vals must equal length of probs:\n    vals=%s (%s)\n    probs=%s (%s)" % (vals, len(vals), probs,len(probs)))# pragma: no cover
+    return sps.rv_discrete(values=(vals, probs))
+        
+        
+    
 
-
-def descretize(distribution, N, loc=0, scale=1, shape=[]):
+def descretize(rv, N=25):
     'Compute a discrete approzimation to a scipy.stats continuous distribution.'
  
     x_list = np.linspace(0,1,N+1)
     
-    rv = sps.expon(*shape, loc=loc, scale=scale)
+#     rv = distribution(*shape, loc=loc, scale=scale)
     y = np.zeros(len(x_list))
     for ii, x in enumerate(x_list):
         y[ii] = rv.ppf(x)
@@ -242,4 +283,6 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
         raise Exception("Probabiltiy mass error (p_sum=%s) at approx_order=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), approx_order))  # pragma: no cover
 
     return pv_new
+
+
     

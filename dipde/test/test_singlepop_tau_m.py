@@ -3,8 +3,16 @@ from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
+import scipy.stats as sps
 
-def test_singlepop():
+def test_tau_constant():
+    singlepop(.02, 5.3550005434746355)
+    
+def test_tau_normal():
+    singlepop((sps.norm(loc=.02, scale=0.004),50), 4.9251936219023831)
+
+
+def singlepop(tau_m, steady_state):
     
     # Settings:
     t0 = 0.
@@ -18,21 +26,18 @@ def test_singlepop():
     # Create simulation:
     b1 = ExternalPopulation(50)
     b2 = ExternalPopulation(50)
-    i1 = InternalPopulation(v_min=v_min, v_max=v_max, dv=dv, update_method='exact')
+    i1 = InternalPopulation(v_min=v_min, tau_m=tau_m, v_max=v_max, dv=dv, update_method='exact')
     b1_i1 = Connection(b1, i1, 1, weights=.005)
     b2_i1 = Connection(b2, i1, 1, weights=.005)
     simulation = Simulation([b1, b2, i1], [b1_i1, b2_i1], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
-    
-    np.testing.assert_almost_equal(i1.t_record[-1], .2, 15)
-    np.testing.assert_almost_equal(i1.firing_rate_record[-1], 5.3550005434746355, 12)
-    assert i1.n_bins == (v_max - v_min)/dv
-    assert i1.n_edges - 1 == i1.n_bins
-    assert len(simulation.population_list) == 3
-    
-    i1.plot_probability_distribution()
+
+    # Test steady-state:    
+    np.testing.assert_almost_equal(i1.firing_rate_record[-1], steady_state, 12)
+
     
 if __name__ == "__main__":      # pragma: no cover 
-    test_singlepop()            # pragma: no cover
+    test_tau_constant()         # pragma: no cover
+    test_tau_normal()           # pragma: no cover
 
     
