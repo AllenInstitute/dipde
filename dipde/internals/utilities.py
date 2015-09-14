@@ -178,8 +178,8 @@ def discretize_if_needed(input):
         vals, probs = descretize(input)
     elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(input[1], (int,)):
         vals, probs = descretize(input[0], N=input[1])
-    elif isinstance(input, (float, )):
-        vals, probs = [input], [1]
+    elif isinstance(input, (float, int)):
+        vals, probs = [float(input)], [1]
     elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (tuple, list)) and isinstance(input[1], (tuple, list)):
         vals, probs = input
     elif isinstance(input, (sps._distn_infrastructure.rv_discrete, )):

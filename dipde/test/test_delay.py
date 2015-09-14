@@ -16,7 +16,7 @@ def test_delay_singlepop():
     # Create simulation:
     b1 = ExternalPopulation('Heaviside(t)*100')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
-    b1_i1 = Connection(b1, i1, 1, weights=.005, delay=2*dt)
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delays=2*dt)
     simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
     
@@ -38,16 +38,43 @@ def test_delay_doublepop():
     
     # Create connections:
     b1_i1 = Connection(b1, i1, 2, weights=.005)
-    i1_i2 = Connection(i1, i2, 20, weights=.005, delay=2*dt)
+    i1_i2 = Connection(i1, i2, 20, weights=.005, delays=2*dt)
     
     # Create and run simulation:
     simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
     
-    
     true_ans = np.array([0, 0.0, 0.0, 0.0, 1.9089656152757652e-13, 1.9787511418980406e-10, 9.5007650186649266e-09, 1.3334881090883857e-07, 1.0103767575651715e-06, 5.3604521936092067e-06, 2.2383604753409621e-05])
     np.testing.assert_almost_equal(i2.firing_rate_record, true_ans, 12)
 
+def test_delay_distribution():
     
+    import matplotlib.pyplot as plt
 
+    # Settings:
+    t0 = 0.
+    dt = .001
+    tf = .2
+    verbose = False
+    
+    # Create populations:
+    b1 = ExternalPopulation(50)
+    i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
+    i2 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
+    
+    # Create connections:
+    b1_i1 = Connection(b1, i1, 2, weights=.0049)
+    i1_i2 = Connection(i1, i2, 20, weights=.0049, delays=((0,.1),(.9,.1)))
+    
+    # Create and run simulation:
+    simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], verbose=verbose)
+    simulation.run(dt=dt, tf=tf, t0=t0)
+        
+    true_ans = np.array([5.88365899e-05, 3.58979283e+00, 4.99964076e+00])
+    np.testing.assert_almost_equal(np.array([i2.firing_rate_record[10], i2.firing_rate_record[100], i2.firing_rate_record[200]]), true_ans, 8)
+
+if __name__ == "__main__":                         # pragma: no cover
+    test_delay_singlepop()                         # pragma: no cover
+    test_delay_doublepop()                         # pragma: no cover    
+    test_delay_distribution()                      # pragma: no cover
 

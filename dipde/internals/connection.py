@@ -54,10 +54,16 @@ class Connection(object):
         self.source = source
         self.target = target
         self.nsyn = nsyn
+        
+        
+        
         self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('weights', None))
-        self.delay = float(kwargs.pop('delay', 0))
-        self.metadata = kwargs
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
+        
+        self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('delays', 0))
+        self.delay_vals, self.delay_probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
+
+        self.metadata = kwargs
 
         # Defined at runtime:
         self.delay_queue = None
@@ -107,14 +113,19 @@ class Connection(object):
         """
 
         # Set up delay queue:
-        self.delay_ind = int(np.round(self.delay/self.simulation.dt))
+        self.delay_inds = np.array(np.round(self.delay_vals/self.simulation.dt), dtype=np.int)
+        max_delay_ind = max(self.delay_inds) 
+
+        self.delay_probability_vector = np.zeros(max_delay_ind+1)
+        self.delay_probability_vector[self.delay_inds] = self.delay_probs
+        self.delay_probability_vector = self.delay_probability_vector[::-1]
         if self.source.type == 'internal':
-            self.delay_queue = np.core.numeric.ones(self.delay_ind+1)*self.source.curr_firing_rate
+            self.delay_queue = np.core.numeric.ones(max_delay_ind+1)*self.source.curr_firing_rate
         elif self.source.type == 'external':
-            self.delay_queue = np.core.numeric.zeros(self.delay_ind+1)
+            self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
             for i in range(len(self.delay_queue)):
                 self.delay_queue[i] = self.source.firing_rate(self.simulation.t - self.simulation.dt*i)
-                self.delay_queue = self.delay_queue[::-1]
+            self.delay_queue = self.delay_queue[::-1]
         else:
             raise Exception('Unrecognized source type: "%s"' % self.source.type)    # pragma: no cover
 
@@ -137,8 +148,8 @@ class Connection(object):
         
         try:
 
-            return self.delay_queue[0]
+            return np.dot(self.delay_queue, self.delay_probability_vector)
         except:
             self.initialize_delay_queue()
-            return self.delay_queue[0]
+            return np.dot(self.delay_queue, self.delay_probability_vector)
             
