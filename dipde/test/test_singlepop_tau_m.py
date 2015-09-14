@@ -6,13 +6,12 @@ from dipde.internals.connection import Connection as Connection
 import scipy.stats as sps
 
 def test_tau_constant():
-    singlepop(.02, 5.3550005434746355)
+    singlepop(5.3550005434746355)
     
 def test_tau_normal():
-    singlepop((sps.norm(loc=.02, scale=0.004),50), 4.9251936219023831)
+    singlepop(4.9251936219023831, tau_m=(sps.norm(loc=.02, scale=0.004),50))
 
-
-def singlepop(tau_m, steady_state):
+def singlepop(steady_state, tau_m=.02):
     
     # Settings:
     t0 = 0.
@@ -24,12 +23,10 @@ def singlepop(tau_m, steady_state):
     verbose = False
     
     # Create simulation:
-    b1 = ExternalPopulation(50)
-    b2 = ExternalPopulation(50)
+    b1 = ExternalPopulation(100)
     i1 = InternalPopulation(v_min=v_min, tau_m=tau_m, v_max=v_max, dv=dv, update_method='exact')
     b1_i1 = Connection(b1, i1, 1, weights=.005)
-    b2_i1 = Connection(b2, i1, 1, weights=.005)
-    simulation = Simulation([b1, b2, i1], [b1_i1, b2_i1], verbose=verbose)
+    simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
 
     # Test steady-state:    
