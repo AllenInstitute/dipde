@@ -60,7 +60,7 @@ class ConnectionDistribution(object):
             assert NotImplementedError  # pragma: no cover
         
         # Must be probabilty distribution
-        assert np.sum(probs) == 1.
+        np.testing.assert_approx_equal(np.sum(probs), 1., 1e-15)
         
         # Defined at runtime:
         self.threshold_flux_vector = None

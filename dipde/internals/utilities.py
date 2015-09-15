@@ -164,11 +164,11 @@ def get_v_edges(v_min, v_max, dv):
     
     return edges
 
-def assert_probability_mass_conserved(pv):
+def assert_probability_mass_conserved(pv, tol=1e-12):
     'Assert that probability mass in control nodes sums to 1.'
     
     try:
-        assert np.abs(np.abs(pv).sum() - 1) < 1e-12
+        assert np.abs(np.abs(pv).sum() - 1) < tol
     except:                                                                                 # pragma: no cover
         raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))    # pragma: no cover
         
@@ -195,7 +195,7 @@ def discretize_if_needed(input):
         raise ValueError("Probability values must be positive: probs=%s" % (probs,))# pragma: no cover
     
     try:
-        sum = np.sum(probs)
+        sum = np.sum(np.abs(probs))
         assert np.abs(1.-sum) < 1e-15
     except:                                                                         # pragma: no cover
         raise ValueError("Probability must sum to 1.: probs=%s (%s)" % (probs,sum)) # pragma: no cover
@@ -204,6 +204,7 @@ def discretize_if_needed(input):
         assert len(vals) == len(probs)
     except:                                                                         # pragma: no cover
         raise ValueError("Length of vals must equal length of probs:\n    vals=%s (%s)\n    probs=%s (%s)" % (vals, len(vals), probs,len(probs)))# pragma: no cover
+    
     return sps.rv_discrete(values=(vals, probs))
         
         

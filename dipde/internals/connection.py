@@ -61,7 +61,6 @@ class Connection(object):
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
         
         self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('delays', 0))
-        self.delay_vals, self.delay_probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
 
         self.metadata = kwargs
 
@@ -69,6 +68,8 @@ class Connection(object):
         self.delay_queue = None
         self.delay_ind = None
         self.simulation = None
+        self.delay_vals = None 
+        self.delay_probs = None
 
     def initialize(self):
         '''Initialize the connection at the beginning of a simulation.
@@ -85,7 +86,7 @@ class Connection(object):
         '''
         
         self.initialize_delay_queue()
-        self.initialize_connection_distribution() 
+        self.initialize_connection_distribution()  
 
     def initialize_connection_distribution(self):
         """Create connection distribution, if necessary.
@@ -112,10 +113,20 @@ class Connection(object):
         InternalPopulation, the queue is initialized to zero.
         """
 
-        # Set up delay queue:
-        self.delay_inds = np.array(np.round(self.delay_vals/self.simulation.dt), dtype=np.int)
-        max_delay_ind = max(self.delay_inds) 
+        self.delay_vals, self.delay_probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
 
+        # Delay vals need to be cleaned up to account for not necessarily being evenly divisible by dt:
+        delay_ind_dict = {}
+        self.delay_inds = np.array(np.round(self.delay_vals/self.simulation.dt), dtype=np.int)
+        for curr_ind, curr_prob in zip(self.delay_inds, self.delay_probs):
+            delay_ind_dict.setdefault(curr_ind, []).append(curr_prob)
+
+        self.delay_inds = sorted(delay_ind_dict.keys())
+        self.delay_vals = [self.simulation.dt*ii for ii in self.delay_inds]
+        self.delay_probs = [np.sum(delay_ind_dict[ii]) for ii in self.delay_inds]
+        util.assert_probability_mass_conserved(self.delay_probs)
+        
+        max_delay_ind = max(self.delay_inds)
         self.delay_probability_vector = np.zeros(max_delay_ind+1)
         self.delay_probability_vector[self.delay_inds] = self.delay_probs
         self.delay_probability_vector = self.delay_probability_vector[::-1]
@@ -147,9 +158,10 @@ class Connection(object):
         """
         
         try:
-
+            assert len(self.delay_queue) == len(self.delay_probability_vector)
             return np.dot(self.delay_queue, self.delay_probability_vector)
         except:
             self.initialize_delay_queue()
+            assert len(self.delay_queue) == len(self.delay_probability_vector)
             return np.dot(self.delay_queue, self.delay_probability_vector)
             

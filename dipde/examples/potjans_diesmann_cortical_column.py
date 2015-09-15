@@ -19,6 +19,11 @@ from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 import itertools
+import scipy.stats as sps
+import numpy as np
+
+def truncated_gaussian(mean, std, a, b):
+    return sps.truncnorm(float(a - mean) / std, float(b - mean) / std, loc=mean, scale=std)
 
 nsyn_background = {
     (23, 'e'): 1600,
@@ -59,8 +64,28 @@ connection_probabilities = {((23,'e'),(23,'e')):.101,   ((23,'e'),(23,'i')):.135
                             ((6,'i'),(23,'e')):0,       ((6,'i'),(23,'i')):0,      ((6,'i'),(4,'e')):0,       ((6,'i'),(4,'i')):0,       ((6,'i'),(5,'e')):0,       ((6,'i'),(5,'i')):0,       ((6,'i'),(6,'e')):.225,    ((6,'i'),(6,'i')):.144}
 
 conn_weights = {
-    'e': .175*1e-3,
-    'i': -.7*1e-3
+    'e': truncated_gaussian(.175*1e-3, .175*1e-3/10, 0, np.inf),
+    'i': truncated_gaussian(-.7*1e-3, .7*1e-3/10, -np.inf, 0)
+}
+
+internal_delays = {
+    'e': truncated_gaussian(1.5*1e-3, .75*1e-3, 0, np.inf),
+    'i': truncated_gaussian(.8*1e-3, .4*1e-3, 0, np.inf)
+}
+
+# internal_delays = {
+#     'e': .0003,
+#     'i': .0003
+# }
+
+# internal_delays = {
+#     'e': 0.,
+#     'i': 0.
+# }
+
+external_delays = {
+    'e': .005,
+    'i': 0.
 }
 
 internal_population_settings = {'v_min': -.03, 
@@ -90,11 +115,7 @@ connection_list = []
 for layer, celltype in itertools.product([23, 4, 5, 6], ['e', 'i']):
     source_population = background_population_dict[layer, celltype]
     target_population = internal_population_dict[layer, celltype]
-    if celltype == 'e':
-        background_delay = .005
-    else:
-        background_delay = 0.
-    curr_connection = Connection(source_population, target_population, nsyn_background[layer, celltype], weights=conn_weights['e'], delay=background_delay) 
+    curr_connection = Connection(source_population, target_population, nsyn_background[layer, celltype], weights=conn_weights['e'], delays=external_delays[celltype]) 
     connection_list.append(curr_connection)
 
 # Create recurrent connections:
@@ -104,7 +125,7 @@ for source_layer, source_celltype in itertools.product([23, 4, 5, 6], ['e', 'i']
         target_population = internal_population_dict[target_layer, target_celltype]
         nsyn = connection_probabilities[(source_layer, source_celltype), (target_layer, target_celltype)]*internal_population_sizes[source_layer, source_celltype]
         weight = conn_weights[source_celltype]
-        curr_connection = Connection(source_population, target_population, nsyn, weights=weight, delay=0.0005)
+        curr_connection = Connection(source_population, target_population, nsyn, weights=weight, delays=internal_delays[source_celltype])
         connection_list.append(curr_connection)
 
 # Create simulation:
