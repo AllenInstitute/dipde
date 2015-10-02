@@ -68,15 +68,15 @@ conn_weights = {
     'i': truncated_gaussian(-.7*1e-3, .7*1e-3/10, -np.inf, 0)
 }
 
+# conn_weights = {
+#     'e': .175*1e-3,
+#     'i': -.7*1e-3
+# }
+
 internal_delays = {
     'e': truncated_gaussian(1.5*1e-3, .75*1e-3, 0, np.inf),
     'i': truncated_gaussian(.8*1e-3, .4*1e-3, 0, np.inf)
 }
-
-# internal_delays = {
-#     'e': .0003,
-#     'i': .0003
-# }
 
 # internal_delays = {
 #     'e': 0.,

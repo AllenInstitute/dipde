@@ -184,6 +184,12 @@ def discretize_if_needed(input):
         vals, probs = input
     elif isinstance(input, (sps._distn_infrastructure.rv_discrete, )):
         return input
+    elif isinstance(input, (dict,)):
+        if input['distribution'] == 'delta':
+            vals, probs = [input['weight']], [1.]
+        else:
+            raise NotImplementedError
+        
     else:
         raise ValueError("Unrecognized input format: input=%s" % (input,)) # pragma: no cover
         
@@ -258,10 +264,15 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
         pv_new += curr_del
         curr_err = spla.norm(curr_del, norm)
 
+    # Normalization based on known properties, to prevent rounding error:
+    warnings.warn('Normalizing probabilty mass')
+    pv[np.where(pv<0)] = 0
+    pv /= pv.sum()
     
     try:
         assert_probability_mass_conserved(pv)
     except:                                                                                                                                                     # pragma: no cover
+        
         raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
     
     return pv_new
