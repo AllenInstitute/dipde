@@ -16,7 +16,7 @@
 import sympy.parsing.sympy_parser as symp
 from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
-
+import types
 
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations.
@@ -47,9 +47,15 @@ class ExternalPopulation(object):
     
     def __init__(self, firing_rate, record=False, **kwargs):
         
-        self.firing_rate_string = str(firing_rate)
-        self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
-        
+        if isinstance(firing_rate, str):
+            self.firing_rate_string = str(firing_rate)
+            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
+        elif isinstance(firing_rate, types.FunctionType):
+            self.closure = firing_rate
+        else:
+            self.firing_rate_string = str(firing_rate)
+            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
+
         self.record = record
         self.type = "external"
         

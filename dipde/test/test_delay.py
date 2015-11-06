@@ -48,30 +48,26 @@ def test_delay_doublepop():
     np.testing.assert_almost_equal(i2.firing_rate_record, true_ans, 12)
 
 def test_delay_distribution():
-    
-    import matplotlib.pyplot as plt
 
     # Settings:
     t0 = 0.
     dt = .001
-    tf = .2
+    tf = .1
     verbose = False
     
     # Create populations:
-    b1 = ExternalPopulation(50)
+    b1 = ExternalPopulation('100*Heaviside(t)')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
-    i2 = InternalPopulation(v_min=0, v_max=.02, dv=.001, update_method='exact')
     
     # Create connections:
-    b1_i1 = Connection(b1, i1, 2, weights=.0049)
-    i1_i2 = Connection(i1, i2, 20, weights=.0049, delays=((0,.1),(.9,.1)))
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delays=((0,.05),(.5,.5)))
     
     # Create and run simulation:
-    simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2], verbose=verbose)
+    simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
     simulation.run(dt=dt, tf=tf, t0=t0)
-        
-    true_ans = np.array([5.88365899e-05, 3.58979283e+00, 4.99964076e+00])
-    np.testing.assert_almost_equal(np.array([i2.firing_rate_record[10], i2.firing_rate_record[100], i2.firing_rate_record[200]]), true_ans, 8)
+    
+    true_ans = np.array([0.38560647739319964, 5.229266329159536])
+    np.testing.assert_almost_equal(np.array(i1.get_firing_rate([.04, .09])), true_ans, 8)
 
 if __name__ == "__main__":                         # pragma: no cover
     test_delay_singlepop()                         # pragma: no cover

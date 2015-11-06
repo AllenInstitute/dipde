@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
+import bisect
 import numpy as np
 from dipde.internals import utilities as util
 
@@ -80,6 +81,9 @@ class InternalPopulation(object):
         
         # Store away inputs:
         self.tau_m = util.discretize_if_needed(tau_m)
+        if np.sum(self.tau_m.xk <= 0) > 0:
+            raise Exception('Negative tau_m values detected: %s' % self.tau_m.xk) # pragma: no cover 
+        
         self.v_min = v_min
         self.v_max = v_max
         self.dv = dv
@@ -289,6 +293,34 @@ class InternalPopulation(object):
             
         ax.plot(self.edges[:-1], self.pv)
         return ax
+    
+    def plot(self, ax=None, **kwargs):
+        '''Convenience method to plot firing rate history.
+        
+        Parameters
+        ----------
+        ax : None or matplotlib.pyplot.axes object (default=None)
+            Axes object to plot distribution on.  If None specified, a figure and axes object will be created.
+        
+        '''
+        
+        import matplotlib.pyplot as plt
+        
+        if ax == None:
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            
+        ax.plot(self.t_record, self.firing_rate_record, **kwargs)
+        return ax
+    
+    def get_firing_rate(self, t):
+        
+        try:
+            ind_list = [bisect.bisect_left(self.t_record,curr_t) for curr_t in t]
+            return [self.firing_rate_record[ind] for ind in ind_list]    
+        except:
+            return self.firing_rate_record[bisect.bisect_left(self.t_record,t)]
+
         
 
         

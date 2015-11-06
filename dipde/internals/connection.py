@@ -56,7 +56,6 @@ class Connection(object):
         self.nsyn = nsyn
         
         
-#         print 'ahhh', kwargs.pop('weights', None)
         self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('weights', None))
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
         self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('delays', 0))

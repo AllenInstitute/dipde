@@ -188,7 +188,7 @@ def discretize_if_needed(input):
         if input['distribution'] == 'delta':
             vals, probs = [input['weight']], [1.]
         else:
-            raise NotImplementedError
+            raise NotImplementedError # pragma: no cover
         
     else:
         raise ValueError("Unrecognized input format: input=%s" % (input,)) # pragma: no cover
@@ -218,27 +218,14 @@ def discretize_if_needed(input):
 
 def descretize(rv, N=25):
     'Compute a discrete approzimation to a scipy.stats continuous distribution.'
- 
-    x_list = np.linspace(0,1,N+1)
-    
-#     rv = distribution(*shape, loc=loc, scale=scale)
-    y = np.zeros(len(x_list))
-    for ii, x in enumerate(x_list):
-        y[ii] = rv.ppf(x)
-    
-    mean = np.zeros(len(x_list)-1)
-    height = np.zeros(len(x_list)-1)
-    a = np.zeros(len(x_list)-1)
-    for ii, yl_yr in enumerate(zip(y[:-1],y[1:])):
-        yl, yr = yl_yr
-        height[ii] = rv.cdf(yr) - rv.cdf(yl)
-        
-        def mu(x):
-            return x*rv.pdf(x)
-        mean[ii] = spi.quad(mu, yl, yr)[0]
-        a[ii] = mean[ii]/height[ii]
-        
-    return a, height
+
+    eps = np.finfo(float).eps
+    y_list = np.linspace(eps,1-eps,N+1)
+    x_list = rv.ppf(y_list)
+    vals = (x_list[1:]+x_list[:-1])/2
+    probs = np.diff(y_list)
+
+    return vals, probs
  
 def exact_update_method(J, pv, dt=.0001):
     'Given a flux matrix, pdate probabilty vector by computing the matrix exponential.'
@@ -272,7 +259,6 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     try:
         assert_probability_mass_conserved(pv)
     except:                                                                                                                                                     # pragma: no cover
-        
         raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
     
     return pv_new

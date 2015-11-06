@@ -9,7 +9,12 @@ def test_tau_constant():
     singlepop(5.3550005434746355)
     
 def test_tau_normal():
-    singlepop(4.9251936219023831, tau_m=(sps.norm(loc=.02, scale=0.004),50))
+    mu = .02
+    sigma = 0.004
+    a = 0
+    b = np.inf
+    tau_m_dist = sps.truncnorm(float(a - mu) / sigma, float(b - mu)/sigma, loc=mu, scale=sigma)
+    singlepop(4.6955315121158119, tau_m=(tau_m_dist,50))
 
 def singlepop(steady_state, tau_m=.02):
     
@@ -34,7 +39,7 @@ def singlepop(steady_state, tau_m=.02):
 
     
 if __name__ == "__main__":      # pragma: no cover 
-    test_tau_constant()         # pragma: no cover
+#     test_tau_constant()         # pragma: no cover
     test_tau_normal()           # pragma: no cover
 
     
