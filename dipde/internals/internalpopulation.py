@@ -17,6 +17,7 @@
 import bisect
 import numpy as np
 import scipy.stats as sps
+import json
 from dipde.internals import utilities as util
 
 class InternalPopulation(object):
@@ -73,7 +74,7 @@ class InternalPopulation(object):
                        v_max=.02,
                        dv=.0001,
                        record=True,
-                       curr_firing_rate=0.0,
+                       initial_firing_rate=0.0,
                        update_method='approx',
                        approx_order=None,
                        tol=1e-12,
@@ -90,11 +91,12 @@ class InternalPopulation(object):
         self.v_max = v_max
         self.dv = dv
         self.record = record
-        self.curr_firing_rate = curr_firing_rate
+        self.curr_firing_rate = initial_firing_rate
         self.update_method = update_method
         self.approx_order = approx_order
         self.tol = tol
         self.norm = norm
+            
         self.type = "internal"
         self.p0 = p0
         
@@ -319,6 +321,7 @@ class InternalPopulation(object):
         return ax
     
     def get_firing_rate(self, t):
+        '''Convenience function to get the firing rate at time "t" after simulation'''
         
         try:
             ind_list = [bisect.bisect_left(self.t_record,curr_t) for curr_t in t]
@@ -327,5 +330,24 @@ class InternalPopulation(object):
             return self.firing_rate_record[bisect.bisect_left(self.t_record,t)]
 
         
-
+    def to_json(self, fh=None, **kwargs):
+        '''Save the contents of the InternalPopultion to json'''
         
+        data_dict = {'p0':(self.edges.tolist(), self.pv.tolist()), 
+                          'norm':self.norm, 
+                          'tau_m':(self.tau_m.xk.tolist(), self.tau_m.pk.tolist()),
+                          'v_min':self.v_min,
+                          'v_max':self.v_max,
+                          'dv':self.dv,
+                          'record':self.record,
+                          'initial_firing_rate':self.firing_rate_record[-1],
+                          'update_method':self.update_method,
+                          'approx_order':self.approx_order,
+                          'tol':self.tol,
+                          'metadata':self.metadata}
+        
+        if fh is None:
+            return json.dumps(data_dict, **kwargs)
+        else:
+            return json.dump(data_dict, fh, **kwargs)
+
