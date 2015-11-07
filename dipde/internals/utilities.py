@@ -172,26 +172,27 @@ def assert_probability_mass_conserved(pv, tol=1e-12):
     except:                                                                                 # pragma: no cover
         raise Exception('Probability mass below threshold: %s' % (np.abs(pv).sum() - 1))    # pragma: no cover
         
-def discretize_if_needed(input):
+def discretize_if_needed(curr_input):
     
-    if isinstance(input, (sps._distn_infrastructure.rv_frozen,)):
-        vals, probs = descretize(input)
-    elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(input[1], (int,)):
-        vals, probs = descretize(input[0], N=input[1])
-    elif isinstance(input, (float, int)):
-        vals, probs = [float(input)], [1]
-    elif isinstance(input, (tuple, list)) and len(input) == 2 and isinstance(input[0], (tuple, list)) and isinstance(input[1], (tuple, list)):
-        vals, probs = input
-    elif isinstance(input, (sps._distn_infrastructure.rv_discrete, )):
-        return input
-    elif isinstance(input, (dict,)):
-        if input['distribution'] == 'delta':
-            vals, probs = [input['weight']], [1.]
+    if isinstance(curr_input, (sps._distn_infrastructure.rv_frozen,)):
+        vals, probs = descretize(curr_input)
+    elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(curr_input[1], (int,)):
+        vals, probs = descretize(curr_input[0], N=curr_input[1])
+    elif isinstance(curr_input, (float, int)):
+        vals, probs = [float(curr_input)], [1]
+    elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (tuple, list, np.ndarray)) and isinstance(curr_input[1], (tuple, list, np.ndarray)):
+        vals, probs = curr_input
+    elif isinstance(curr_input, (sps._distn_infrastructure.rv_discrete, )):
+        return curr_input
+    elif isinstance(curr_input, (dict,)):
+        if curr_input['distribution'] == 'delta':
+            vals, probs = [curr_input['weight']], [1.]
         else:
             raise NotImplementedError # pragma: no cover
         
     else:
-        raise ValueError("Unrecognized input format: input=%s" % (input,)) # pragma: no cover
+        
+        raise ValueError("Unrecognized curr_input format: input=%s" % (curr_input,)) # pragma: no cover
         
     # Double-check inputs with more helpful error messages:
     try:
@@ -200,24 +201,18 @@ def discretize_if_needed(input):
     except:                                                                         # pragma: no cover
         raise ValueError("Probability values must be positive: probs=%s" % (probs,))# pragma: no cover
     
-    try:
-        sum = np.sum(np.abs(probs))
-        assert np.abs(1.-sum) < 1e-15
-    except:                                                                         # pragma: no cover
-        raise ValueError("Probability must sum to 1.: probs=%s (%s)" % (probs,sum)) # pragma: no cover
-    
-    try:
-        assert len(vals) == len(probs)
-    except:                                                                         # pragma: no cover
-        raise ValueError("Length of vals must equal length of probs:\n    vals=%s (%s)\n    probs=%s (%s)" % (vals, len(vals), probs,len(probs)))# pragma: no cover
+    assert_probability_mass_conserved(probs, 1e-15)
+    if len(vals) == len(probs):
+        pass
+    elif len(vals) == len(probs)+1:
+        vals = (np.array(vals[1:]) + np.array(vals[:-1]))/2
+    else:                                                                         # pragma: no cover
+        raise ValueError("Length of vals and probs not consistent with a probability distribtion")
     
     return sps.rv_discrete(values=(vals, probs))
         
-        
-    
-
 def descretize(rv, N=25):
-    'Compute a discrete approzimation to a scipy.stats continuous distribution.'
+    'Compute a discrete approximation to a scipy.stats continuous distribution.'
 
     eps = np.finfo(float).eps
     y_list = np.linspace(eps,1-eps,N+1)

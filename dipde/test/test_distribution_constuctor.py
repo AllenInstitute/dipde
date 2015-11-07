@@ -15,6 +15,9 @@ def test_discrete_rv():
  
 def test_dist_specified():
     test_dist = discretize_if_needed(((0,1,2,3),(.25,.25,.25,.25)))
+    
+def test_dist_xk_pk_off_by_one():
+    test_dist = discretize_if_needed(((0,1,2,3),(.5,.25,.25)))
 
 
 if __name__ == "__main__":                      # pragma: no cover
@@ -23,4 +26,4 @@ if __name__ == "__main__":                      # pragma: no cover
     test_scalar()                               # pragma: no cover
     test_discrete_rv()                          # pragma: no cover
     test_dist_specified()                       # pragma: no cover
-
+    test_dist_xk_pk_off_by_one()                # pragma: no cover

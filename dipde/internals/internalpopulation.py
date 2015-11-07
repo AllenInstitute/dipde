@@ -16,6 +16,7 @@
 
 import bisect
 import numpy as np
+import scipy.stats as sps
 from dipde.internals import utilities as util
 
 class InternalPopulation(object):
@@ -77,6 +78,7 @@ class InternalPopulation(object):
                        approx_order=None,
                        tol=1e-12,
                        norm=np.inf,
+                       p0=([0.],[1.]),
                        **kwargs):
         
         # Store away inputs:
@@ -94,6 +96,7 @@ class InternalPopulation(object):
         self.tol = tol
         self.norm = norm
         self.type = "internal"
+        self.p0 = p0
         
         # Additional metadata:
         self.metadata = kwargs
@@ -161,11 +164,13 @@ class InternalPopulation(object):
     def initialize_probability(self):
         '''Initialize self.pv to delta-distribution at v=0.'''
 
-        # Delta initial probability distribution:
-        self.pv = np.zeros_like(self.edges[:-1])
-        zero_bin_list = util.get_zero_bin_list(self.edges)
-        for ii in zero_bin_list:
-            self.pv[ii] = 1. / len(zero_bin_list)
+        if not isinstance(self.p0, (sps._distn_infrastructure.rv_frozen, sps._distn_infrastructure.rv_discrete)):
+            self.p0 = util.discretize_if_needed(self.p0)
+ 
+        self.pv = self.p0.cdf(self.edges[1:]) - self.p0.cdf(self.edges[:-1]) 
+        self.pv[0] += self.p0.cdf(self.edges[0])
+        self.pv[-1] += 1-self.p0.cdf(self.edges[-1])
+        util.assert_probability_mass_conserved(self.pv, 1e-15)
         
     def initialize_firing_rate_recorder(self):
         '''Initialize recorder at the beginning of a simulation.

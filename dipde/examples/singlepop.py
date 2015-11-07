@@ -29,14 +29,13 @@ def get_simulation(dv=.001, verbose=False, update_method='exact', approx_order=N
 
     return simulation
 
-def example(show=True, save=False):
+def example(show=False, save=False, verbose=False):
 
     # Settings:
     t0 = 0.
     dt = .0001
     dv = .0001
     tf = .1
-    verbose = True
     update_method = 'approx'
     approx_order = 1
     tol = 1e-14
@@ -47,16 +46,17 @@ def example(show=True, save=False):
     
     # Visualize:
     i1 = simulation.population_list[1]
-    plt.figure(figsize=(3,3))
-    plt.plot(i1.t_record, i1.firing_rate_record)
+    fig, ax = plt.subplots(figsize=(3,3))
+    i1.plot(ax=ax)
     plt.xlim([0,tf])
     plt.ylim(ymin=0)
     plt.xlabel('Time (s)')
     plt.ylabel('Firing Rate (Hz)')
-    plt.tight_layout()
+    fig.tight_layout()
     if save == True: plt.savefig('./singlepop.png')
     if show == True: plt.show()
-    
+        
     return i1.t_record, i1.firing_rate_record
     
-if __name__ == "__main__": example()        # pragma: no cover
+if __name__ == "__main__": example(verbose=True, show=True)        # pragma: no cover
+
