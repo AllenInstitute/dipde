@@ -64,11 +64,6 @@ class Connection(object):
         self.nsyn = nsyn
         self.synaptic_weight_distribution = util.discretize_if_needed(weights)
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
-        try:
-            print delays[0]
-            print delays[1]
-        except:
-            pass
 
         self.delay_distribution = util.discretize_if_needed(delays)
         self.delay_vals, self.delay_probs = self.delay_distribution.xk, self.delay_distribution.pk

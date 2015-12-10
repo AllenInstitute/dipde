@@ -178,8 +178,6 @@ class Simulation(object):
                 p.update()
                 self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
                 
-#         print self.ti, self.firing_rate_organizer.firing_rate_dict_internal
-#         sys.exit()
         self.distributed_configuration.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal[self.ti])
         
         for c in self.connection_list:
