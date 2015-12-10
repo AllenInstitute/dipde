@@ -179,14 +179,14 @@ def discretize_if_needed(curr_input):
     elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(curr_input[1], (int,)):
         vals, probs = descretize(curr_input[0], N=curr_input[1])
     elif isinstance(curr_input, (float, int)):
-        vals, probs = [float(curr_input)], [1]
+        vals, probs = np.array([float(curr_input)]), np.array([1])
     elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (tuple, list, np.ndarray)) and isinstance(curr_input[1], (tuple, list, np.ndarray)):
-        vals, probs = curr_input
+        vals, probs = map(np.array, curr_input)
     elif isinstance(curr_input, (sps._distn_infrastructure.rv_discrete, )):
         return curr_input
     elif isinstance(curr_input, (dict,)):
         if curr_input['distribution'] == 'delta':
-            vals, probs = [curr_input['weight']], [1.]
+            vals, probs = np.array([curr_input['weight']]), np.array([1.])
         else:
             raise NotImplementedError # pragma: no cover
         
@@ -207,7 +207,7 @@ def discretize_if_needed(curr_input):
     elif len(vals) == len(probs)+1:
         vals = (np.array(vals[1:]) + np.array(vals[:-1]))/2
     else:                                                                         # pragma: no cover
-        raise ValueError("Length of vals and probs not consistent with a probability distribtion")
+        raise ValueError("Length of vals and probs not consistent with a probability distribution")
     
     return sps.rv_discrete(values=(vals, probs))
         
@@ -247,14 +247,11 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
         curr_err = spla.norm(curr_del, norm)
 
     # Normalization based on known properties, to prevent rounding error:
-    warnings.warn('Normalizing probabilty mass')
-    pv[np.where(pv<0)] = 0
-    pv /= pv.sum()
-    
+
     try:
         assert_probability_mass_conserved(pv)
     except:                                                                                                                                                     # pragma: no cover
-        raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
+        raise Exception("Probability mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
     
     return pv_new
 
@@ -277,5 +274,26 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
 
     return pv_new
 
+def get_callback_dict(unknown_key_dict, callback_key_list):
+    callback_dict = {}
+    for key in callback_key_list:
+        if key in unknown_key_dict: callback_dict[key] = unknown_key_dict.pop(key)
+    return callback_dict
+
+def get_pv_from_p0(p0, edges):
+    
+    pv = p0.cdf(edges[1:]) - p0.cdf(edges[:-1]) 
+    pv[0] += p0.cdf(edges[0])
+    pv[-1] += 1-p0.cdf(edges[-1])
+    
+    return pv 
+
+class NullObject(object):
+    
+    def __init__(self, ): pass
+        
+    def null_fcn(self, *args, **kwargs): pass
+        
+    def __getattr__(self, *args, **kwargs): return self.null_fcn
 
     

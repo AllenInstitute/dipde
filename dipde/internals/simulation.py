@@ -15,6 +15,17 @@
 
 from dipde.internals.connectiondistributioncollection import ConnectionDistributionCollection
 import time
+from dipde.internals import utilities
+import json
+import importlib
+import logging
+from dipde.internals.firingrateorganizer import FiringRateOrganizer
+from dipde.interfaces.distributed.distributedconfiguration import DistributedConfiguration
+from dipde.internals.internalpopulation import InternalPopulation
+
+logger = logging.getLogger(__name__)
+
+
 
 class Simulation(object):
     '''Initialize and run a dipde simulation.
@@ -35,50 +46,62 @@ class Simulation(object):
         Setting True prints current time-step at each update evaluation.
     '''
     
-    
     def __init__(self, 
-                 population_list, 
-                 connection_list, 
-                 verbose=True):
+                 population_list=[], 
+                 connection_list=[],
+                 dt=None,
+                 t0=None,
+                 metadata={},
+                 run_callback=lambda s: None,
+                 update_callback=lambda s: None):
         
-        self.verbose = verbose
+        self.dt = dt
+        self.t0 = t0
+        self.update_callback = update_callback
+        self.run_callback = run_callback
         
-        self.population_list = population_list
-        self.connection_list = [c for c in connection_list if c.nsyn != 0]
-        
-    def initialize(self, t0=0.):
-        '''Initialize simulation, populations, and connections.
-        
-        This function is typically called by the self.run() method, however can
-        be called independently if defining a new time stepping loop.
-        
-        Parameters
-        ----------
-        t0 : float (default=0.)
-            Simulation start time (unit=seconds).
-        '''
+        self.population_list = []
+        for p in population_list:
+            if isinstance(p, dict):
+                curr_module, curr_class = p['class']
+                curr_instance = getattr(importlib.import_module(curr_module), curr_class)(**p)
+                self.population_list.append(curr_instance)
+            else: 
+                self.population_list.append(p)
+
+        self.connection_list = []
+        for c in connection_list:
+            if isinstance(c, dict):
+                curr_module, curr_class = c['class']
+                curr_instance = getattr(importlib.import_module(curr_module), curr_class)(**c)
+                if curr_instance.nsyn != 0:
+                    self.connection_list.append(curr_instance)
+            else:
+                if c.nsyn != 0:
+                    self.connection_list.append(c)
+
+
+        self.gid_dict = dict((population, ii) for ii, population in enumerate(self.population_list))
+        for key, val in self.gid_dict.items():
+            self.gid_dict[val] = key
         
         # Initialize:
         self.connection_distribution_collection = ConnectionDistributionCollection()
-        self.t = t0
         
-        # Monkey-patch dt to the populations:
+        # Each population needs access to dt:
         for p in self.population_list:
             p.simulation = self
             
         # Each connection needs access to t:
         for c in self.connection_list:
             c.simulation = self
+    
+    @property
+    def rank(self):
+        return self.distributed_configuration.rank()
+
         
-        # Initialize populations:
-        for p in self.population_list:
-            p.initialize()
-        
-        # Initialize connections:    
-        for c in self.connection_list:
-            c.initialize()
-        
-    def run(self, t0=0., dt=.001, tf=.1):
+    def run(self, t0=None, dt=None, tf=.1, distributed_configuration=utilities.NullObject()):
         '''Main iteration control loop for simulation
         
         The time step selection must be approximately of the same order as dv
@@ -94,33 +117,107 @@ class Simulation(object):
         dt : float (default=0.001)
             Time step (unit=seconds).
         '''
+
+        self.distributed_configuration = distributed_configuration
+        self.firing_rate_organizer = FiringRateOrganizer(self.distributed_configuration)
         
-        
-        self.dt = dt
-        self.tf = tf
+        # Override __init__ settings if provided:
+        if not dt is None: self.dt = dt
         
         # Initialize:
         start_time = time.time()
-        self.initialize(t0=t0)
+        self.tf = tf
+        self.ti = 0
+        
+        self.distributed_configuration.initialize(self.ti)
+        
+        # Initialize populations:
+        for gid, p in enumerate(self.population_list):
+            p.initialize()
+            self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
+        
+        self.distributed_configuration.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal[self.ti])
+            
+        for p in self.population_list:
+            if isinstance(p, InternalPopulation):        
+                p.initialize_total_input_dict()
+        
+        # Initialize connections:    
+        for c in self.connection_list:
+            c.initialize()
         self.initialization_time = time.time() - start_time
+        
+        
         
         # Run
         start_time = time.time()
         while self.t < self.tf:
+            self.update()
             
-            self.t += self.dt
-            if self.verbose: print 'time: %s' % self.t
-            
-            for p in self.population_list:
-                p.update()
-                
-            for c in self.connection_list:
-                c.update()
-                
         self.run_time = time.time() - start_time
+        
+        self.distributed_configuration.finalize()
+        
+        self.run_callback(self)
+        
+    @property
+    def t(self):
+        if self.t0 is None:
+            return self.ti*self.dt
+        else:
+            return self.t0+self.ti*self.dt
 
+    def update(self):
 
+        self.firing_rate_organizer.drop(self.ti)
+        self.ti += 1
+        logger.info( 'time: %s' % self.t)
+        
+        for gid, p in enumerate(self.population_list):
+            if self.distributed_configuration.gid_to_rank(gid) == self.rank:
+                p.update()
+                self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
+                
+#         print self.ti, self.firing_rate_organizer.firing_rate_dict_internal
+#         sys.exit()
+        self.distributed_configuration.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal[self.ti])
+        
+        for c in self.connection_list:
+            c.update()
+            
+        self.update_callback(self)
+        
+    def to_dict(self):
 
+        data_dict = {'population_list':[p.to_dict() for p in self.population_list],
+                     'connection_list':[c.to_dict() for c in self.connection_list],
+                     'dt':getattr(self, 'dt',None),
+                     't0':getattr(self, 't',None)}
+        
+        return data_dict
+        
+    def to_json(self, fh=None, **kwargs):
+        '''Save the contents of the InternalPopultion to json'''
+        
+        data_dict = self.to_dict()
+
+        indent = kwargs.pop('indent',2)
+
+        if fh is None:
+            return json.dumps(data_dict, indent=indent, **kwargs)
+        else:
+            return json.dump(data_dict, fh, indent=indent, **kwargs)
+
+    def copy(self):
+        return Simulation(**self.to_dict())
+    
+    def get_curr_firing_rate(self, gid):
+        return self.firing_rate_organizer.pull(self.ti,gid)
+        
+    def get_firing_rate(self, gid, t):
+        return self.population_list[gid].firing_rate(t)
+        
+         
 
 
 

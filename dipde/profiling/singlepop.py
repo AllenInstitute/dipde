@@ -18,13 +18,22 @@ from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 
-def get_simulation(dt=.001, dv=.001, tf=.2, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
+import logging
+import dipde.internals.externalpopulation
+import dipde.internals.internalpopulation
+import dipde.internals.simulation
+logging.getLogger(dipde.internals.simulation.__name__).setLevel(logging.CRITICAL)
+logging.getLogger(dipde.internals.internalpopulation.__name__).setLevel(logging.CRITICAL)
+logging.getLogger(dipde.internals.externalpopulation.__name__).setLevel(logging.CRITICAL)
+
+
+def get_simulation(dv=.001, update_method='exact', approx_order=None, tol=1e-8):
 
     # Create simulation:
-    b1 = ExternalPopulation('100')
+    b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    b1_i1 = Connection(b1, i1, 1, weights=[.005], probs=[1.], delay=0.0)
-    simulation = Simulation([b1, i1], [b1_i1], dt=dt, tf=tf, verbose=verbose)
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
+    simulation = Simulation([b1, i1], [b1_i1])
 
     return simulation
 
@@ -33,14 +42,14 @@ def main():
     # Settings:
     dt = .00005
     dv = .00005
+    t0 = 0
     tf = .2
-    verbose = False
     
     update_method = 'approx'
     approx_order = None
     tol = 1e-14
-    simulation = get_simulation(dt=dt, tf=tf, dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
-    simulation.run()
+    simulation = get_simulation(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
+    simulation.run(dt=dt, tf=tf, t0=t0)
 
     
 if __name__ == "__main__":

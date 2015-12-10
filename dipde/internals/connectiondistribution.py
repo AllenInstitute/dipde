@@ -89,9 +89,9 @@ class ConnectionDistribution(object):
     def signature(self):
         """A unique key used to organize ConnectionDistributions."""
         
-        return (tuple(self.edges), 
+        return (tuple(self.edges),
                 tuple(self.weights),
-                tuple(self.probs), 
+                tuple(self.probs),
                 self.reversal_potential)
     
  

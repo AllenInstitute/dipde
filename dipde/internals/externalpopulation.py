@@ -17,6 +17,11 @@ import sympy.parsing.sympy_parser as symp
 from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
 import types
+from dipde.internals import utilities as util
+import json
+from dipde.interfaces.zmq import RequestFiringRate
+import logging
+logger = logging.getLogger(__name__)
 
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations.
@@ -44,23 +49,28 @@ class ExternalPopulation(object):
     self.t_record : list
         List of times that firing rates were recorded during Simulation.
     '''
-    
-    def __init__(self, firing_rate, record=False, **kwargs):
+
+    def __init__(self, firing_rate, rank=0,record=False, firing_rate_record=[], t_record=[], metadata={}, **kwargs):
         
+        self.rank = 0
         if isinstance(firing_rate, str):
             self.firing_rate_string = str(firing_rate)
             self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
-        elif isinstance(firing_rate, types.FunctionType):
+        elif isinstance(firing_rate, (types.FunctionType, RequestFiringRate)):
             self.closure = firing_rate
         else:
             self.firing_rate_string = str(firing_rate)
             self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
 
+        self.firing_rate_record = [x for x in firing_rate_record]
+        self.t_record = [x for x in t_record]
+        assert len(self.firing_rate_record) == len(self.t_record)
+
         self.record = record
-        self.type = "external"
+        self.metadata = metadata
         
-        # Additional metadata:
-        self.metadata = kwargs
+        for key in kwargs.keys():
+            assert key in ['class']
         
     def firing_rate(self, t):
         '''Firing rate of the population at time t (Hz).''' 
@@ -70,6 +80,14 @@ class ExternalPopulation(object):
             raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.firing_rate_string, t)) # pragma: no cover
         
         return curr_firing_rate
+    
+    @property
+    def curr_firing_rate(self):
+        
+        if hasattr(self, 'simulation') and hasattr(self.simulation, 't'):
+            return self.get_firing_rate(self.simulation.t)
+        else:
+            return None
     
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
@@ -92,6 +110,7 @@ class ExternalPopulation(object):
         '''
         
         if self.record == True: self.update_firing_rate_recorder()
+        logger.debug('firing rate %s: %3.2f' % (self.metadata.get('name',''), self.curr_firing_rate))
     
     def initialize_firing_rate_recorder(self):
         '''Initialize recorder at the beginning of a simulation.
@@ -102,8 +121,10 @@ class ExternalPopulation(object):
         '''
         
         # Set up firing rate recorder:
-        self.firing_rate_record = [self.curr_firing_rate]
-        self.t_record = [self.simulation.t]
+        if len(self.firing_rate_record) == 0:
+            self.firing_rate_record.append(self.curr_firing_rate)
+        if len(self.t_record) == 0:
+            self.t_record.append(self.simulation.t)
     
     def update_firing_rate_recorder(self):
         '''Record current time and firing rate, if record==True.
@@ -116,8 +137,37 @@ class ExternalPopulation(object):
         self.firing_rate_record.append(self.curr_firing_rate)
         self.t_record.append(self.simulation.t)
     
+    def get_firing_rate(self, t):
+        '''Property that accesses the firing rate ar time t of the population (Hz).'''
+
+        return float(self.firing_rate(t))
+    
     @property
-    def curr_firing_rate(self):
-        '''Property that accesses the current firing rate of the population (Hz).'''
+    def gid(self):
+        return self.simulation.gid_dict[self]
+    
+    def to_dict(self):
         
-        return float(self.firing_rate(self.simulation.t))
+        if not hasattr(self, 'firing_rate_string'):
+            raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string')
+        
+        data_dict = {'rank':self.rank,
+                     'record':self.record,
+                     'metadata':self.metadata,
+                     'firing_rate':self.firing_rate_string,
+                     'class':(__name__, self.__class__.__name__)
+                      }
+        
+        return data_dict
+
+    
+    def to_json(self, fh=None, **kwargs):
+        '''Save the population contents to json'''
+        
+        data_dict = self.to_dict()
+        indent = kwargs.pop('indent',2)
+        
+        if fh is None:
+            return json.dumps(data_dict, indent=indent, **kwargs)
+        else:
+            return json.dump(data_dict, fh, indent=indent, **kwargs)
