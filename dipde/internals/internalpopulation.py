@@ -287,10 +287,7 @@ class InternalPopulation(object):
     @property
     def source_connection_list(self):
         '''List of all connections that are a source for this population.'''
-        if hasattr(self, 'simulation'):
-            return [c for c in self.simulation.connection_list if c.target == self]
-        else:
-            return []
+        return [c for c in self.simulation.connection_list if c.target == self]
     
     @property
     def n_bins(self):
@@ -344,7 +341,7 @@ class InternalPopulation(object):
             ax = fig.add_subplot(1, 1, 1)
         
         if self.firing_rate_record is None or self.t_record is None:
-            raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)
+            raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)  # pragma: no cover
         ax.plot(self.t_record, self.firing_rate_record, **kwargs)
         return ax
     

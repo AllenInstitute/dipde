@@ -274,12 +274,6 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
 
     return pv_new
 
-def get_callback_dict(unknown_key_dict, callback_key_list):
-    callback_dict = {}
-    for key in callback_key_list:
-        if key in unknown_key_dict: callback_dict[key] = unknown_key_dict.pop(key)
-    return callback_dict
-
 def get_pv_from_p0(p0, edges):
     
     pv = p0.cdf(edges[1:]) - p0.cdf(edges[:-1]) 

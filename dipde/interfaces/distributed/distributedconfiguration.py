@@ -33,10 +33,6 @@ class DistributedConfiguration(object):
         
     def rank(self):
         return self.synchronization_harness.rank
-        
-if __name__ == "__main__":
-    
-    d = DistributedConfiguration(0,3)
 
             
             

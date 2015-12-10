@@ -83,11 +83,7 @@ class ExternalPopulation(object):
     
     @property
     def curr_firing_rate(self):
-        
-        if hasattr(self, 'simulation') and hasattr(self.simulation, 't'):
-            return self.get_firing_rate(self.simulation.t)
-        else:
-            return None
+        return self.get_firing_rate(self.simulation.t)
     
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
@@ -149,7 +145,7 @@ class ExternalPopulation(object):
     def to_dict(self):
         
         if not hasattr(self, 'firing_rate_string'):
-            raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string')
+            raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
         
         data_dict = {'rank':self.rank,
                      'record':self.record,
