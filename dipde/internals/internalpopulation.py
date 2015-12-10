@@ -378,20 +378,20 @@ class InternalPopulation(object):
 
         data_dict = {'rank':self.rank,
                      'p0':(edges, pv), 
-                          'norm':self.norm, 
-                          'tau_m':(self.tau_m.xk.tolist(), self.tau_m.pk.tolist()),
-                          'v_min':self.v_min,
-                          'v_max':self.v_max,
-                          'dv':self.dv,
-                          'record':self.record,
-                          'initial_firing_rate':initial_firing_rate,
-                          'update_method':self.update_method,
-                          'approx_order':self.approx_order,
-                          'tol':self.tol,
-                          'metadata':self.metadata,
-                          'class':(__name__, self.__class__.__name__),
-                          'firing_rate_record':self.firing_rate_record,
-                          't_record':self.t_record}
+                      'norm':self.norm, 
+                      'tau_m':(self.tau_m.xk.tolist(), self.tau_m.pk.tolist()),
+                      'v_min':self.v_min,
+                      'v_max':self.v_max,
+                      'dv':self.dv,
+                      'record':self.record,
+                      'initial_firing_rate':initial_firing_rate,
+                      'update_method':self.update_method,
+                      'approx_order':self.approx_order,
+                      'tol':self.tol,
+                      'metadata':self.metadata,
+                      'class':(__name__, self.__class__.__name__),
+                      'firing_rate_record':self.firing_rate_record,
+                      't_record':self.t_record}
         
         return data_dict
     
@@ -406,3 +406,5 @@ class InternalPopulation(object):
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
 
+    def copy(self):
+        return InternalPopulation(**self.to_dict())

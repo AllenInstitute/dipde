@@ -82,14 +82,20 @@ class Connection(object):
     @property
     def source(self):
         if isinstance(self.source_gid_or_population, int):
-            return self.simulation.gid_dict[self.source_gid_or_population]
+            if self.simulation is None:
+                return None
+            else:
+                return self.simulation.gid_dict[self.source_gid_or_population]
         else: 
             return self.source_gid_or_population
         
     @property
     def target(self):
         if isinstance(self.target_gid_or_population, int):
-            return self.simulation.gid_dict[self.target_gid_or_population]
+            if self.simulation is None:
+                return None
+            else:
+                return self.simulation.gid_dict[self.target_gid_or_population]
         else: 
             return self.target_gid_or_population
 
@@ -224,3 +230,6 @@ class Connection(object):
             return json.dumps(data_dict, indent=indent, **kwargs)
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
+        
+    def copy(self):
+        return Connection(**self.to_dict())

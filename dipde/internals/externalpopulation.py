@@ -171,3 +171,6 @@ class ExternalPopulation(object):
             return json.dumps(data_dict, indent=indent, **kwargs)
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
+        
+    def copy(self):
+        return ExternalPopulation(**self.to_dict())

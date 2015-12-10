@@ -18,11 +18,10 @@ import time
 from dipde.internals import utilities
 import json
 import importlib
-import logging
-from dipde.internals.firingrateorganizer import FiringRateOrganizer
-from dipde.interfaces.distributed.distributedconfiguration import DistributedConfiguration
-from dipde.internals.internalpopulation import InternalPopulation
 
+from dipde.internals.firingrateorganizer import FiringRateOrganizer
+from dipde.internals.internalpopulation import InternalPopulation
+import logging
 logger = logging.getLogger(__name__)
 
 
