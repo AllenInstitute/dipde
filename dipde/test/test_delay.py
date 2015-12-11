@@ -1,7 +1,7 @@
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 
 
@@ -21,7 +21,7 @@ def test_delay_singlepop():
 #     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=((0,.001, .002),(0,0,1.)), delay_queue=[0,0,50])
     
     
-    simulation = Simulation([b1, i1], [b1_i1])
+    simulation = Network([b1, i1], [b1_i1])
     simulation.run(dt=dt, tf=tf, t0=t0)
     
     true_ans = np.array([0, 0.0, 0.0, 0.00066516669656511084, 0.025842290308637855, 0.08117342489138904])
@@ -44,7 +44,7 @@ def test_delay_doublepop():
     i1_i2 = Connection(i1, i2, 20, weights=.005, delays=2*dt)    
     
     # Create and run simulation:
-    simulation = Simulation([b1, i1, i2], [b1_i1, i1_i2])
+    simulation = Network([b1, i1, i2], [b1_i1, i1_i2])
     simulation.run(dt=dt, tf=tf, t0=t0)
     
     true_ans = np.array([0, 0.0, 0.0, 0.0, 1.9089656152757652e-13, 1.9787511418980406e-10, 9.5007650186649266e-09, 1.3334881090883857e-07, 1.0103767575651715e-06, 5.3604521936092067e-06, 2.2383604753409621e-05])
@@ -65,7 +65,7 @@ def test_delay_distribution():
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=((0,.05),(.5,.5)))
     
     # Create and run simulation:
-    simulation = Simulation([b1, i1], [b1_i1])
+    simulation = Network([b1, i1], [b1_i1])
     simulation.run(dt=dt, tf=tf, t0=t0)
     
     true_ans = np.array([0.38560647739319964, 5.229266329159536])

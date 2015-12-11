@@ -2,7 +2,7 @@ import numpy as np
 import json
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import StringIO
 
@@ -12,7 +12,7 @@ def test_restart_interal():
     b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=.001)
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
-    simulation = Simulation([b1, i1], [b1_i1])
+    simulation = Network([b1, i1], [b1_i1])
     simulation.run(dt=.001, tf=.01, t0=0)
     i1_str = i1.to_json()
     b1_str = b1.to_json()
@@ -20,13 +20,13 @@ def test_restart_interal():
     # Rehydrate and continue run:
     b2 = ExternalPopulation(**json.loads(b1_str))
     i2 = InternalPopulation(**json.loads(i1_str))
-    simulation2 = Simulation([b2, i2], [Connection(b2, i2, 1, weights=.005, delays=0.0)])
+    simulation2 = Network([b2, i2], [Connection(b2, i2, 1, weights=.005, delays=0.0)])
     simulation2.run(dt=.001, tf=.02, t0=.01)
     
     # Run straight through, for comparison:
     b3 = ExternalPopulation('100', record=True)
     i3 = InternalPopulation(v_min=0, v_max=.02, dv=.001)
-    simulation3 = Simulation([b3, i3], [Connection(b3, i3, 1, weights=.005, delays=0.0)])
+    simulation3 = Network([b3, i3], [Connection(b3, i3, 1, weights=.005, delays=0.0)])
     simulation3.run(dt=.001, tf=.02, t0=0)
 
     # Test:
@@ -56,7 +56,7 @@ def test_marshal_simulation():
     # Run copy half way, round trip, and then finish:
     simulation_2.run(dt=.001, tf=.01, t0=0)
     s_mid = simulation_2.to_json()
-    simulation_3 = Simulation(**json.loads(s_mid))
+    simulation_3 = Network(**json.loads(s_mid))
     simulation_3.run(tf=.02)
 
     # Compare:

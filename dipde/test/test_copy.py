@@ -1,6 +1,6 @@
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 from dipde.internals.utilities import compare_dicts
 
@@ -32,7 +32,7 @@ def test_simulation_copy():
     b1 = ExternalPopulation(100)
     i1 = InternalPopulation(v_min=0, v_max=.02)
     b1_i1 = Connection(b1, i1, 2, weights=.005)
-    o1 = Simulation([b1, i1], [b1_i1])
+    o1 = Network([b1, i1], [b1_i1])
     o2 = o1.copy()
     compare(o1, o2)
     

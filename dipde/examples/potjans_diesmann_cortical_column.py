@@ -16,7 +16,7 @@
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import itertools
 import scipy.stats as sps
@@ -96,7 +96,7 @@ internal_population_settings = {'v_min': -.03,
                                 'tau_m':.01,
                                 'record':True}
 
-# Simulation settings:
+# Network settings:
 t0 = 0.
 dt = .0001
 tf = .1
@@ -130,7 +130,7 @@ for source_layer, source_celltype in itertools.product([23, 4, 5, 6], ['e', 'i']
 
 # Create simulation:
 population_list = background_population_dict.values() + internal_population_dict.values()
-simulation = Simulation(population_list, connection_list, verbose=True)
+simulation = Network(population_list, connection_list, verbose=True)
 
 # Run simulation:
 simulation.run(dt=dt, tf=tf, t0=t0)

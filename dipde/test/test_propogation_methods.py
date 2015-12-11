@@ -1,7 +1,7 @@
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 
 def get_singlepop_simulation(dv=.001, update_method='exact', approx_order=None, tol=1e-8):
@@ -10,7 +10,7 @@ def get_singlepop_simulation(dv=.001, update_method='exact', approx_order=None, 
     b1 = ExternalPopulation('100')
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
-    simulation = Simulation([b1, i1], [b1_i1])
+    simulation = Network([b1, i1], [b1_i1])
 
     return simulation
 

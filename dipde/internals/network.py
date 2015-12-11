@@ -24,10 +24,10 @@ from dipde.internals.internalpopulation import InternalPopulation
 import logging
 logger = logging.getLogger(__name__)
 
-class Simulation(object):
+class Network(object):
     '''Initialize and run a dipde simulation.
     
-    The Simulation class handles the initialization of population and connection
+    The Network class handles the initialization of population and connection
     objects, and provides a convenience time stepping loop to drive a network
     simulation.  Typical usage involves the create of populations and
     connections, construction of a simulation object, and then call to
@@ -108,9 +108,9 @@ class Simulation(object):
         Parameters
         ----------
         t0 : float (default=0.)
-            Simulation start time (unit=seconds), passed to initialize call.
+            Network start time (unit=seconds), passed to initialize call.
         tf : float (default=.1)
-            Simulation end time (unit=seconds).
+            Network end time (unit=seconds).
         dt : float (default=0.001)
             Time step (unit=seconds).
         '''
@@ -204,7 +204,7 @@ class Simulation(object):
             return json.dump(data_dict, fh, indent=indent, **kwargs)
 
     def copy(self):
-        return Simulation(**self.to_dict())
+        return Network(**self.to_dict())
     
     def get_curr_firing_rate(self, gid):
         return self.firing_rate_organizer.pull(self.ti,gid)

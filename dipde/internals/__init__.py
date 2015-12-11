@@ -20,4 +20,4 @@ from connection import Connection
 from connectiondistributioncollection import ConnectionDistributionCollection
 from externalpopulation import ExternalPopulation
 from internalpopulation import InternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network

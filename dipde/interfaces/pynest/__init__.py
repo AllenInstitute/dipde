@@ -2,7 +2,7 @@ import nest
 from distutils.version import LooseVersion
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 from dipde.examples.potjans_diesmann_cortical_column import population_list,\
     connection_list
@@ -12,7 +12,7 @@ assert LooseVersion(nest.version().split()[1]) >= LooseVersion("2.6.0")
 class Kernel(object):
     
     def __init__(self, population_list=[], connection_list=[]):
-        self.simulation = Simulation(population_list, connection_list)
+        self.simulation = Network(population_list, connection_list)
     
 #     def Create("poisson_generator", number_of_neurons, params={"rate": float(firing_rate), 'start':float(start)/.001})
 # 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 #     b1 = ExternalPopulation('100', record=True)
 #     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
 #     b1_i1 = Connection(b1, i1, 1, weights=.005, delay=0.0)
-#     simulation = Simulation([b1, i1], [b1_i1], verbose=True)
+#     simulation = Network([b1, i1], [b1_i1], verbose=True)
 #     
 #     simulation.run(dt=dt, tf=tf, t0=t0)
 #     

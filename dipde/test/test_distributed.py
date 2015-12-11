@@ -1,6 +1,6 @@
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.network import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import numpy as np
 import threading
@@ -15,7 +15,7 @@ def threaded_distributed_compare(simulation_dict, run_dict):
         tf = run_dict['tf']
         number_of_processes = run_dict.get('number_of_processes', 1)
     
-        simulation = Simulation(**simulation_dict)
+        simulation = Network(**simulation_dict)
         if rank is None:
             simulation.run(dt=dt, tf=tf, t0=t0)
         else:
@@ -60,7 +60,7 @@ def get_multipop_model():
     b1_i1 = Connection(b1, i1, 1, weights=.005)
     i1_i2 = Connection(i1, i2, 20, weights=.005, delays=.001)
     b2_i2 = Connection(b2, i2, 2, weights=.005, delays=.002)
-    simulation = Simulation([b1, b2, i1, i2], [b1_i1, i1_i2, b2_i2])
+    simulation = Network([b1, b2, i1, i2], [b1_i1, i1_i2, b2_i2])
     simulation_dict = simulation.to_dict()
     
     return simulation_dict
