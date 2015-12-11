@@ -113,6 +113,7 @@ class InternalPopulation(object):
         assert len(self.firing_rate_record) == len(self.t_record)
 
         # Additional metadata:
+        util.check_metadata(metadata)
         self.metadata = metadata
         
         # Defined in initialization:

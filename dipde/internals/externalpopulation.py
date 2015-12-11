@@ -67,6 +67,7 @@ class ExternalPopulation(object):
         assert len(self.firing_rate_record) == len(self.t_record)
 
         self.record = record
+        util.check_metadata(metadata)
         self.metadata = metadata
         
         for key in kwargs.keys():

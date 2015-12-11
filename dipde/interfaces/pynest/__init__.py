@@ -2,7 +2,7 @@ import nest
 from distutils.version import LooseVersion
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Simulation
 from dipde.internals.connection import Connection as Connection
 from dipde.examples.potjans_diesmann_cortical_column import population_list,\
     connection_list

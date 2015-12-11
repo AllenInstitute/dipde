@@ -2,8 +2,6 @@ import zmq
 import json
 import logging
 
-
-# Initializations:
 context = zmq.Context()
 
 class SynchronizationHarness(object):

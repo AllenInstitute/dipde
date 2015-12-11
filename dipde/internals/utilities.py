@@ -19,6 +19,7 @@ import scipy.stats as sps
 import scipy.integrate as spi
 import bisect
 import warnings
+import json
 
 def fraction_overlap(a1, a2, b1, b2):
     '''Calculate the fractional overlap between range (a1,a2) and (b1,b2).
@@ -290,4 +291,14 @@ class NullObject(object):
         
     def __getattr__(self, *args, **kwargs): return self.null_fcn
 
+def compare_dicts(o1_dict, o2_dict):
+    
+    for key, o1_value in o1_dict.items():
+        assert o2_dict[key] == o1_value
+        
+def check_metadata(metadata):
+    try:
+        compare_dicts(metadata, json.loads(json.dumps(metadata)))
+    except:
+        raise RuntimeError('Metadata cannot be marshalled')
     

@@ -1,7 +1,7 @@
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Simulation
 from dipde.internals.connection import Connection as Connection
 
 def get_singlepop_simulation(dv=.001, update_method='exact', approx_order=None, tol=1e-8):

@@ -69,6 +69,7 @@ class Connection(object):
         self.delay_vals, self.delay_probs = self.delay_distribution.xk, self.delay_distribution.pk
         self.delay_queue_initial_condition = delay_queue
 
+        util.check_metadata(metadata)
         self.metadata = metadata
 
         # Defined at runtime:
@@ -214,6 +215,7 @@ class Connection(object):
                      'nsyn':self.nsyn,
                      'weights':(self.weights.tolist(), self.probs.tolist()),
                      'delays':(self.delay_vals.tolist(), self.delay_probs.tolist()),
+                     'metadata':self.metadata,
                      'class':(__name__, self.__class__.__name__)
                     }
         

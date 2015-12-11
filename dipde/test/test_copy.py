@@ -1,14 +1,12 @@
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Simulation
 from dipde.internals.connection import Connection as Connection
+from dipde.internals.utilities import compare_dicts
 
 def compare(o1, o2):
-    o1_dict = o1.to_dict()
-    o2_dict = o2.to_dict()
     
-    for key, o1_value in o1_dict.items():
-        assert o2_dict[key] == o1_value
+    compare_dicts(o1.to_dict(), o2.to_dict())
 
 def test_internalpopulation_copy():
     i1 = InternalPopulation(v_min=0, v_max=.02)

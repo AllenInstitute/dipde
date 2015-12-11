@@ -85,7 +85,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from dipde.internals.internalpopulation import InternalPopulation
     from dipde.internals.externalpopulation import ExternalPopulation
-    from dipde.internals.simulation import Simulation
+    from dipde.internals.network import Simulation
     from dipde.internals.connection import Connection as Connection
     
     def get_simulation(dv=.001, verbose=False, update_method='exact', approx_order=None, tol=1e-8):

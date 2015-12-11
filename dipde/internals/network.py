@@ -24,8 +24,6 @@ from dipde.internals.internalpopulation import InternalPopulation
 import logging
 logger = logging.getLogger(__name__)
 
-
-
 class Simulation(object):
     '''Initialize and run a dipde simulation.
     

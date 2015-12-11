@@ -1,6 +1,6 @@
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Simulation
 from dipde.internals.connection import Connection as Connection
 import numpy as np
 import threading

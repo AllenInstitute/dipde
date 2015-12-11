@@ -1,5 +1,5 @@
 import re
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Simulation
 import cProfile
 import pstats
 import StringIO
