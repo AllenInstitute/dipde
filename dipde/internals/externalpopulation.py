@@ -106,7 +106,7 @@ class ExternalPopulation(object):
         '''
         
         if self.record == True: self.update_firing_rate_recorder()
-        logger.debug('firing rate %s: %3.2f' % (self.metadata.get('name',''), self.curr_firing_rate))
+        logger.debug('GID(%s) Firing rate: %3.2f' % (self.gid, self.curr_firing_rate))
     
     def initialize_firing_rate_recorder(self):
         '''Initialize recorder at the beginning of a simulation.

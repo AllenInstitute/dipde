@@ -14,9 +14,8 @@ def test_profile_singlepop():
     
     run_dict = {'dt':.0001, 't0':0, 'tf':.2}
     simulation = get_simulation(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    total_time_list = []
-    profile_result = profile_simulation(simulation.to_dict(), run_dict)
-    run_time = extract_value(profile_result, 'cumtime', 'simulation.py', 'run')
+    profile_result = profile_simulation(simulation, run_dict)
+    run_time = extract_value(profile_result, 'simulation.py', 'run')
 
     
     

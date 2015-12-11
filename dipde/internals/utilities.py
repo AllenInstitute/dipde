@@ -242,7 +242,7 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     
     while curr_err > tol:
         counter += 1
-        curr_del = J.dot(curr_del)/counter
+        curr_del = np.dot(J,curr_del)/counter
         pv_new += curr_del
         curr_err = spla.norm(curr_del, norm)
 
@@ -264,7 +264,7 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
     pv_new = pv
     for curr_order in range(approx_order):
         coeff *= curr_order+1
-        curr_del = J.dot(curr_del*dt)
+        curr_del = np.dot(J,curr_del)*dt
         pv_new += (1./coeff)*curr_del
     
     try:
