@@ -115,7 +115,8 @@ class Connection(object):
         '''
         
         self.initialize_delay_queue()
-        self.initialize_connection_distribution()  
+        if isinstance(self.target, InternalPopulation):
+            self.initialize_connection_distribution()  
 
     def initialize_connection_distribution(self):
         """Create connection distribution, if necessary.
@@ -168,7 +169,8 @@ class Connection(object):
                     self.delay_queue[i] = self.simulation.get_firing_rate(self.source.gid, self.simulation.t - self.simulation.dt*i)
                 self.delay_queue = self.delay_queue[::-1]
             else:
-                raise Exception('Unrecognized source type: "%s"' % self.source.type)    # pragma: no cover
+                self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
+#                 raise Exception('Unrecognized source type: "%s"' % type(self.source))    # pragma: no cover
     
         else:
             self.delay_queue = self.delay_queue_initial_condition
@@ -178,8 +180,8 @@ class Connection(object):
 
     def update(self):
         """Update Connection,  called once per timestep."""
-
-        self.delay_queue[0] = self.simulation.get_curr_firing_rate(self.source.gid)
+        
+        self.delay_queue[0] = self.simulation.get_curr_firing_rate(self.simulation.gid_dict[self.source])
         self.delay_queue.rotate(-1)
 
     @property

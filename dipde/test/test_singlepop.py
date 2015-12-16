@@ -1,7 +1,9 @@
 import numpy as np 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
+from dipde.internals.simulationconfiguration import SimulationConfiguration
 from dipde.internals.network import Network
+from dipde.internals.simulation import Simulation
 from dipde.internals.connection import Connection as Connection
 import scipy.stats as sps
 from dipde.interfaces.zmq import RequestFiringRate, ReplyServerThread
@@ -69,8 +71,10 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
     b1 = ExternalPopulation(bgfr)
     i1 = InternalPopulation(v_min=v_min, tau_m=tau_m, v_max=v_max, dv=dv, update_method='exact', p0=p0)
     b1_i1 = Connection(b1, i1, 1, weights=weights)
-    simulation = Network([b1, i1], [b1_i1])
-    simulation.run(dt=dt, tf=tf, t0=t0)
+    network = Network([b1, i1], [b1_i1])
+    simulation_configuration = SimulationConfiguration(dt, tf, t0=t0)
+    simulation = Simulation(network=network, simulation_configuration=simulation_configuration)
+    simulation.run()
 
     i1.plot_probability_distribution()
     i1.plot()
@@ -82,8 +86,8 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
     
 if __name__ == "__main__":          # pragma: no cover 
     test_basic()                    # pragma: no cover
-    test_tau_normal()               # pragma: no cover
-    test_p0()                       # pragma: no cover
+#     test_tau_normal()               # pragma: no cover
+#     test_p0()                       # pragma: no cover
 #     test_weight()                   # pragma: no cover
 #     test_drive()                    # pragma: no cover
 #     test_zmq_drive_bind_server()    # pragma: no cover

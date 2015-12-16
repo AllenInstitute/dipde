@@ -46,14 +46,10 @@ class Network(object):
     def __init__(self, 
                  population_list=[], 
                  connection_list=[],
-                 dt=None,
-                 t0=None,
                  metadata={},
                  run_callback=lambda s: None,
                  update_callback=lambda s: None):
         
-        self.dt = dt
-        self.t0 = t0
         self.update_callback = update_callback
         self.run_callback = run_callback
         
@@ -98,7 +94,7 @@ class Network(object):
         return self.distributed_configuration.rank()
 
         
-    def run(self, t0=None, dt=None, tf=.1, distributed_configuration=utilities.NullObject()):
+    def run(self, dt, tf, t0=0., distributed_configuration=utilities.NullObject()):
         '''Main iteration control loop for simulation
         
         The time step selection must be approximately of the same order as dv
@@ -118,8 +114,8 @@ class Network(object):
         self.distributed_configuration = distributed_configuration
         self.firing_rate_organizer = FiringRateOrganizer(self.distributed_configuration)
         
-        # Override __init__ settings if provided:
-        if not dt is None: self.dt = dt
+        self.dt = dt
+        self.t0 = t0
         
         # Initialize:
         start_time = time.time()
@@ -185,9 +181,7 @@ class Network(object):
     def to_dict(self):
 
         data_dict = {'population_list':[p.to_dict() for p in self.population_list],
-                     'connection_list':[c.to_dict() for c in self.connection_list],
-                     'dt':getattr(self, 'dt',None),
-                     't0':getattr(self, 't',None)}
+                     'connection_list':[c.to_dict() for c in self.connection_list]}
         
         return data_dict
         

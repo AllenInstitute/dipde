@@ -57,7 +57,7 @@ def test_marshal_simulation():
     simulation_2.run(dt=.001, tf=.01, t0=0)
     s_mid = simulation_2.to_json()
     simulation_3 = Network(**json.loads(s_mid))
-    simulation_3.run(tf=.02)
+    simulation_3.run(dt=.001, tf=.02, t0=.01)
 
     # Compare:
     y1 = simulation.population_list[1].firing_rate_record
@@ -70,6 +70,6 @@ def test_marshal_simulation():
     
     
 if __name__ == "__main__":                         # pragma: no cover
-    test_restart_interal()                         # pragma: no cover
+#     test_restart_interal()                         # pragma: no cover
+#     test_marshal_connection()                 # pragma: no cover
     test_marshal_simulation()                         # pragma: no cover
-    test_marshal_connection()                 # pragma: no cover
