@@ -47,7 +47,7 @@ class Simulation(object):
             if self.network.t == self.tf:
                 return True
             else:
-                raise Exception('Initialized network but didnt run. This should not be possible.')
+                raise Exception('Initialized network but didnt run. This should not be possible.') # pragma: no cover
     
     
     def to_dict(self):
