@@ -14,6 +14,7 @@
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
 import sympy.parsing.sympy_parser as symp
+from dipde.interfaces.pandas import to_df
 from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
 import types
@@ -71,7 +72,7 @@ class ExternalPopulation(object):
         self.metadata = metadata
         
         for key in kwargs.keys():
-            assert key in ['class']
+            assert key in ['class', 'module']
         
     def firing_rate(self, t):
         '''Firing rate of the population at time t (Hz).''' 
@@ -152,7 +153,8 @@ class ExternalPopulation(object):
                      'record':self.record,
                      'metadata':self.metadata,
                      'firing_rate':self.firing_rate_string,
-                     'class':(__name__, self.__class__.__name__)
+                     'class':self.__class__.__name__,
+                     'module':__name__
                       }
         
         return data_dict
@@ -171,3 +173,6 @@ class ExternalPopulation(object):
         
     def copy(self):
         return ExternalPopulation(**self.to_dict())
+    
+    def to_df(self):
+        return to_df(self)

@@ -18,6 +18,7 @@ import bisect
 import numpy as np
 import scipy.stats as sps
 import json
+from dipde.interfaces.pandas import to_df
 from dipde.internals import utilities as util
 import logging
 logger = logging.getLogger(__name__)
@@ -72,7 +73,7 @@ class InternalPopulation(object):
     """
     
     def __init__(self, rank=0,
-                       tau_m=.02,
+                       tau_m={'distribution':'delta', 'weight':0.02},
                        v_min=-.1,
                        v_max=.02,
                        dv=.0001,
@@ -82,7 +83,7 @@ class InternalPopulation(object):
                        approx_order=None,
                        tol=1e-12,
                        norm=np.inf,
-                       p0=([0.],[1.]),
+                       p0={'distribution':'delta', 'weight':0.},
                        metadata={},
                        firing_rate_record=[],
                        t_record=[],
@@ -92,11 +93,8 @@ class InternalPopulation(object):
         
         # Store away inputs:
         self.rank = 0
-        self.tau_m = util.discretize_if_needed(tau_m)
-        self.p0 = util.discretize_if_needed(p0)
-        if np.sum(self.tau_m.xk <= 0) > 0:
-            raise Exception('Negative tau_m values detected: %s' % self.tau_m.xk) # pragma: no cover 
-        
+        self.tau_m = tau_m
+        self.p0 = p0 
         self.v_min = v_min
         self.v_max = v_max
         self.dv = dv
@@ -122,7 +120,7 @@ class InternalPopulation(object):
         self.leak_flux_matrix = None
         
         for key in kwargs.keys():
-            assert key in ['class']
+            assert key in ['class', 'module']
         
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
@@ -177,12 +175,16 @@ class InternalPopulation(object):
         '''
 
         # Voltage edges and leak matrix construction
+        self.tau_m = util.discretize_if_needed(self.tau_m)
+        if np.sum(self.tau_m.xk <= 0) > 0:
+            raise Exception('Negative tau_m values detected: %s' % self.tau_m.xk) # pragma: no cover
         self.edges = util.get_v_edges(self.v_min, self.v_max, self.dv)
         self.leak_flux_matrix = util.leak_matrix(self.edges, self.tau_m)
     
     def initialize_probability(self):
         '''Initialize self.pv to delta-distribution at v=0.'''
 
+        self.p0 = util.discretize_if_needed(self.p0)
         self.pv = util.get_pv_from_p0(self.p0, self.edges)
         util.assert_probability_mass_conserved(self.pv, 1e-15)
         
@@ -357,39 +359,39 @@ class InternalPopulation(object):
 
     def to_dict(self):
         
-        # Only needed if population not yet initialized:
+        # Only needed if population not yet initialized:        
         if self.edges is None:
-            edges = util.get_v_edges(self.v_min, self.v_max, self.dv).tolist()
+            p0 = self.p0
         else:
-            edges = self.edges.tolist()
-            
-        if self.pv is None:
-            pv = util.get_pv_from_p0(self.p0, edges).tolist()
-        else:
-            pv = self.pv.tolist()
+            p0 = (self.edges.tolist(), self.pv.tolist())
             
         if len(self.firing_rate_record) is 0:
             initial_firing_rate = 0
         else:
             initial_firing_rate = self.firing_rate_record[-1] 
         
+        try:
+            tau_m = self.tau_m.xk.tolist(), self.tau_m.pk.tolist()
+        except:
+            tau_m = self.tau_m
 
         data_dict = {'rank':self.rank,
-                     'p0':(edges, pv), 
-                      'norm':self.norm, 
-                      'tau_m':(self.tau_m.xk.tolist(), self.tau_m.pk.tolist()),
-                      'v_min':self.v_min,
-                      'v_max':self.v_max,
-                      'dv':self.dv,
-                      'record':self.record,
-                      'initial_firing_rate':initial_firing_rate,
-                      'update_method':self.update_method,
-                      'approx_order':self.approx_order,
-                      'tol':self.tol,
-                      'metadata':self.metadata,
-                      'class':(__name__, self.__class__.__name__),
-                      'firing_rate_record':self.firing_rate_record,
-                      't_record':self.t_record}
+                     'p0':p0, 
+                     'norm':self.norm, 
+                     'tau_m':tau_m,
+                     'v_min':self.v_min,
+                     'v_max':self.v_max,
+                     'dv':self.dv,
+                     'record':self.record,
+                     'initial_firing_rate':initial_firing_rate,
+                     'update_method':self.update_method,
+                     'approx_order':self.approx_order,
+                     'tol':self.tol,
+                     'metadata':self.metadata,
+                     'module':__name__, 
+                     'class':self.__class__.__name__,
+                     'firing_rate_record':self.firing_rate_record,
+                     't_record':self.t_record}
         
         return data_dict
     
@@ -406,3 +408,7 @@ class InternalPopulation(object):
 
     def copy(self):
         return InternalPopulation(**self.to_dict())
+
+    def to_df(self):
+        return to_df(self)
+        

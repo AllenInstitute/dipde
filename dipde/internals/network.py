@@ -18,9 +18,10 @@ import time
 from dipde.internals import utilities
 import json
 import importlib
-
+import pandas as pd
 from dipde.internals.firingrateorganizer import FiringRateOrganizer
 from dipde.internals.internalpopulation import InternalPopulation
+from dipde.interfaces.pandas import reorder_df_columns
 import logging
 logger = logging.getLogger(__name__)
 
@@ -48,15 +49,17 @@ class Network(object):
                  connection_list=[],
                  metadata={},
                  run_callback=lambda s: None,
-                 update_callback=lambda s: None):
+                 update_callback=lambda s: None,
+                 **kwargs):
         
         self.update_callback = update_callback
         self.run_callback = run_callback
         
         self.population_list = []
         for p in population_list:
+            print p
             if isinstance(p, dict):
-                curr_module, curr_class = p['class']
+                curr_module, curr_class = p['module'], p['class']
                 curr_instance = getattr(importlib.import_module(curr_module), curr_class)(**p)
                 self.population_list.append(curr_instance)
             else: 
@@ -154,11 +157,7 @@ class Network(object):
         self.run_callback(self)
         
     @property
-    def t(self):
-        if self.t0 is None:
-            return self.ti*self.dt
-        else:
-            return self.t0+self.ti*self.dt
+    def t(self): return self.t0+self.ti*self.dt
 
     def update(self):
 
@@ -181,7 +180,9 @@ class Network(object):
     def to_dict(self):
 
         data_dict = {'population_list':[p.to_dict() for p in self.population_list],
-                     'connection_list':[c.to_dict() for c in self.connection_list]}
+                     'connection_list':[c.to_dict() for c in self.connection_list],
+                     'class':self.__class__.__name__,
+                     'module':__name__}
         
         return data_dict
         
@@ -205,6 +206,16 @@ class Network(object):
         
     def get_firing_rate(self, gid, t):
         return self.population_list[gid].firing_rate(t)
+    
+    def to_df(self):
+        pd.options.display.max_columns = 999
+        df_list = [p.to_df() for p in self.population_list]
+        return reorder_df_columns(pd.concat(df_list), ['class', 'module'])
+
+
+
+
+        
         
          
 
