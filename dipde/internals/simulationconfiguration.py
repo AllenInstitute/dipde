@@ -13,7 +13,9 @@ class SimulationConfiguration(object):
         
         return {'dt':self.dt,
                 'tf':self.tf,
-                't0':self.t0}
+                't0':self.t0,
+                'class':self.__class__.__name__,
+                 'module':__name__}
         
     def to_json(self, fh=None, **kwargs):
         '''Save the contents of the InternalPopultion to json'''

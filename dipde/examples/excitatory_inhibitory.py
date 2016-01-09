@@ -20,16 +20,16 @@ from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import scipy.stats as sps
 
-def get_simulation(dv=.001, verbose=False, update_method='approx', approx_order=1, tol=1e-14):
+def get_network(dv=.001, verbose=False, update_method='approx', approx_order=1, tol=1e-14):
 
-    # Create simulation:
+    # Create network:
     b1 = ExternalPopulation('100')
     i1 = InternalPopulation(v_min=-.02, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=([.005, .01],[.5,.5]))
     b1_i1_2 = Connection(b1, i1, 1, weights=-.005, delays=sps.uniform(0,.01))
-    simulation = Network([b1, i1], [b1_i1, b1_i1_2])
+    network = Network([b1, i1], [b1_i1, b1_i1_2])
     
-    return simulation
+    return network
 
 
 def example(show=True, save=False):
@@ -45,11 +45,11 @@ def example(show=True, save=False):
     tol = 1e-14
     
     # Run simulation:
-    simulation = get_simulation(dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
-    simulation.run(dt=dt, tf=tf, t0=t0)
+    network = get_network(dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
+    network.run(dt=dt, tf=tf, t0=t0)
     
     # Visualize:
-    i1 = simulation.population_list[1]
+    i1 = network.population_list[1]
     plt.figure(figsize=(3,3))
     plt.plot(i1.t_record, i1.firing_rate_record)
     plt.xlim([0,tf])

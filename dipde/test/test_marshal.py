@@ -3,6 +3,8 @@ import json
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
+from dipde.internals.simulation import Simulation
+from dipde.internals.simulationconfiguration import SimulationConfiguration
 from dipde.internals.connection import Connection as Connection
 import StringIO
 
@@ -43,33 +45,62 @@ def test_marshal_connection():
     
 def test_marshal_simulation():
     
-    from dipde.examples.excitatory_inhibitory import get_simulation
+    from dipde.examples.excitatory_inhibitory import get_network
     
+    simulation_configuration_full = SimulationConfiguration(dt=.001, tf=.02, t0=0)
+    simulation_configuration_p1 = SimulationConfiguration(dt=.001, tf=.01, t0=0)
+    simulation_configuration_p2 = SimulationConfiguration(dt=.001, tf=.01, t0=0)
     
-    # Create simulation:
-    simulation = get_simulation()
-    simulation_2 = simulation.copy()
+    # Run full simulation:
+    simulation_full = Simulation(network=get_network(), simulation_configuration=simulation_configuration_full)
+    assert simulation_full.completed == False
+    simulation_full.run()
+    assert simulation_full.completed == True
     
-    # Run original simulation: 
-    simulation.run(dt=.001, tf=.02, t0=0)
+    # Run simulation, part 1: 
+    simulation_p1 = Simulation(network=get_network(), simulation_configuration=simulation_configuration_p1)
+    simulation_p1.run()
+    s_midway = simulation_p1.to_json()
+
+    # Run simulation, part 2:
+    simulation_p2 = Simulation(**json.loads(s_midway))
+    simulation_p2.simulation_configuration = simulation_configuration_p2
+    simulation_p2.run()
 
     # Run copy half way, round trip, and then finish:
-    simulation_2.run(dt=.001, tf=.01, t0=0)
-    s_mid = simulation_2.to_json()
-    simulation_3 = Network(**json.loads(s_mid))
-    simulation_3.run(dt=.001, tf=.02, t0=.01)
 
     # Compare:
-    y1 = simulation.population_list[1].firing_rate_record
-    y2 = simulation_3.population_list[1].firing_rate_record
+    y1 = simulation_full.network.population_list[1].firing_rate_record
+    y2 = simulation_p2.network.population_list[1].firing_rate_record
+    
     assert len(y1) == len(y2)
     for y1i, y2i in zip(y1, y2):
         np.testing.assert_almost_equal(y1i, y2i, 12)
         
-    simulation.to_json(StringIO.StringIO())
+    simulation_full.to_json(StringIO.StringIO())
     
+
+def test_json_network():
     
+    from dipde.examples.excitatory_inhibitory import get_network
+    
+    network = get_network()
+    network.to_json()
+    network.to_json(StringIO.StringIO())
+
+def test_simulation_configuration():
+    sc = SimulationConfiguration(dt=.001, tf=.01, t0=0)
+    sc.to_json()
+    sc.to_json(StringIO.StringIO())
+    
+    s = Simulation(simulation_configuration=sc)
+    assert s.t0 == sc.t0
+    assert s.tf == sc.tf
+    assert s.dt == sc.dt
+
 if __name__ == "__main__":                         # pragma: no cover
-#     test_restart_interal()                         # pragma: no cover
-#     test_marshal_connection()                 # pragma: no cover
+    test_restart_interal()                         # pragma: no cover
+    test_marshal_connection()                 # pragma: no cover
     test_marshal_simulation()                         # pragma: no cover
+    test_json_network()                   # pragma: no cover
+    test_simulation_configuration()                   # pragma: no cover

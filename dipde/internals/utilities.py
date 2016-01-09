@@ -299,6 +299,6 @@ def compare_dicts(o1_dict, o2_dict):
 def check_metadata(metadata):
     try:
         compare_dicts(metadata, json.loads(json.dumps(metadata)))
-    except:
-        raise RuntimeError('Metadata cannot be marshalled')
+    except: # pragma: no cover
+        raise RuntimeError('Metadata cannot be marshalled') # pragma: no cover
     
