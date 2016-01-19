@@ -57,7 +57,6 @@ class Network(object):
         
         self.population_list = []
         for p in population_list:
-            print p
             if isinstance(p, dict):
                 curr_module, curr_class = p['module'], p['class']
                 curr_instance = getattr(importlib.import_module(curr_module), curr_class)(**p)

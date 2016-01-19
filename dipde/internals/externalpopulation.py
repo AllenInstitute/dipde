@@ -176,3 +176,25 @@ class ExternalPopulation(object):
     
     def to_df(self):
         return to_df(self)
+    
+    def plot(self, ax=None, **kwargs):
+        '''Convenience method to plot firing rate history.
+        
+        Parameters
+        ----------
+        ax : None or matplotlib.pyplot.axes object (default=None)
+            Axes object to plot distribution on.  If None specified, a figure and axes object will be created.
+        
+        '''
+        
+        import matplotlib.pyplot as plt
+        
+        if ax == None:
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+        
+        if self.firing_rate_record is None or self.t_record is None:
+            raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)  # pragma: no cover
+        ax.plot(self.t_record, self.firing_rate_record, **kwargs)
+
+        return ax
