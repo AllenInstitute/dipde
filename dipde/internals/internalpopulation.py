@@ -405,6 +405,11 @@ class InternalPopulation(object):
             return json.dumps(data_dict, indent=indent, **kwargs)
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
+        
+    def parameter_dict(self):
+        return {'reversal_potential':0.
+                }
+        
 
     def copy(self):
         return InternalPopulation(**self.to_dict())
