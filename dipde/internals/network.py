@@ -93,7 +93,7 @@ class Network(object):
     
     @property
     def rank(self):
-        return self.distributed_configuration.rank()
+        return self.distributed_configuration.rank
 
         
     def run(self, dt, tf, t0=0., distributed_configuration=utilities.NullObject()):
