@@ -1,9 +1,10 @@
 
 class FiringRateOrganizer(object):
     
-    def __init__(self, distributed_configuration):
+    def __init__(self, synchronization_harness):
         
-        self.distributed_configuration = distributed_configuration
+        self.synchronization_harness = synchronization_harness
+        self.synchronization_harness.firing_rate_organizer = self
         self.firing_rate_dict_internal = {}
         
     def push(self, ti, gid, firing_rate):
@@ -12,7 +13,6 @@ class FiringRateOrganizer(object):
     def pull(self, ti, gid):
         return self.firing_rate_dict_internal[ti][gid]
 
-        
     def drop(self, ti):
         del self.firing_rate_dict_internal[ti]
         

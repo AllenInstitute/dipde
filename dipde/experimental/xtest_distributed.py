@@ -4,7 +4,7 @@ from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import numpy as np
 import threading
-from dipde.interfaces.distributed.distributedconfiguration import DistributedConfiguration
+from dipde.interfaces.distributed.synchronizationharness import SynchronizationHarness
 
 def threaded_distributed_compare(simulation_dict, run_dict):
 
@@ -19,7 +19,14 @@ def threaded_distributed_compare(simulation_dict, run_dict):
         if rank is None:
             simulation.run(dt=dt, tf=tf, t0=t0)
         else:
-            simulation.run(dt=dt, tf=tf, t0=t0, distributed_configuration=DistributedConfiguration(rank, number_of_processes=number_of_processes))
+            
+            address_config_dict = {}
+            rank_address_function = lambda rank:"ipc://%s" % (5559+rank)
+            for ii in range(number_of_processes):
+                address_config_dict[ii] = rank_address_function(ii)
+
+            
+            simulation.run(dt=dt, tf=tf, t0=t0, synchronization_harness=SynchronizationHarness(rank, address_config_dict, number_of_processes))
         
         result_dict[rank] = {}
         for p in simulation.population_list:
@@ -88,5 +95,5 @@ def test_multipop_model_4():
     threaded_distributed_compare(simulation_dict, run_dict)
 
 if __name__ == "__main__":    # pragma: no cover
-    test_multipop_model_2()   # pragma: no cover
+#     test_multipop_model_2()   # pragma: no cover
     test_multipop_model_4()   # pragma: no cover

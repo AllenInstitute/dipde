@@ -231,6 +231,10 @@ def exact_update_method(J, pv, dt=.0001):
     assert_probability_mass_conserved(pv)
     return pv
 
+def dot(A,b):
+    return np.dot(A,b)
+#     return np.sum(A*b,axis=1)
+
 def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     'Approximate the effect of a matrix exponential, with residual smaller than tol.'
     
@@ -243,7 +247,7 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     
     while curr_err > tol:
         counter += 1
-        curr_del = np.dot(J,curr_del)/counter
+        curr_del = dot(J,curr_del)/counter
         pv_new += curr_del
         curr_err = spla.norm(curr_del, norm)
 
@@ -283,9 +287,12 @@ def get_pv_from_p0(p0, edges):
     
     return pv 
 
-class NullObject(object):
+class DefaultSynchronizationHarness(object):
     
-    def __init__(self, ): pass
+    def __init__(self, ):
+        self.rank = 0
+    
+    def gid_to_rank(self, gid): return 0
         
     def null_fcn(self, *args, **kwargs): pass
         
