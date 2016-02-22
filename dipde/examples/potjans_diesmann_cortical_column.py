@@ -63,25 +63,25 @@ connection_probabilities = {((23,'e'),(23,'e')):.101,   ((23,'e'),(23,'i')):.135
                             ((6,'e'),(23,'e')):.008,    ((6,'e'),(23,'i')):.004,   ((6,'e'),(4,'e')):.045,    ((6,'e'),(4,'i')):.106,    ((6,'e'),(5,'e')):.020,    ((6,'e'),(5,'i')):.009,    ((6,'e'),(6,'e')):.040,    ((6,'e'),(6,'i')):.066,
                             ((6,'i'),(23,'e')):0,       ((6,'i'),(23,'i')):0,      ((6,'i'),(4,'e')):0,       ((6,'i'),(4,'i')):0,       ((6,'i'),(5,'e')):0,       ((6,'i'),(5,'i')):0,       ((6,'i'),(6,'e')):.225,    ((6,'i'),(6,'i')):.144}
 
-conn_weights = {
-    'e': truncated_gaussian(.175*1e-3, .175*1e-3/10, 0, np.inf),
-    'i': truncated_gaussian(-.7*1e-3, .7*1e-3/10, -np.inf, 0)
-}
-
 # conn_weights = {
-#     'e': .175*1e-3,
-#     'i': -.7*1e-3
+#     'e': truncated_gaussian(.175*1e-3, .175*1e-3/10, 0, np.inf),
+#     'i': truncated_gaussian(-.7*1e-3, .7*1e-3/10, -np.inf, 0)
 # }
 
-internal_delays = {
-    'e': truncated_gaussian(1.5*1e-3, .75*1e-3, 0, np.inf),
-    'i': truncated_gaussian(.8*1e-3, .4*1e-3, 0, np.inf)
+conn_weights = {
+    'e': .175*1e-3,
+    'i': -.7*1e-3
 }
 
 # internal_delays = {
-#     'e': 0.,
-#     'i': 0.
+#     'e': truncated_gaussian(1.5*1e-3, .75*1e-3, 0, np.inf),
+#     'i': truncated_gaussian(.8*1e-3, .4*1e-3, 0, np.inf)
 # }
+
+internal_delays = {
+    'e': 0.,
+    'i': 0.
+}
 
 external_delays = {
     'e': .005,
