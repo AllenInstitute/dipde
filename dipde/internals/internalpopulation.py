@@ -343,9 +343,7 @@ class InternalPopulation(object):
         except:
             return self.firing_rate_record[bisect.bisect_left(self.t_record,t)]
 
-        
-    def to_json(self, fh=None, **kwargs):
-        '''Save the contents of the InternalPopultion to json'''
+    def to_dict(self):
         
         data_dict = {'p0':(self.edges.tolist(), self.pv.tolist()), 
                           'norm':self.norm, 
@@ -359,6 +357,13 @@ class InternalPopulation(object):
                           'approx_order':self.approx_order,
                           'tol':self.tol,
                           'metadata':self.metadata}
+        
+        return data_dict
+    
+    def to_json(self, fh=None, **kwargs):
+        '''Save the contents of the InternalPopultion to json'''
+        
+        data_dict = self.to_dict()
         
         if fh is None:
             return json.dumps(data_dict, **kwargs)
