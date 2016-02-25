@@ -14,3 +14,6 @@
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.1.0'
+
+from internals.internalpopulation import InternalPopulation
+from internals.externalpopulation import ExternalPopulation
