@@ -190,6 +190,8 @@ def discretize_if_needed(curr_input):
             vals, probs = np.array([curr_input['weight']]), np.array([1.])
         else:
             raise NotImplementedError # pragma: no cover
+    elif isinstance(curr_input,str):
+        return discretize_if_needed(json.loads(curr_input))
         
     else:
         

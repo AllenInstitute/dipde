@@ -273,8 +273,12 @@ class InternalPopulation(object):
         '''Update curr_firing_rate attribute based on the total flux of probability mass across threshold.'''
         
         # Compute flux:
-        flux_vector = reduce(np.add, [key.threshold_flux_vector * val for key, val in self.total_input_dict.items()])
-        self.curr_firing_rate = np.dot(flux_vector, self.pv) 
+        reduce_list = [key.threshold_flux_vector * val for key, val in self.total_input_dict.items()]
+        if len(reduce_list) > 0:
+            flux_vector = reduce(np.add, reduce_list)
+            self.curr_firing_rate = np.dot(flux_vector, self.pv)
+        else:
+            self.curr_firing_rate = 0.
         
     def update_firing_rate_recorder(self):
         '''Record current time and firing rate, if record==True.
