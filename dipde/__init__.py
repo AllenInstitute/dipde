@@ -17,3 +17,9 @@ __version__ = '0.2.0'
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
+
+from internals.internalpopulation import InternalPopulation
+from internals.externalpopulation import ExternalPopulation
+from internals.network import Network
+from internals.simulation import Simulation
+from internals.simulationconfiguration import SimulationConfiguration
