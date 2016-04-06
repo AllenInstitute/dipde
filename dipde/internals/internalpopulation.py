@@ -231,19 +231,19 @@ class InternalPopulation(object):
         
         J = self.get_total_flux_matrix()
         
-        import scipy.linalg as spla
-        import matplotlib.pyplot as plt
-        
-        if self.simulation.t > .09:
-        
-            for key, val in self.total_input_dict.items():
-                print key, val
-        
-            evs = spla.eigvals(J*self.simulation.dt)
-            evs_re = np.real(evs)
-            evs_im = np.imag(evs)
-            plt.plot(evs_re, evs_im, '.')
-            plt.show()
+#         import scipy.linalg as spla
+#         import matplotlib.pyplot as plt
+#         
+#         if self.simulation.t > .09:
+#         
+#             for key, val in self.total_input_dict.items():
+#                 print key, val
+#         
+#             evs = spla.eigvals(J*self.simulation.dt)
+#             evs_re = np.real(evs)
+#             evs_im = np.imag(evs)
+#             plt.plot(evs_re, evs_im, '.')
+#             plt.show()
         
         if self.update_method == 'exact':
             self.pv = util.exact_update_method(J, self.pv, dt=self.simulation.dt)
