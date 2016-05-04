@@ -1,12 +1,19 @@
+import json
+import os
+# Set up number of threads for fair comparison:
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+import copy
 import logging
+import argparse
 logging.disable(logging.CRITICAL)
-import time
+from dipde.interfaces.mpi.synchronizationharness import MPISynchronizationHarness
+from dipde.profiling import time_network
 
 # Example call to run:
 # mpiexec -n 1 python benchmark.py --benchmark=singlepop --scale=4
 
 def get_singlepop_benchmark_network(scale=2):
-
+    
     from dipde.internals.internalpopulation import InternalPopulation
     from dipde.internals.externalpopulation import ExternalPopulation
     from dipde.internals.network import Network
@@ -23,7 +30,7 @@ def get_singlepop_benchmark_network(scale=2):
     i_list = []
     conn_list = []
     for _ in range(scale):
-        b = ExternalPopulation(100)
+        b = ExternalPopulation(100, record=True)
         i = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
         c = Connection(b, i, 1, weights=.005)
         b_list += [b]
@@ -31,7 +38,7 @@ def get_singlepop_benchmark_network(scale=2):
         conn_list += [c]
     return Network(b_list+i_list, conn_list)
 
-def get_recurrent_singlepop_benchmark_network(scale):
+def get_recurrent_singlepop_benchmark_network(scale=2):
     
     from dipde.internals.internalpopulation import InternalPopulation
     from dipde.internals.externalpopulation import ExternalPopulation
@@ -50,7 +57,7 @@ def get_recurrent_singlepop_benchmark_network(scale):
     conn_list = []
     for _ in range(scale):
         
-        b = ExternalPopulation(100)
+        b = ExternalPopulation(100, record=True)
         i = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
         c = Connection(b, i, 1, weights=.005)
         b_list += [b]
@@ -64,46 +71,45 @@ def get_recurrent_singlepop_benchmark_network(scale):
     
     return Network(b_list+i_list, conn_list)
 
+# This is envoked by test_mpi, for module-level running
 if __name__ == '__main__':
     
     # Parse arguments:
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--benchmark',type=str, choices=['singlepop', 'recurrent_singlepop'],default='recurrent_singlepop')
-    args, remaining_args = parser.parse_known_args()
- 
-    # Set up number of threads for fair comparison:
-    import os
-    os.environ['OPENBLAS_NUM_THREADS'] = '1'
+    parser = argparse.ArgumentParser() # pragma: no cover
+    parser.add_argument('--benchmark',type=str, choices=['singlepop', 'recurrent_singlepop'],default='recurrent_singlepop') # pragma: no cover
+    args, remaining_args = parser.parse_known_args() # pragma: no cover
     
-    from dipde.interfaces.mpi.synchronizationharness import MPISynchronizationHarness
-    from dipde.profiling import time_network
-    if args.benchmark == 'singlepop':
+    if args.benchmark == 'singlepop':                   # pragma: no cover
         
         # Singlepop-specific configuration:
-        network_getter = get_singlepop_benchmark_network
-        parser_singlepop = argparse.ArgumentParser()
-        parser_singlepop.add_argument('--scale',type=int,default=2)
-        trial_args = parser_singlepop.parse_args(remaining_args)
+        network_getter = get_singlepop_benchmark_network  # pragma: no cover
+        parser_singlepop = argparse.ArgumentParser()  # pragma: no cover
+        parser_singlepop.add_argument('--scale',type=int,default=2)  # pragma: no cover
+        trial_args = parser_singlepop.parse_args(remaining_args)  # pragma: no cover
         
-    elif args.benchmark == 'recurrent_singlepop':
+    elif args.benchmark == 'recurrent_singlepop':               # pragma: no cover
         
         # Singlepop-specific configuration:
-        network_getter = get_recurrent_singlepop_benchmark_network
-        parser_singlepop = argparse.ArgumentParser()
-        parser_singlepop.add_argument('--scale',type=int,default=6)
-        trial_args = parser_singlepop.parse_args(remaining_args)
+        network_getter = get_recurrent_singlepop_benchmark_network # pragma: no cover
+        parser_singlepop = argparse.ArgumentParser()  # pragma: no cover
+        parser_singlepop.add_argument('--scale',type=int,default=2)  # pragma: no cover
+        trial_args = parser_singlepop.parse_args(remaining_args) # pragma: no cover
         
-    else:
-        raise NotImplementedError(args.benchmark)
+    else:                                           # pragma: no cover
+        raise NotImplementedError(args.benchmark)  # pragma: no cover
     
+    network = network_getter(**vars(trial_args))        # pragma: no cover
+    synchronization_harness = MPISynchronizationHarness(network)        # pragma: no cover
+    run_time = time_network(network, synchronization_harness=synchronization_harness)       # pragma: no cover
     
-    network = network_getter(**vars(trial_args))
-    synchronization_harness = MPISynchronizationHarness(network)
-    run_time = time_network(network, synchronization_harness=synchronization_harness)
-    if network.rank == 0:
-        print run_time
-    
+    if network.rank == 0:                               # pragma: no cover
+
+        result_dict = copy.copy(network.firing_rate_organizer.firing_rate_dict_internal)[network.ti]        # pragma: no cover
+        result_dict['run_time'] = run_time          # pragma: no cover
+
+        print json.dumps(result_dict)       # pragma: no cover
+            
+            
 
 
     

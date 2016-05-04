@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
-import matplotlib
-matplotlib.use('Qt4Agg')
+# import matplotlib
+# matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
@@ -56,11 +56,12 @@ def example(show=False, save=False):
     plt.ylabel('Firing Rate (Hz)')
     fig.tight_layout()
     if save == True: plt.savefig('./singlepop.png')
-    if show == True: 
-        fig = plt.gcf()
-        window = fig.canvas.manager.window
-        window.raise_()
-        plt.show()
+    if show == True: plt.show()
+#     if show == True: 
+#         fig = plt.gcf()
+#         window = fig.canvas.manager.window
+#         window.raise_()
+#         plt.show()
          
     return i1.t_record, i1.firing_rate_record
     

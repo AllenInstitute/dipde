@@ -1,3 +1,4 @@
+from dipde.interfaces.mpi import set_number_of_threads
 from mpi4py import MPI
 import json
 import logging
@@ -7,7 +8,10 @@ comm = MPI.COMM_WORLD
 
 class MPISynchronizationHarness(object):
     
-    def __init__(self, network):
+    def __init__(self, network, number_of_threads=1):
+        
+        set_number_of_threads(number_of_threads)
+        
         
         
         self.size = comm.Get_size()

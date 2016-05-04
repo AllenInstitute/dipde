@@ -2,6 +2,12 @@ import logging
 import os
 import subprocess as sp
 
+def set_number_of_threads(number_of_threads):
+    os.environ['OPENBLAS_NUM_THREADS'] = '%s' % number_of_threads
+    os.environ['MKL_NUM_THREADS']='%s' % number_of_threads
+    os.environ['NUMEXPR_NUM_THREADS']='%s' % number_of_threads
+    os.environ['OMP_NUM_THREADS']='%s' % number_of_threads
+
 class MPIJob(object):
     log = logging.getLogger(__name__)
     mpi_command = 'mpiexec'
