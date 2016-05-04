@@ -13,23 +13,25 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
+# import matplotlib
+# matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
-from dipde.internals.simulation import Simulation
+from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 
-def get_simulation(dv=.001, verbose=False, update_method='exact', approx_order=None, tol=1e-8):
+def get_network(dv=.001, update_method='exact', approx_order=None, tol=1e-8):
 
     # Create simulation:
     b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    b1_i1 = Connection(b1, i1, 1, weights=.005, delay=0.0)
-    simulation = Simulation([b1, i1], [b1_i1], verbose=verbose)
+    b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
+    simulation = Network([b1, i1], [b1_i1])
 
     return simulation
 
-def example(show=False, save=False, verbose=False):
+def example(show=False, save=False):
 
     # Settings:
     t0 = 0.
@@ -41,11 +43,11 @@ def example(show=False, save=False, verbose=False):
     tol = 1e-14
     
     # Run simulation:
-    simulation = get_simulation(dv=dv, verbose=verbose, update_method=update_method, approx_order=approx_order, tol=tol)
-    simulation.run(dt=dt, tf=tf, t0=t0)
-    
+    network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
+    network.run(dt=dt, tf=tf, t0=t0)
+     
     # Visualize:
-    i1 = simulation.population_list[1]
+    i1 = network.population_list[1]
     fig, ax = plt.subplots(figsize=(3,3))
     i1.plot(ax=ax)
     plt.xlim([0,tf])
@@ -55,8 +57,13 @@ def example(show=False, save=False, verbose=False):
     fig.tight_layout()
     if save == True: plt.savefig('./singlepop.png')
     if show == True: plt.show()
-        
+#     if show == True: 
+#         fig = plt.gcf()
+#         window = fig.canvas.manager.window
+#         window.raise_()
+#         plt.show()
+         
     return i1.t_record, i1.firing_rate_record
     
-if __name__ == "__main__": example(verbose=True, show=True)        # pragma: no cover
+if __name__ == "__main__": example(show=True)        # pragma: no cover
 

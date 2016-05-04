@@ -1,129 +1,70 @@
-# Copyright 2013 Allen Institute
-# This file is part of dipde
-# dipde is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# dipde is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with dipde.  If not, see <http://www.gnu.org/licenses/>.
-
-from dipde.internals.connectiondistributioncollection import ConnectionDistributionCollection
-import time
+import json
+import importlib
 
 class Simulation(object):
-    '''Initialize and run a dipde simulation.
     
-    The Simulation class handles the initialization of population and connection
-    objects, and provides a convenience time stepping loop to drive a network
-    simulation.  Typical usage involves the create of populations and
-    connections, construction of a simulation object, and then call to
-    simulation.run()
-    
-    Parameters
-    ----------
-    population_list : list of ExternalPopulation, InternalPopulation objects
-        List of populations to include in simulation.
-    connection_list : list of Connection objects
-        List of connections to include in simulation.
-    verbose : bool (default=True)
-        Setting True prints current time-step at each update evaluation.
-    '''
-    
-    
-    def __init__(self, 
-                 population_list, 
-                 connection_list, 
-                 verbose=True):
+    def __init__(self, **kwargs):
         
-        self.verbose = verbose
+        network = kwargs.get('network', None)
+        simulation_configuration = kwargs.get('simulation_configuration', None)
+#         distributed_configuration = kwargs.get('distributed_configuration', None)
         
-        self.population_list = population_list
-        self.connection_list = [c for c in connection_list if c.nsyn != 0]
         
-    def initialize(self, t0=0.):
-        '''Initialize simulation, populations, and connections.
-        
-        This function is typically called by the self.run() method, however can
-        be called independently if defining a new time stepping loop.
-        
-        Parameters
-        ----------
-        t0 : float (default=0.)
-            Simulation start time (unit=seconds).
-        '''
-        
-        # Initialize:
-        self.connection_distribution_collection = ConnectionDistributionCollection()
-        self.t = t0
-        
-        # Monkey-patch dt to the populations:
-        for p in self.population_list:
-            p.simulation = self
+        # Create network
+        #TODO: factor this functionality into a utility function
+        if isinstance(network, dict):
+            curr_module, curr_class = network.pop('module'), network.pop('class')
+            self.network = getattr(importlib.import_module(curr_module), curr_class)(**network) 
+        else: 
+            self.network = network
             
-        # Each connection needs access to t:
-        for c in self.connection_list:
-            c.simulation = self
+        # Create simulation_configuration:
+        if isinstance(simulation_configuration, dict):
+            curr_module, curr_class = simulation_configuration.pop('module'), simulation_configuration.pop('class')
+            self.simulation_configuration = getattr(importlib.import_module(curr_module), curr_class)(**simulation_configuration) 
+        else: 
+            self.simulation_configuration = simulation_configuration
         
-        # Initialize populations:
-        for p in self.population_list:
-            p.initialize()
+    def run(self): 
+        self.network.run(self.simulation_configuration.dt, self.simulation_configuration.tf, self.simulation_configuration.t0)
+
+    @property
+    def t0(self): return self.simulation_configuration.t0
+
+    @property
+    def dt(self): return self.simulation_configuration.dt
+    
+    @property
+    def tf(self): return self.simulation_configuration.tf
+    
+    @property
+    def completed(self):
         
-        # Initialize connections:    
-        for c in self.connection_list:
-            c.initialize()
+        if not hasattr(self.network, 't'):
+            return False
+        else:
         
-    def run(self, t0=0., dt=.001, tf=.1):
-        '''Main iteration control loop for simulation
+            if self.network.t == self.tf:
+                return True
+            else:
+                raise Exception('Initialized network but didnt run. This should not be possible.') # pragma: no cover
+    
+    
+    def to_dict(self):
         
-        The time step selection must be approximately of the same order as dv
-        for the internal populations, if the 'approx' time stepping method is
-        selected.
+        return {'network':self.network.to_dict(),
+                'simulation_configuration':self.simulation_configuration.to_dict(),
+                'class':self.__class__.__name__,
+                'module':__name__}
         
-        Parameters
-        ----------
-        t0 : float (default=0.)
-            Simulation start time (unit=seconds), passed to initialize call.
-        tf : float (default=.1)
-            Simulation end time (unit=seconds).
-        dt : float (default=0.001)
-            Time step (unit=seconds).
-        '''
+    def to_json(self, fh=None, **kwargs):
+        '''Save the contents of the InternalPopultion to json'''
         
-        
-        self.dt = dt
-        self.tf = tf
-        
-        # Initialize:
-        start_time = time.time()
-        self.initialize(t0=t0)
-        self.initialization_time = time.time() - start_time
-        
-        # Run
-        start_time = time.time()
-        while self.t < self.tf:
-            
-            self.t += self.dt
-            if self.verbose: print 'time: %s' % self.t
-            
-            for p in self.population_list:
-                p.update()
-                
-            for c in self.connection_list:
-                c.update()
-                
-        self.run_time = time.time() - start_time
+        data_dict = self.to_dict()
 
+        indent = kwargs.pop('indent',2)
 
-
-
-
-
-
-
-
+        if fh is None:
+            return json.dumps(data_dict, indent=indent, **kwargs)
+        else:
+            return json.dump(data_dict, fh, indent=indent, **kwargs)

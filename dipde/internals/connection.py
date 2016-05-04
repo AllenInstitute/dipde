@@ -18,7 +18,10 @@
 import numpy as np
 from dipde.internals import utilities as util
 from dipde.internals import ConnectionDistribution
+from dipde.internals.externalpopulation import ExternalPopulation
+from dipde.internals.internalpopulation import InternalPopulation
 import collections
+import json
 
 class Connection(object):
     '''Class that connects dipde source population to dipde target population.
@@ -46,28 +49,56 @@ class Connection(object):
     '''
 
     def __init__(self,
-                 source,
-                 target,
-                 nsyn,
+                 source=None,
+                 target=None,
+                 nsyn=None,
+                 delays=0,
+                 weights=None,
+                 delay_queue=None,
+                 metadata={},
                  **kwargs):
 
-        self.source = source
-        self.target = target
+        self.source_gid_or_population = source
+        self.target_gid_or_population = target
+        
         self.nsyn = nsyn
-        
-        
-        self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('weights', None))
+        self.synaptic_weight_distribution = util.discretize_if_needed(weights)
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
-        self.synaptic_weight_distribution = util.discretize_if_needed(kwargs.pop('delays', 0))
 
-        self.metadata = kwargs
+        self.delay_distribution = util.discretize_if_needed(delays)
+        self.delay_vals, self.delay_probs = self.delay_distribution.xk, self.delay_distribution.pk
+        self.delay_queue_initial_condition = delay_queue
+
+        util.check_metadata(metadata)
+        self.metadata = metadata
 
         # Defined at runtime:
         self.delay_queue = None
         self.delay_ind = None
         self.simulation = None
-        self.delay_vals = None 
-        self.delay_probs = None
+        
+        for key in kwargs.keys():
+            assert key in ['class']
+
+    @property
+    def source(self):
+        if isinstance(self.source_gid_or_population, int):
+            if self.simulation is None:
+                return None
+            else:
+                return self.simulation.gid_dict[self.source_gid_or_population]
+        else: 
+            return self.source_gid_or_population
+        
+    @property
+    def target(self):
+        if isinstance(self.target_gid_or_population, int):
+            if self.simulation is None:
+                return None
+            else:
+                return self.simulation.gid_dict[self.target_gid_or_population]
+        else: 
+            return self.target_gid_or_population
 
     def initialize(self):
         '''Initialize the connection at the beginning of a simulation.
@@ -84,7 +115,8 @@ class Connection(object):
         '''
         
         self.initialize_delay_queue()
-        self.initialize_connection_distribution()  
+        if isinstance(self.target, InternalPopulation):
+            self.initialize_connection_distribution()  
 
     def initialize_connection_distribution(self):
         """Create connection distribution, if necessary.
@@ -111,8 +143,6 @@ class Connection(object):
         InternalPopulation, the queue is initialized to zero.
         """
 
-        self.delay_vals, self.delay_probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
-
         # Delay vals need to be cleaned up to account for not necessarily being evenly divisible by dt:
         delay_ind_dict = {}
         self.delay_inds = np.array(np.round(self.delay_vals/self.simulation.dt), dtype=np.int)
@@ -120,31 +150,38 @@ class Connection(object):
             delay_ind_dict.setdefault(curr_ind, []).append(curr_prob)
 
         self.delay_inds = sorted(delay_ind_dict.keys())
-        self.delay_vals = [self.simulation.dt*ii for ii in self.delay_inds]
-        self.delay_probs = [np.sum(delay_ind_dict[ii]) for ii in self.delay_inds]
+        self.delay_vals = np.array([self.simulation.dt*ii for ii in self.delay_inds])
+        self.delay_probs = np.array([np.sum(delay_ind_dict[ii]) for ii in self.delay_inds])
         util.assert_probability_mass_conserved(self.delay_probs)
         
         max_delay_ind = max(self.delay_inds)
         self.delay_probability_vector = np.zeros(max_delay_ind+1)
         self.delay_probability_vector[self.delay_inds] = self.delay_probs
         self.delay_probability_vector = self.delay_probability_vector[::-1]
-        if self.source.type == 'internal':
-            self.delay_queue = np.core.numeric.ones(max_delay_ind+1)*self.source.curr_firing_rate
-        elif self.source.type == 'external':
-            self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
-            for i in range(len(self.delay_queue)):
-                self.delay_queue[i] = self.source.firing_rate(self.simulation.t - self.simulation.dt*i)
-            self.delay_queue = self.delay_queue[::-1]
+        
+        # Determine delay_queue:
+        if self.delay_queue_initial_condition is None:
+            if isinstance(self.source, InternalPopulation):
+                self.delay_queue = np.core.numeric.ones(max_delay_ind+1)*self.simulation.get_curr_firing_rate(self.source.gid)
+            elif isinstance(self.source, ExternalPopulation):
+                self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
+                for i in range(len(self.delay_queue)):
+                    self.delay_queue[i] = self.simulation.get_firing_rate(self.source.gid, self.simulation.t - self.simulation.dt*i)
+                self.delay_queue = self.delay_queue[::-1]
+            else:
+                self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
+#                 raise Exception('Unrecognized source type: "%s"' % type(self.source))    # pragma: no cover
+    
         else:
-            raise Exception('Unrecognized source type: "%s"' % self.source.type)    # pragma: no cover
-
+            self.delay_queue = self.delay_queue_initial_condition
+            assert len(self.delay_queue) == len(self.delay_probability_vector)
+    
         self.delay_queue = collections.deque(self.delay_queue)
 
     def update(self):
         """Update Connection,  called once per timestep."""
-
-        self.delay_queue[0] = self.source.curr_firing_rate
-#         self.delay_queue = np.core.numeric.roll(self.delay_queue, -1)
+        
+        self.delay_queue[0] = self.simulation.get_curr_firing_rate(self.simulation.gid_dict[self.source])
         self.delay_queue.rotate(-1)
 
     @property
@@ -163,3 +200,40 @@ class Connection(object):
             assert len(self.delay_queue) == len(self.delay_probability_vector)
             return np.dot(self.delay_queue, self.delay_probability_vector)
             
+    def to_dict(self):
+        
+        if self.source is None or isinstance(self.source, int):
+            source = self.source
+        else:
+            source = self.source.gid
+            
+        if isinstance(self.target, int) or self.target is None:
+            target = self.target
+        else:
+            target = self.target.gid
+        
+        data_dict = {'source':source,
+                     'target':target,
+                     'nsyn':self.nsyn,
+                     'weights':(self.weights.tolist(), self.probs.tolist()),
+                     'delays':(self.delay_vals.tolist(), self.delay_probs.tolist()),
+                     'metadata':self.metadata,
+                     'class':(__name__, self.__class__.__name__)
+                    }
+        
+        return data_dict
+
+    
+    def to_json(self, fh=None, **kwargs):
+        '''Save the population contents to json'''
+         
+        data_dict = self.to_dict()
+        indent = kwargs.pop('indent',2)
+         
+        if fh is None:
+            return json.dumps(data_dict, indent=indent, **kwargs)
+        else:
+            return json.dump(data_dict, fh, indent=indent, **kwargs)
+        
+    def copy(self):
+        return Connection(**self.to_dict())

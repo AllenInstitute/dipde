@@ -1,0 +1,20 @@
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta4.xsd" id="dipde_example">
+    <expOneSynapse id="Ex_syn" erev="0mV" gbase="1nS" tauDecay="1ms"/>
+    <iafCell id="iaf0" reset="-65mV" C="1.0 nF" thresh="-50mV" leakConductance="10 nS" leakReversal="-65mV"/>
+    <network id="dipde_example" type="network">
+        <notes>Network generated using libNeuroML v0.2.11</notes>
+        <population id="population_0" type="populationList" component="iaf0">
+            <instance id="0">
+                <location y="0." x="0." z="0."/>
+            </instance>
+        </population>
+        <population id="population_1" type="populationList" component="iaf0">
+            <instance id="1">
+                <location y="0." x="10." z="0."/>
+            </instance>
+        </population>
+        <projection id="Proj_0" postsynapticPopulation="population_1" presynapticPopulation="population_0" synapse="Ex_syn">
+            <connection id="0" preFractionAlong="0.5" preCellId="population_0[0]" postFractionAlong="0.5" postSegmentId="0" postCellId="population_1[0]" preSegmentId="0"/>
+        </projection>
+    </network>
+</neuroml>

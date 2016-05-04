@@ -19,6 +19,7 @@ import scipy.stats as sps
 import scipy.integrate as spi
 import bisect
 import warnings
+import json
 
 def fraction_overlap(a1, a2, b1, b2):
     '''Calculate the fractional overlap between range (a1,a2) and (b1,b2).
@@ -179,14 +180,14 @@ def discretize_if_needed(curr_input):
     elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (sps._distn_infrastructure.rv_frozen,)) and isinstance(curr_input[1], (int,)):
         vals, probs = descretize(curr_input[0], N=curr_input[1])
     elif isinstance(curr_input, (float, int)):
-        vals, probs = [float(curr_input)], [1]
+        vals, probs = np.array([float(curr_input)]), np.array([1])
     elif isinstance(curr_input, (tuple, list)) and len(curr_input) == 2 and isinstance(curr_input[0], (tuple, list, np.ndarray)) and isinstance(curr_input[1], (tuple, list, np.ndarray)):
-        vals, probs = curr_input
+        vals, probs = map(np.array, curr_input)
     elif isinstance(curr_input, (sps._distn_infrastructure.rv_discrete, )):
         return curr_input
     elif isinstance(curr_input, (dict,)):
         if curr_input['distribution'] == 'delta':
-            vals, probs = [curr_input['weight']], [1.]
+            vals, probs = np.array([curr_input['weight']]), np.array([1.])
         else:
             raise NotImplementedError # pragma: no cover
         
@@ -207,7 +208,7 @@ def discretize_if_needed(curr_input):
     elif len(vals) == len(probs)+1:
         vals = (np.array(vals[1:]) + np.array(vals[:-1]))/2
     else:                                                                         # pragma: no cover
-        raise ValueError("Length of vals and probs not consistent with a probability distribtion")
+        raise ValueError("Length of vals and probs not consistent with a probability distribution")
     
     return sps.rv_discrete(values=(vals, probs))
         
@@ -230,6 +231,10 @@ def exact_update_method(J, pv, dt=.0001):
     assert_probability_mass_conserved(pv)
     return pv
 
+def dot(A,b):
+    return np.dot(A,b)
+#     return np.sum(A*b,axis=1)
+
 def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     'Approximate the effect of a matrix exponential, with residual smaller than tol.'
     
@@ -242,19 +247,16 @@ def approx_update_method_tol(J, pv, tol=2.2e-16, dt=.0001, norm='inf'):
     
     while curr_err > tol:
         counter += 1
-        curr_del = J.dot(curr_del)/counter
+        curr_del = dot(J,curr_del)/counter
         pv_new += curr_del
         curr_err = spla.norm(curr_del, norm)
 
     # Normalization based on known properties, to prevent rounding error:
-    warnings.warn('Normalizing probabilty mass')
-    pv[np.where(pv<0)] = 0
-    pv /= pv.sum()
-    
+
     try:
         assert_probability_mass_conserved(pv)
     except:                                                                                                                                                     # pragma: no cover
-        raise Exception("Probabiltiy mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
+        raise Exception("Probability mass error (p_sum=%s) at tol=%s; consider higher order, decrease dt, or increase dv" % (np.abs(pv).sum(), tol))            # pragma: no cover
     
     return pv_new
 
@@ -267,7 +269,7 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
     pv_new = pv
     for curr_order in range(approx_order):
         coeff *= curr_order+1
-        curr_del = J.dot(curr_del*dt)
+        curr_del = np.dot(J,curr_del)*dt
         pv_new += (1./coeff)*curr_del
     
     try:
@@ -277,5 +279,33 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
 
     return pv_new
 
+def get_pv_from_p0(p0, edges):
+    
+    pv = p0.cdf(edges[1:]) - p0.cdf(edges[:-1]) 
+    pv[0] += p0.cdf(edges[0])
+    pv[-1] += 1-p0.cdf(edges[-1])
+    
+    return pv 
 
+class DefaultSynchronizationHarness(object):
+    
+    def __init__(self, ):
+        self.rank = 0
+    
+    def gid_to_rank(self, gid): return 0
+        
+    def null_fcn(self, *args, **kwargs): pass
+        
+    def __getattr__(self, *args, **kwargs): return self.null_fcn
+
+def compare_dicts(o1_dict, o2_dict):
+    
+    for key, o1_value in o1_dict.items():
+        assert o2_dict[key] == o1_value
+        
+def check_metadata(metadata):
+    try:
+        compare_dicts(metadata, json.loads(json.dumps(metadata)))
+    except: # pragma: no cover
+        raise RuntimeError('Metadata cannot be marshalled') # pragma: no cover
     
