@@ -13,8 +13,10 @@ def test_profile_singlepop():
     tol = 1e-14
     
     run_dict = {'dt':.0001, 't0':0, 'tf':.2}
+
     network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     profile_result = profile_simulation(network, run_dict)
+
     run_time = extract_value(profile_result, 'network.py', 'run')
     
     

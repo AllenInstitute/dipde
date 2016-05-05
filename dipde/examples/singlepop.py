@@ -44,8 +44,9 @@ def example(show=False, save=False):
     
     # Run simulation:
     network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
+
     network.run(dt=dt, tf=tf, t0=t0)
-     
+      
     # Visualize:
     i1 = network.population_list[1]
     fig, ax = plt.subplots(figsize=(3,3))
@@ -61,7 +62,7 @@ def example(show=False, save=False):
         window = fig.canvas.manager.window
         window.raise_()
         plt.show()
-         
+          
     return i1.t_record, i1.firing_rate_record
     
 if __name__ == "__main__": example(show=True)        # pragma: no cover
