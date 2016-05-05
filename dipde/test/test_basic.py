@@ -10,8 +10,23 @@ def test_internal():
     import dipde.internals as dd
     reload(dd)
     
+    import dipde.interfaces as tf
+    reload(tf)
+    
+    import dipde.interfaces.pandas as ipd
+    reload(ipd)
+    
+    import dipde.interfaces.zmq as izmq
+    reload(izmq)
+    
     import dipde.internals.connection as cc
     reload(cc)
+    
+    import dipde.internals.firingrateorganizer as ifro
+    reload(ifro)
+    
+    import dipde.internals.network as ntw
+    reload(ntw)
     
     import dipde.internals.connectiondistribution as cd
     reload(cd)

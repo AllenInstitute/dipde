@@ -427,4 +427,9 @@ class InternalPopulation(object):
 
     def to_df(self):
         return to_df(self)
+    
+    def initialize_delay_queue(self, max_delay_ind):
+        
+        return np.core.numeric.ones(max_delay_ind+1)*self.simulation.get_curr_firing_rate(self.gid)
+        
         

@@ -108,10 +108,10 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
 
     
 if __name__ == "__main__":          # pragma: no cover 
-#     test_zmq_callback()             # pragma: no cover
+    test_zmq_callback()             # pragma: no cover
     test_basic()                    # pragma: no cover
-#     test_tau_normal()               # pragma: no cover
-#     test_p0()                       # pragma: no cover
-#     test_weight()                   # pragma: no cover
-#     test_drive()                    # pragma: no cover
-#     test_zmq_drive_bind_server()    # pragma: no cover
+    test_tau_normal()               # pragma: no cover
+    test_p0()                       # pragma: no cover
+    test_weight()                   # pragma: no cover
+    test_drive()                    # pragma: no cover
+    test_zmq_drive_bind_server()    # pragma: no cover

@@ -138,8 +138,10 @@ class Network(object):
         self.synchronization_harness.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal.setdefault(self.ti, {}))
             
         for p in self.population_list:
-            if isinstance(p, InternalPopulation):        
+            try:
                 p.initialize_total_input_dict()
+            except AttributeError:
+                pass
         
         # Initialize connections:    
         for c in self.connection_list:
