@@ -1,6 +1,8 @@
 import logging
 import scipy.integrate as spi
+
 import numpy as np
+
 logger = logging.getLogger(__name__)
 
 class PopulationInterface(object):
@@ -43,7 +45,7 @@ class PopulationInterface(object):
     
     def initialize_delay_queue(self, max_delay_ind):    
         return np.core.numeric.zeros(max_delay_ind+1)
-        
+
 class ODE(PopulationInterface):
     '''Example Extension class that solves an ODE to provide firing rate input'''
     

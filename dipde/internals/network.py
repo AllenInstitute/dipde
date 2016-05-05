@@ -97,6 +97,7 @@ class Network(object):
 
         
     def run(self, dt, tf, t0=0., synchronization_harness=None):
+
         '''Main iteration control loop for simulation
         
         The time step selection must be approximately of the same order as dv
@@ -132,6 +133,7 @@ class Network(object):
         # Initialize populations:
         for gid, p in enumerate(self.population_list):
             p.initialize()
+
             if self.synchronization_harness.gid_to_rank(gid) == self.rank:
                 self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
         
@@ -142,6 +144,7 @@ class Network(object):
                 p.initialize_total_input_dict()
             except AttributeError:
                 pass
+
         
         # Initialize connections:    
         for c in self.connection_list:
@@ -157,7 +160,9 @@ class Network(object):
             
         self.run_time = time.time() - start_time
         
+
         self.synchronization_harness.finalize()
+
         
         self.run_callback(self)
         
@@ -171,11 +176,13 @@ class Network(object):
         logger.info( 'time: %s' % self.t)
         
         for gid, p in enumerate(self.population_list):
+
             if self.synchronization_harness.gid_to_rank(gid) == self.rank:
                 p.update()
                 self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
         
         self.synchronization_harness.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal.setdefault(self.ti, {}))
+
         
         for c in self.connection_list:
             c.update()

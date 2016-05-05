@@ -58,7 +58,6 @@ class ExternalPopulation(object):
         if isinstance(firing_rate, str):
             self.firing_rate_string = str(firing_rate)
             self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
-#         elif isinstance(firing_rate, (types.FunctionType, RequestFiringRate)):
         elif hasattr(firing_rate, "__call__"):
             self.closure = firing_rate
         else:
@@ -150,6 +149,7 @@ class ExternalPopulation(object):
         
         if not hasattr(self, 'firing_rate_string'):
             raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
+
         
         data_dict = {'rank':self.rank,
                      'record':self.record,
@@ -208,3 +208,4 @@ class ExternalPopulation(object):
         delay_queue = delay_queue[::-1]
         
         return delay_queue
+

@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
-# import matplotlib
-# matplotlib.use('Qt4Agg')
+
+import matplotlib
+matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
@@ -44,8 +45,10 @@ def example(show=False, save=False):
     
     # Run simulation:
     network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
+
     network.run(dt=dt, tf=tf, t0=t0)
      
+
     # Visualize:
     i1 = network.population_list[1]
     fig, ax = plt.subplots(figsize=(3,3))
@@ -56,13 +59,14 @@ def example(show=False, save=False):
     plt.ylabel('Firing Rate (Hz)')
     fig.tight_layout()
     if save == True: plt.savefig('./singlepop.png')
-    if show == True: plt.show()
-#     if show == True: 
-#         fig = plt.gcf()
-#         window = fig.canvas.manager.window
-#         window.raise_()
-#         plt.show()
-         
+
+    if show == True:                        # pragma: no cover
+        fig = plt.gcf()                     # pragma: no cover
+        window = fig.canvas.manager.window  # pragma: no cover
+        window.raise_()                     # pragma: no cover
+        plt.show()                          # pragma: no cover
+          
+
     return i1.t_record, i1.firing_rate_record
     
 if __name__ == "__main__": example(show=True)        # pragma: no cover

@@ -7,6 +7,9 @@ def test_imports():
     
 def test_internal():
     
+    import dipde.internals.simulationconfiguration as simconf
+    reload(simconf)
+    
     import dipde.internals as dd
     reload(dd)
     

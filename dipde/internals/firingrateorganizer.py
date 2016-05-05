@@ -1,6 +1,7 @@
 
 class FiringRateOrganizer(object):
     
+
     def __init__(self, synchronization_harness):
         
         self.synchronization_harness = synchronization_harness
@@ -15,6 +16,8 @@ class FiringRateOrganizer(object):
 
     def drop(self, ti):
         del self.firing_rate_dict_internal[ti]
+        
+
         
 #     @property
 #     def rank(self):
@@ -96,3 +99,4 @@ class FiringRateOrganizer(object):
 #     
 #     
 #     
+

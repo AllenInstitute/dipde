@@ -115,7 +115,6 @@ class Connection(object):
         '''
         
         self.initialize_delay_queue()
-#         if isinstance(self.target, InternalPopulation):
         try:
             self.initialize_connection_distribution()
         except AttributeError:
@@ -164,18 +163,7 @@ class Connection(object):
         
         # Determine delay_queue:
         if self.delay_queue_initial_condition is None:
-#             if isinstance(self.source, InternalPopulation):
-#                 self.delay_queue = np.core.numeric.ones(max_delay_ind+1)*self.simulation.get_curr_firing_rate(self.source.gid)
             self.delay_queue = self.source.initialize_delay_queue(max_delay_ind)
-#             elif isinstance(self.source, ExternalPopulation):
-#                 self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
-#                 for i in range(len(self.delay_queue)):
-#                     self.delay_queue[i] = self.simulation.get_firing_rate(self.source.gid, self.simulation.t - self.simulation.dt*i)
-#                 self.delay_queue = self.delay_queue[::-1]
-#             else:
-#                 self.delay_queue = np.core.numeric.zeros(max_delay_ind+1)
-#                 raise Exception('Unrecognized source type: "%s"' % type(self.source))    # pragma: no cover
-    
         else:
             self.delay_queue = self.delay_queue_initial_condition
             assert len(self.delay_queue) == len(self.delay_probability_vector)

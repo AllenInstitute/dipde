@@ -287,8 +287,12 @@ class InternalPopulation(object):
         '''Update curr_firing_rate attribute based on the total flux of probability mass across threshold.'''
         
         # Compute flux:
-        flux_vector = reduce(np.add, [key.threshold_flux_vector * val for key, val in self.total_input_dict.items()])
-        self.curr_firing_rate = np.dot(flux_vector, self.pv) 
+        reduce_list = [key.threshold_flux_vector * val for key, val in self.total_input_dict.items()]
+        if len(reduce_list) > 0:
+            flux_vector = reduce(np.add, reduce_list)
+            self.curr_firing_rate = np.dot(flux_vector, self.pv)
+        else:
+            self.curr_firing_rate = 0.  # pragma: no cover
         
     def update_firing_rate_recorder(self):
         '''Record current time and firing rate, if record==True.
@@ -414,13 +418,13 @@ class InternalPopulation(object):
         
         indent = kwargs.pop('indent',2)
         data_dict = self.to_dict()
+
         
         if fh is None:
             return json.dumps(data_dict, indent=indent, **kwargs)
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
 
-        
 
     def copy(self):
         return InternalPopulation(**self.to_dict())
@@ -431,5 +435,5 @@ class InternalPopulation(object):
     def initialize_delay_queue(self, max_delay_ind):
         
         return np.core.numeric.ones(max_delay_ind+1)*self.simulation.get_curr_firing_rate(self.gid)
-        
+
         

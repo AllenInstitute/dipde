@@ -40,3 +40,4 @@ def time_network(network, t0=0., dt=.0001, tf=.1, synchronization_harness=None):
 
     profile = profile_network(network, run_dict, logging=False)
     return extract_value(profile, 'network.py', 'run')
+
