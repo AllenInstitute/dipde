@@ -1,0 +1,2 @@
+[run]
+omit=dipde/interfaces/mpi/run_benchmark.py
