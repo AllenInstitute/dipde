@@ -31,6 +31,9 @@ def test_p0():
     p0 = sps.norm(0.01,.001)
     singlepop(5.4319721344676637, p0=p0)
     
+def test_gmres():
+    singlepop(5.0693643281797707, update_method='gmres')
+    
 def test_weight():
     weights = sps.norm(0.005,.001)
     singlepop(5.7051134618017816, weights=weights)
@@ -80,7 +83,7 @@ def test_zmq_callback():
     
 
 
-def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution':'delta', 'weight':.005}, bgfr=100, network_update_callback=lambda s: None):
+def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution':'delta', 'weight':.005}, bgfr=100, network_update_callback=lambda s: None, update_method='approx'):
     
     # Settings:
     t0 = 0.
@@ -92,7 +95,7 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
     
     # Create simulation:
     b1 = ExternalPopulation(bgfr)
-    i1 = InternalPopulation(v_min=v_min, tau_m=tau_m, v_max=v_max, dv=dv, update_method='exact', p0=p0)
+    i1 = InternalPopulation(v_min=v_min, tau_m=tau_m, v_max=v_max, dv=dv, update_method=update_method, p0=p0)
     b1_i1 = Connection(b1, i1, 1, weights=weights)
     network = Network([b1, i1], [b1_i1], update_callback=network_update_callback)
     simulation_configuration = SimulationConfiguration(dt, tf, t0=t0)
@@ -116,4 +119,5 @@ if __name__ == "__main__":          # pragma: no cover
     test_weight()                   # pragma: no cover
     test_drive()                    # pragma: no cover
     test_zmq_drive_bind_server()    # pragma: no cover
+    test_gmres()                    # pragma: no cover
 

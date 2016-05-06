@@ -75,15 +75,20 @@ class ConnectionDistribution(object):
         """
         
         nv = len(self.edges)-1
-        self.flux_matrix = np.zeros((nv, nv))
+        flux_matrix_dense = np.zeros((nv, nv))
         self.threshold_flux_vector = np.zeros(nv)
         for curr_weight, curr_prob in zip(self.weights, self.probs):
             curr_threshold_flux_vector, curr_flux_matrix = util.flux_matrix(self.edges, curr_weight, curr_prob)
-            self.flux_matrix += curr_flux_matrix
+            flux_matrix_dense += curr_flux_matrix
             self.threshold_flux_vector += curr_threshold_flux_vector
+            
+        M_I, M_J = np.where(flux_matrix_dense != 0)
+        M_val = flux_matrix_dense[M_I, M_J]
+        flux_matrix_sparse = (M_I, M_J, M_val)
+        self.flux_matrix_dict = {'dense':flux_matrix_dense, 'sparse':flux_matrix_sparse}
 
         # Guarantee zero flux:
-        np.testing.assert_almost_equal(np.abs(np.sum(self.flux_matrix, axis=0)).sum(), 0, 12)
+        np.testing.assert_almost_equal(np.abs(np.sum(self.flux_matrix_dict['dense'], axis=0)).sum(), 0, 12)
         
     @property
     def signature(self):
