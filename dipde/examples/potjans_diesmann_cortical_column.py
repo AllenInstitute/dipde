@@ -79,6 +79,7 @@ def example(show=False, save=False):
                                     'dv':dv,
                                     'update_method':'gmres',
                                     'tau_m':.01,
+                                    'tol':1e-7,
                                     'record':True}
     
     # Create populations:
@@ -127,7 +128,7 @@ def example(show=False, save=False):
             curr_population = internal_population_dict[layer, celltype]
             axes[row_ind].plot(curr_population.t_record, curr_population.firing_rate_record, plot_color)
             result_dict[layer, celltype] = curr_population.firing_rate_record[-1]
-            print layer, celltype, result_dict[layer, celltype] 
+#             print '(%s,\'%s\'):%s,' % (layer, celltype, result_dict[layer, celltype]) 
        
         axes[row_ind].set_xlim([0,tf])
         axes[row_ind].set_ylim(ymin=0)

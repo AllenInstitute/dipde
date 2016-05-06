@@ -42,18 +42,18 @@ def test_potjans_diesmann():
 
     result_dict = example(show=False)
 
-    true_ans_dict = {(23, 'e'):0.36683677638000578,
-                     (23, 'i'):3.1151133546760521,
-                     (4, 'e'):4.7552501275610446,
-                     (4, 'i'):6.7775636919284405,
-                     (5, 'e'):12.147501318850377,
-                     (5, 'i'):11.178004318697729,
-                     (6, 'e'):2.1020601597049673,
-                     (6, 'i'):9.2949915351536987}
+    true_ans_dict = {(23,'e'):0.34214856949,
+(23,'i'):3.13299317767,
+(4,'e'):4.80494193825,
+(4,'i'):6.82875438905,
+(5,'e'):12.5818269963,
+(5,'i'):11.274015534,
+(6,'e'):2.18598174613,
+(6,'i'):9.36196647966}
     
     for layer in [23, 4, 5, 6]:
         for celltype in ['e', 'i']:
-            np.testing.assert_almost_equal(result_dict[layer, celltype], true_ans_dict[layer, celltype])
+            np.testing.assert_almost_equal(result_dict[layer, celltype], true_ans_dict[layer, celltype],3)
 #  
 #     np.testing.assert_almost_equal(t[-1], .1)
 

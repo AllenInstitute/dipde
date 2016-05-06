@@ -117,7 +117,6 @@ class InternalPopulation(object):
                 self.tol = 1e-12
         else:
             self.tol = tol
-        print self.tol
 
         # Additional metadata:
         util.check_metadata(metadata)
