@@ -22,4 +22,5 @@ from internals.internalpopulation import InternalPopulation
 from internals.externalpopulation import ExternalPopulation
 from internals.network import Network
 from internals.simulation import Simulation
+from internals.connection import Connection
 from internals.simulationconfiguration import SimulationConfiguration

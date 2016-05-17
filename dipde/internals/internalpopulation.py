@@ -81,7 +81,7 @@ class InternalPopulation(object):
                        initial_firing_rate=0.0,
                        update_method='approx',
                        approx_order=None,
-                       tol=1e-12,
+                       tol=1e-14,
                        norm=np.inf,
                        p0={'distribution':'delta', 'weight':0.},
                        metadata={},
@@ -342,6 +342,7 @@ class InternalPopulation(object):
         '''
         
         import matplotlib.pyplot as plt
+        show = kwargs.pop('show',True)
         
         if ax == None:
             fig = plt.figure()
@@ -350,6 +351,10 @@ class InternalPopulation(object):
         if self.firing_rate_record is None or self.t_record is None:
             raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)  # pragma: no cover
         ax.plot(self.t_record, self.firing_rate_record, **kwargs)
+        
+        if show == True:
+            plt.show()
+        
         return ax
     
     def get_firing_rate(self, t):

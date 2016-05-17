@@ -17,6 +17,7 @@ import sympy.parsing.sympy_parser as symp
 from dipde.interfaces.pandas import to_df
 from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
+import numpy as np 
 import types
 from dipde.internals import utilities as util
 import json
@@ -79,7 +80,10 @@ class ExternalPopulation(object):
         
         curr_firing_rate = self.closure(t)
         if curr_firing_rate < 0:
-            raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.firing_rate_string, t)) # pragma: no cover
+            if np.abs(curr_firing_rate) < 1e-14:
+                return np.abs(curr_firing_rate)
+            else:
+                raise RuntimeError("negative firing rate requested: %s, at t=%s" % (curr_firing_rate, t)) # pragma: no cover
         
         return curr_firing_rate
     
@@ -144,18 +148,24 @@ class ExternalPopulation(object):
     def gid(self):
         return self.simulation.gid_dict[self]
     
+    @property
+    def module_name(self):
+        return __name__
+    
     def to_dict(self):
-        
-        if not hasattr(self, 'firing_rate_string'):
-            raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
-        
+
         data_dict = {'rank':self.rank,
                      'record':self.record,
                      'metadata':self.metadata,
-                     'firing_rate':self.firing_rate_string,
                      'class':self.__class__.__name__,
-                     'module':__name__
+                     'module':self.module_name
                       }
+        
+        if hasattr(self, 'firing_rate_string'):
+            data_dict['firing_rate'] = self.firing_rate_string
+#             raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
+        
+
         
         return data_dict
 
@@ -188,6 +198,7 @@ class ExternalPopulation(object):
         '''
         
         import matplotlib.pyplot as plt
+        show = kwargs.pop('show',True)
         
         if ax == None:
             fig = plt.figure()
@@ -196,5 +207,8 @@ class ExternalPopulation(object):
         if self.firing_rate_record is None or self.t_record is None:
             raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)  # pragma: no cover
         ax.plot(self.t_record, self.firing_rate_record, **kwargs)
+        
+        if show == True:
+            plt.show()
 
         return ax
