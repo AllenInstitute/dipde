@@ -38,7 +38,7 @@ def test_excitatory_inhibitory():
     np.testing.assert_almost_equal(y[-1], 0.90725590501763964)
     
 def test_potjans_diesmann():
-    from dipde.examples.potjans_diesmann_cortical_column import example
+    from dipde.examples.cortical_column import example
 
     result_dict = example(show=False)
 

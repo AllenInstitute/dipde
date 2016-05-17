@@ -61,6 +61,10 @@ class Connection(object):
         self.source_gid_or_population = source
         self.target_gid_or_population = target
         
+        # Used for jumping off point for making a matched nest simulation:
+        self.original_weights = weights
+        self.original_delays = delays
+        
         self.nsyn = nsyn
         self.synaptic_weight_distribution = util.discretize_if_needed(weights)
         self.weights, self.probs = self.synaptic_weight_distribution.xk, self.synaptic_weight_distribution.pk
@@ -229,3 +233,4 @@ class Connection(object):
         
     def copy(self):
         return Connection(**self.to_dict())
+    

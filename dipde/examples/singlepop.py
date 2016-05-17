@@ -28,9 +28,9 @@ def get_network(dv=.001, update_method='exact', approx_order=None, tol=1e-8):
     b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
-    simulation = Network([b1, i1], [b1_i1])
+    network = Network([b1, i1], [b1_i1])
 
-    return simulation
+    return network
 
 def example(show=False, save=False):
 

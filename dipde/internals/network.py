@@ -224,6 +224,20 @@ class Network(object):
         df_list = [p.to_df() for p in self.population_list]
         return reorder_df_columns(pd.concat(df_list), ['class', 'module'])
 
+    def get_total_flux_matrix(self, internal_population, dt):
+        
+        # Protect memory state of population and network:
+        population_ind = self.population_list.index(internal_population)
+        new_network = self.copy()
+        new_network.dt = dt
+        new_network.t0 = 0
+        new_network.ti = 0
+        
+        new_internal_population = new_network.population_list[population_ind] 
+        new_internal_population.initialize()
+        new_internal_population.initialize_total_input_dict()
+        return new_internal_population.get_total_flux_matrix()
+
 
 
 

@@ -47,7 +47,7 @@ class Simulation(object):
         self.network.update_callback = types.MethodType(new_network_callback, self.network)
         
         self.pause = False
-        if not (self.checkpoint_file_name is None or self.checkpoint_period is None): 
+        if not (self.checkpoint_file_name is None or self.checkpoint_period ==np.inf): 
             self.thread.start() 
         self.network.run(self.simulation_configuration.dt, self.simulation_configuration.tf, self.simulation_configuration.t0)
 
@@ -94,6 +94,7 @@ class Simulation(object):
         
     def run_checkpoint_thread(self):
         while True:
+            
             time.sleep(self.checkpoint_period)
               
             # Request pause

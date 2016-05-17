@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
@@ -20,17 +21,11 @@ from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import itertools
 import logging
+from brian.neurongroup import network
 logging.disable(logging.CRITICAL) # pragma: no cover
 
-def example(show=False, save=False):
+def get_network(dv = .0001):
 
-    # Simulation settings:
-    t0 = 0.
-    dt = .0001
-    dv = .0001
-    tf = .1
-    save = False
-    
     nsyn_background = {
         (23, 'e'): 1600,
         (23, 'i'): 1500,
@@ -74,6 +69,17 @@ def example(show=False, save=False):
         'i': -.7*1e-3
     }
     
+    position_dict = {
+        (23, 'e'): (0,0,3),
+        (23, 'i'): (0,1,3),
+        (4, 'e'): (0,0,2),
+        (4, 'i'): (0,1,2),
+        (5, 'e'): (0,0,1),
+        (5, 'i'): (0,1,1),
+        (6, 'e'): (0,0,0),
+        (6, 'i'): (0,1,0)
+    }
+    
     internal_population_settings = {'v_min': -.03, 
                                     'v_max':.015,
                                     'dv':dv,
@@ -86,8 +92,12 @@ def example(show=False, save=False):
     background_population_dict = {}
     internal_population_dict = {}
     for layer, celltype in itertools.product([23, 4, 5, 6], ['e', 'i']):    
-        background_population_dict[layer, celltype] = ExternalPopulation('Heaviside(t)*%s' % background_firing_rate, record=False)
-        internal_population_dict[layer, celltype] = InternalPopulation(**internal_population_settings)
+        background_population_dict[layer, celltype] = ExternalPopulation('Heaviside(t)*%s' % background_firing_rate, record=False, metadata={'layer':layer, 'celltype':celltype})
+        curr_population_settings = copy.copy(internal_population_settings)
+        x_pos, y_pos, z_pos = position_dict[layer, celltype]
+        metadata={'layer':layer, 'celltype':celltype, 'x':x_pos, 'y':y_pos, 'z':z_pos,}
+        curr_population_settings.update({'metadata':metadata})
+        internal_population_dict[layer, celltype] = InternalPopulation(**curr_population_settings)
     
     # Create background connections:
     connection_list = []
@@ -114,6 +124,26 @@ def example(show=False, save=False):
     # Create simulation:
     population_list = background_population_dict.values() + internal_population_dict.values()
     network = Network(population_list, connection_list)
+    
+    return network
+    
+def example(show=False, save=False, network=None):
+    
+    # Simulation settings:
+    t0 = 0.
+    dt = .0001
+    tf = .1
+    dv = .0001
+    
+    if network is None:
+        network = get_network(dv)
+    
+    internal_population_dict = {}
+    for p in network.population_list:
+        if isinstance(p, InternalPopulation):
+            layer = p.metadata['layer']
+            celltype = p.metadata['celltype']
+            internal_population_dict[layer, celltype] = p 
     
     # Run simulation:
     network.run(dt=dt, tf=tf, t0=t0)

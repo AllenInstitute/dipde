@@ -26,9 +26,11 @@ def create_elem(neuroml_template, elem_type='root', **kwargs):
     elem.attrib.update(kwargs)
     return elem
 
-def create_root(id): return create_elem(neuroml_template, elem_type='root', id=id)
+def create_root(id): 
+    return create_elem(neuroml_template, elem_type='root', id=id)
 
-def create_network(id): return create_elem(neuroml_template, elem_type='network', type='network')
+def create_network(id): 
+    return create_elem(neuroml_template, elem_type='network', type='network')
 
 def create_internal_population_type(id, v_max, tau_m): 
     warnings.warn('Timescale not used for conversion')
@@ -92,9 +94,9 @@ print internal_population.attrib
 #     
 
 
-# # tree.write('tmp.nml')
+# tree.write('tmp.nml')
 # 
-# # validate_neuroml2('tmp.nml')
+# validate_neuroml2('tmp.nml')
 
 # # Write root element:
 # root = get_bare_neuroml_root(neuroml_example_file_name)
