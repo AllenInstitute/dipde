@@ -1,5 +1,8 @@
 import logging
 import scipy.integrate as spi
+
+import numpy as np
+
 logger = logging.getLogger(__name__)
 
 class PopulationInterface(object):
@@ -40,6 +43,9 @@ class PopulationInterface(object):
     def source_firing_rate_dict(self):
         return dict((c.source.gid,self.simulation.get_curr_firing_rate(c.source.gid)) for c in self.source_connection_list)
     
+    def initialize_delay_queue(self, max_delay_ind):    
+        return np.core.numeric.zeros(max_delay_ind+1)
+
 class ODE(PopulationInterface):
     '''Example Extension class that solves an ODE to provide firing rate input'''
     

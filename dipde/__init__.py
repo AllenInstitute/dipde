@@ -24,3 +24,4 @@ from internals.network import Network
 from internals.simulation import Simulation
 from internals.connection import Connection
 from internals.simulationconfiguration import SimulationConfiguration
+

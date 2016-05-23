@@ -24,6 +24,7 @@ import json
 from dipde.interfaces.zmq import RequestFiringRate
 import logging
 logger = logging.getLogger(__name__)
+import numpy as np
 
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations.
@@ -58,7 +59,7 @@ class ExternalPopulation(object):
         if isinstance(firing_rate, str):
             self.firing_rate_string = str(firing_rate)
             self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
-        elif isinstance(firing_rate, (types.FunctionType, RequestFiringRate)):
+        elif hasattr(firing_rate, "__call__"):
             self.closure = firing_rate
         else:
             self.firing_rate_string = str(firing_rate)
@@ -154,6 +155,9 @@ class ExternalPopulation(object):
     
     def to_dict(self):
 
+        if not hasattr(self, 'firing_rate_string'):
+            raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
+
         data_dict = {'rank':self.rank,
                      'record':self.record,
                      'metadata':self.metadata,
@@ -198,7 +202,7 @@ class ExternalPopulation(object):
         '''
         
         import matplotlib.pyplot as plt
-        show = kwargs.pop('show',True)
+        show = kwargs.pop('show',False)
         
         if ax == None:
             fig = plt.figure()
@@ -212,3 +216,12 @@ class ExternalPopulation(object):
             plt.show()
 
         return ax
+    
+    def initialize_delay_queue(self, max_delay_ind):
+        delay_queue = np.core.numeric.zeros(max_delay_ind+1)
+        for i in range(len(delay_queue)):
+            delay_queue[i] = self.simulation.get_firing_rate(self.gid, self.simulation.t - self.simulation.dt*i)
+        delay_queue = delay_queue[::-1]
+        
+        return delay_queue
+

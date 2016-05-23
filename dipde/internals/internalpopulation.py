@@ -22,6 +22,8 @@ from dipde.interfaces.pandas import to_df
 from dipde.internals import utilities as util
 import logging
 logger = logging.getLogger(__name__)
+import scipy.sparse as sps
+import scipy.sparse.linalg as spsla
 
 class InternalPopulation(object):
     """Population density class
@@ -102,13 +104,19 @@ class InternalPopulation(object):
         self.curr_firing_rate = initial_firing_rate
         self.update_method = update_method
         self.approx_order = approx_order
-        self.tol = tol
         self.norm = norm
         self.update_callback = update_callback
         self.initialize_callback = initialize_callback
         self.firing_rate_record = [x for x in firing_rate_record]
         self.t_record = [x for x in t_record]
         assert len(self.firing_rate_record) == len(self.t_record)
+        if tol is None:
+            if self.update_method == 'gmres':
+                self.tol = 1e-5
+            else:
+                self.tol = 1e-12
+        else:
+            self.tol = tol
 
         # Additional metadata:
         util.check_metadata(metadata)
@@ -178,8 +186,25 @@ class InternalPopulation(object):
         self.tau_m = util.discretize_if_needed(self.tau_m)
         if np.sum(self.tau_m.xk <= 0) > 0:
             raise Exception('Negative tau_m values detected: %s' % self.tau_m.xk) # pragma: no cover
+        
+        
+        
+        
+        
+        
+        # Voltage edges and leak matrix construction
         self.edges = util.get_v_edges(self.v_min, self.v_max, self.dv)
-        self.leak_flux_matrix = util.leak_matrix(self.edges, self.tau_m)
+ 
+        # Different leak matrices for different solvers:
+        self.leak_flux_matrix_dict = {}
+        self.leak_flux_matrix_dict['dense'] = util.leak_matrix(self.edges, self.tau_m) 
+        
+        # Backward Euler sparse:
+        lfm_csrbe = sps.eye(np.shape(self.leak_flux_matrix_dict['dense'])[0], format='csr') - self.simulation.dt*self.leak_flux_matrix_dict['dense']
+        M_I, M_J = np.where(np.array(lfm_csrbe) != 0) 
+        M_val = lfm_csrbe[M_I, M_J]
+        self.leak_flux_matrix_dict['sparse'] = (M_I, M_J, M_val)
+
     
     def initialize_probability(self):
         '''Initialize self.pv to delta-distribution at v=0.'''
@@ -222,13 +247,13 @@ class InternalPopulation(object):
     def get_total_flux_matrix(self):
         '''Create a total flux matrix by summing presynaptic inputs and the leak matrix.'''
         
-        total_flux_matrix = self.leak_flux_matrix.copy()
+        total_flux_matrix = self.leak_flux_matrix_dict['dense'].copy()
         for key, val in self.total_input_dict.items():
             try:
-                total_flux_matrix += key.flux_matrix * val
+                total_flux_matrix += key.flux_matrix_dict['dense'] * val
             except:  
                 key.initialize()
-                total_flux_matrix += key.flux_matrix * val
+                total_flux_matrix += key.flux_matrix_dict['dense'] * val
         return total_flux_matrix
 
     def update_total_input_dict(self):
@@ -245,18 +270,36 @@ class InternalPopulation(object):
     def update_propability_mass(self):
         """Create a total flux matrix, and propogate self.pv one time-step."""
         
-        J = self.get_total_flux_matrix()
+        
+        
+#         import scipy.linalg as spla
+#         import matplotlib.pyplot as plt
+#         
+#         if self.simulation.t > .09:
+#         
+#             for key, val in self.total_input_dict.items():
+#                 print key, val
+#         
+#             evs = spla.eigvals(J*self.simulation.dt)
+#             evs_re = np.real(evs)
+#             evs_im = np.imag(evs)
+#             plt.plot(evs_re, evs_im, '.')
+#             plt.show()
         
         if self.update_method == 'exact':
+            J = self.get_total_flux_matrix()
             self.pv = util.exact_update_method(J, self.pv, dt=self.simulation.dt)
             
         elif self.update_method == 'approx':
-
+            J = self.get_total_flux_matrix()
             if self.approx_order == None:
                 self.pv = util.approx_update_method_tol(J, self.pv, tol=self.tol, dt=self.simulation.dt, norm=self.norm)
 
             else:
                 self.pv = util.approx_update_method_order(J, self.pv, approx_order=self.approx_order, dt=self.simulation.dt)
+        
+        elif self.update_method == 'gmres':
+            self.update_propability_mass_backward_euler(lambda J, x0: spsla.gmres(J, x0, x0=x0, tol=self.tol)[0])
         
         else:
             raise Exception('Unrecognized population update method: "%s"' % self.update_method)  # pragma: no cover
@@ -267,7 +310,36 @@ class InternalPopulation(object):
             self.pv /= self.pv.sum()
             logger.critical('Normalizing Probability Mass')
          
+    def update_propability_mass_backward_euler(self, solver):
+
+        # Determine size of sparse array to construct
+        total_size = len(self.leak_flux_matrix_dict['sparse'][0])
+        for key, val in self.total_input_dict.items():
+            try:
+                total_size += len(key.flux_matrix_dict['sparse'][0])
+            except:
+                key.initialize()
+                total_size += len(key.flux_matrix_dict['sparse'][0])
+
+        M_I_total = np.empty(total_size)
+        M_J_total = np.empty(total_size)
+        M_val_total = np.empty(total_size)
         
+        start_ind = 0
+        end_ind = len(self.leak_flux_matrix_dict['sparse'][0])
+        M_I_total[start_ind:end_ind] = self.leak_flux_matrix_dict['sparse'][0]
+        M_J_total[start_ind:end_ind] = self.leak_flux_matrix_dict['sparse'][1]
+        M_val_total[start_ind:end_ind] = self.leak_flux_matrix_dict['sparse'][2]
+        
+        for key, val in self.total_input_dict.items():
+            start_ind = end_ind
+            end_ind += len(key.flux_matrix_dict['sparse'][0])
+            M_I_total[start_ind:end_ind] = key.flux_matrix_dict['sparse'][0]
+            M_J_total[start_ind:end_ind] = key.flux_matrix_dict['sparse'][1]
+            M_val_total[start_ind:end_ind] = -key.flux_matrix_dict['sparse'][2]*(val*self.simulation.dt)
+
+        J = sps.coo_matrix((M_val_total, (M_I_total, M_J_total)), shape=(len(self.pv), len(self.pv)))
+        self.pv = solver(J, self.pv)
         
     def update_firing_rate(self):
         '''Update curr_firing_rate attribute based on the total flux of probability mass across threshold.'''
@@ -278,7 +350,7 @@ class InternalPopulation(object):
             flux_vector = reduce(np.add, reduce_list)
             self.curr_firing_rate = np.dot(flux_vector, self.pv)
         else:
-            self.curr_firing_rate = 0.
+            self.curr_firing_rate = 0.  # pragma: no cover
         
     def update_firing_rate_recorder(self):
         '''Record current time and firing rate, if record==True.
@@ -342,7 +414,7 @@ class InternalPopulation(object):
         '''
         
         import matplotlib.pyplot as plt
-        show = kwargs.pop('show',True)
+        show = kwargs.pop('show',False)
         
         if ax == None:
             fig = plt.figure()
@@ -405,24 +477,26 @@ class InternalPopulation(object):
         return data_dict
     
     def to_json(self, fh=None, **kwargs):
-        '''Save the population contents to json'''
+        '''Save the contents of the InternalPopultion to json'''
         
-        data_dict = self.to_dict()
         indent = kwargs.pop('indent',2)
+        data_dict = self.to_dict()
+
         
         if fh is None:
             return json.dumps(data_dict, indent=indent, **kwargs)
         else:
             return json.dump(data_dict, fh, indent=indent, **kwargs)
-        
-    def parameter_dict(self):
-        return {'reversal_potential':0.
-                }
-        
+
 
     def copy(self):
         return InternalPopulation(**self.to_dict())
 
     def to_df(self):
         return to_df(self)
+    
+    def initialize_delay_queue(self, max_delay_ind):
+        
+        return np.core.numeric.ones(max_delay_ind+1)*self.simulation.get_curr_firing_rate(self.gid)
+
         

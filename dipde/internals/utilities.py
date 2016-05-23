@@ -285,13 +285,20 @@ def get_pv_from_p0(p0, edges):
     
     return pv 
 
-class NullObject(object):
+
+class DefaultSynchronizationHarness(object):
     
-    def __init__(self, ): pass
-        
+    def __init__(self, ):
+        self.rank = 0
+    
+    def gid_to_rank(self, gid): return 0
+    
     def null_fcn(self, *args, **kwargs): pass
         
     def __getattr__(self, *args, **kwargs): return self.null_fcn
+
+
+
 
 def compare_dicts(o1_dict, o2_dict):
     

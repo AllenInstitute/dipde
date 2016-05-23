@@ -93,10 +93,11 @@ class Network(object):
     
     @property
     def rank(self):
-        return self.distributed_configuration.rank()
+        return self.synchronization_harness.rank
 
         
-    def run(self, dt, tf, t0=0., distributed_configuration=utilities.NullObject()):
+    def run(self, dt, tf, t0=0., synchronization_harness=None):
+
         '''Main iteration control loop for simulation
         
         The time step selection must be approximately of the same order as dv
@@ -113,8 +114,11 @@ class Network(object):
             Time step (unit=seconds).
         '''
 
-        self.distributed_configuration = distributed_configuration
-        self.firing_rate_organizer = FiringRateOrganizer(self.distributed_configuration)
+        if synchronization_harness is None:
+            self.synchronization_harness = utilities.DefaultSynchronizationHarness()
+        else:
+            self.synchronization_harness = synchronization_harness
+        self.firing_rate_organizer = FiringRateOrganizer(self.synchronization_harness)
         
         self.dt = dt
         self.t0 = t0
@@ -124,18 +128,23 @@ class Network(object):
         self.tf = tf
         self.ti = 0
         
-        self.distributed_configuration.initialize(self.ti)
+        self.synchronization_harness.initialize(self.ti)
         
         # Initialize populations:
         for gid, p in enumerate(self.population_list):
             p.initialize()
-            self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
+
+            if self.synchronization_harness.gid_to_rank(gid) == self.rank:
+                self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
         
-        self.distributed_configuration.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal[self.ti])
+        self.synchronization_harness.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal.setdefault(self.ti, {}))
             
         for p in self.population_list:
-            if isinstance(p, InternalPopulation):        
+            try:
                 p.initialize_total_input_dict()
+            except AttributeError:
+                pass
+
         
         # Initialize connections:    
         for c in self.connection_list:
@@ -151,7 +160,9 @@ class Network(object):
             
         self.run_time = time.time() - start_time
         
-        self.distributed_configuration.finalize()
+
+        self.synchronization_harness.finalize()
+
         
         self.run_callback(self)
         
@@ -165,11 +176,13 @@ class Network(object):
         logger.info( 'time: %s' % self.t)
         
         for gid, p in enumerate(self.population_list):
-            if self.distributed_configuration.gid_to_rank(gid) == self.rank:
+
+            if self.synchronization_harness.gid_to_rank(gid) == self.rank:
                 p.update()
                 self.firing_rate_organizer.push(self.ti, gid, p.curr_firing_rate)
-                
-        self.distributed_configuration.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal[self.ti])
+        
+        self.synchronization_harness.update(self.ti, self.firing_rate_organizer.firing_rate_dict_internal.setdefault(self.ti, {}))
+
         
         for c in self.connection_list:
             c.update()
@@ -210,6 +223,20 @@ class Network(object):
         pd.options.display.max_columns = 999
         df_list = [p.to_df() for p in self.population_list]
         return reorder_df_columns(pd.concat(df_list), ['class', 'module'])
+
+    def get_total_flux_matrix(self, internal_population, dt):
+        
+        # Protect memory state of population and network:
+        population_ind = self.population_list.index(internal_population)
+        new_network = self.copy()
+        new_network.dt = dt
+        new_network.t0 = 0
+        new_network.ti = 0
+        
+        new_internal_population = new_network.population_list[population_ind] 
+        new_internal_population.initialize()
+        new_internal_population.initialize_total_input_dict()
+        return new_internal_population.get_total_flux_matrix()
 
 
 

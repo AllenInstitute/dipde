@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import matplotlib
 matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
@@ -27,9 +28,9 @@ def get_network(dv=.001, update_method='exact', approx_order=None, tol=1e-8):
     b1 = ExternalPopulation('100', record=True)
     i1 = InternalPopulation(v_min=0, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     b1_i1 = Connection(b1, i1, 1, weights=.005, delays=0.0)
-    simulation = Network([b1, i1], [b1_i1])
+    network = Network([b1, i1], [b1_i1])
 
-    return simulation
+    return network
 
 def example(show=False, save=False):
 
@@ -45,10 +46,14 @@ def example(show=False, save=False):
     # Run simulation:
     network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     network.run(dt=dt, tf=tf, t0=t0)
+    
      
+
     # Visualize:
     i1 = network.population_list[1]
+    
     fig, ax = plt.subplots(figsize=(3,3))
+    
     i1.plot(ax=ax)
     plt.xlim([0,tf])
     plt.ylim(ymin=0)
@@ -56,12 +61,16 @@ def example(show=False, save=False):
     plt.ylabel('Firing Rate (Hz)')
     fig.tight_layout()
     if save == True: plt.savefig('./singlepop.png')
-    if show == True: 
-        fig = plt.gcf()
-        window = fig.canvas.manager.window
-        window.raise_()
-        plt.show()
-         
+    
+    
+
+    if show == True:                        # pragma: no cover
+        fig = plt.gcf()                     # pragma: no cover
+        window = fig.canvas.manager.window  # pragma: no cover
+        window.raise_()                     # pragma: no cover
+        plt.show()                          # pragma: no cover
+          
+
     return i1.t_record, i1.firing_rate_record
     
 if __name__ == "__main__": example(show=True)        # pragma: no cover
