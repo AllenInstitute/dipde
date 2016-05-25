@@ -155,7 +155,7 @@ class ExternalPopulation(object):
     
     def to_dict(self):
 
-        if not hasattr(self, 'firing_rate_string'):
+        if not hasattr(self, 'firing_rate_string') and not hasattr(self, 'nwb_file_name'):
             raise RuntimeError('Cannot marshal ExternalPopulation with not firing_rate_string') # pragma: no cover
 
         data_dict = {'rank':self.rank,
