@@ -189,14 +189,25 @@ class Network(object):
             
         self.update_callback(self)
         
-    def to_dict(self):
+    def to_dict(self, organization='sparse_adjacency_matrix'):
 
-        data_dict = {'population_list':[p.to_dict() for p in self.population_list],
-                     'connection_list':[c.to_dict() for c in self.connection_list],
-                     'class':self.__class__.__name__,
-                     'module':__name__}
+        population_list = [p.to_dict() for p in self.population_list]
+        connection_list = [c.to_dict() for c in self.connection_list]
+
+        if organization == 'sparse_adjacency_matrix':
+
+            data_dict = {'population_list':population_list,
+                         'connection_list':connection_list,
+                         'class':self.__class__.__name__,
+                         'module':__name__}
+            
+            return data_dict
         
-        return data_dict
+        else:
+            
+            raise NotImplementedError
+            
+            
         
     def to_json(self, fh=None, **kwargs):
         '''Save the contents of the InternalPopultion to json'''
