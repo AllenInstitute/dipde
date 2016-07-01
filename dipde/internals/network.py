@@ -23,6 +23,7 @@ from dipde.internals.firingrateorganizer import FiringRateOrganizer
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.interfaces.pandas import reorder_df_columns
 import logging
+from dipde.internals.externalpopulation import ExternalPopulation
 logger = logging.getLogger(__name__)
 
 class Network(object):
@@ -248,6 +249,14 @@ class Network(object):
         new_internal_population.initialize()
         new_internal_population.initialize_total_input_dict()
         return new_internal_population.get_total_flux_matrix()
+    
+    @property
+    def external_population_list(self):
+        return [p for p in self.population_list if isinstance(p, ExternalPopulation)]
+    
+    @property
+    def internal_population_list(self):
+        return [p for p in self.population_list if isinstance(p, InternalPopulation)]
 
 
 
