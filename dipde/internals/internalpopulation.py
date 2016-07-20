@@ -423,7 +423,7 @@ class InternalPopulation(object):
         if self.firing_rate_record is None or self.t_record is None:
             raise RuntimeError('Firing rate not recorded on gid: %s' % self.gid)  # pragma: no cover
         ax.plot(self.t_record, self.firing_rate_record, **kwargs)
-        
+        ax.set_ylim(bottom=0, top=np.max(self.firing_rate_record)*1.1)
         if show == True:
             plt.show()
         

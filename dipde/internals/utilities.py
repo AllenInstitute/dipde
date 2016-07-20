@@ -192,7 +192,7 @@ def discretize_if_needed(curr_input):
             raise NotImplementedError # pragma: no cover
     elif isinstance(curr_input,str):
         return discretize_if_needed(json.loads(curr_input))
-        
+    
     else:
         
         raise ValueError("Unrecognized curr_input format: input=%s" % (curr_input,)) # pragma: no cover
