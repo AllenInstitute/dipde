@@ -19,15 +19,15 @@ from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 
-def get_simulation(dv=.001, update_method='approx', approx_order=None, tol=1e-8):
+def get_simulation(dv=.001, update_method='approx', tol=1e-8):
     import scipy.stats as sps
 
     # Create simulation:
     b1 = ExternalPopulation(50)
     b2 = ExternalPopulation(1000)
-    i1 = InternalPopulation(v_min=-.04, v_max=.02, dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
-    b1_i1 = Connection(b1, i1, 1, delays=0.0, weights=(sps.expon(0,.00196), 201))
-    b2_i1 = Connection(b2, i1, 1, delays=0.0, weights=(sps.expon(0, .001), 201))
+    i1 = InternalPopulation(v_min=-.04, v_max=.02, dv=dv, update_method=update_method, tol=tol)
+    b1_i1 = Connection(b1, i1, 1, delays=0.0, weights=(sps.expon(0,.00196), 301))
+    b2_i1 = Connection(b2, i1, 1, delays=0.0, weights=(sps.expon(0, .001), 301))
     simulation = Network([b1, b2, i1], [b1_i1, b2_i1])
 
     return simulation
@@ -40,12 +40,11 @@ def example(show=True, save=False):
     dt = .0001
     dv = .0001
     tf = .1
-    update_method = 'exact'
-    approx_order = 1
+    update_method = 'approx'
     tol = 1e-14
     
     # Run simulation:
-    simulation = get_simulation(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
+    simulation = get_simulation(dv=dv, update_method=update_method, tol=tol)
     simulation.run(dt=dt, tf=tf, t0=t0)
     
     # Visualize:
