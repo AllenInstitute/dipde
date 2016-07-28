@@ -17,6 +17,7 @@ import sympy.parsing.sympy_parser as symp
 from dipde.interfaces.pandas import to_df
 from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
+import sympy
 import numpy as np 
 import types
 from dipde.internals import utilities as util
@@ -25,6 +26,7 @@ from dipde.interfaces.zmq import RequestFiringRate
 import logging
 logger = logging.getLogger(__name__)
 import numpy as np
+from sympy import Piecewise
 
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations.
@@ -58,7 +60,7 @@ class ExternalPopulation(object):
         self.rank = 0
         if isinstance(firing_rate, str):
             self.firing_rate_string = str(firing_rate)
-            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
+            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string, local_dict={'Heaviside':lambda x: Piecewise((0,x<0), (1,x>0),(.5,True))}))
         elif hasattr(firing_rate, "__call__"):
             self.closure = firing_rate
         else:

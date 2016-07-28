@@ -13,7 +13,6 @@ logging.disable(logging.CRITICAL)
 import scipy.optimize as sopt
 import scipy.sparse as spsp
 import scipy.io as sio
-import sys
 
 
 def get_infinitesimal_perturbation(t0, sigma, amplitude):
@@ -22,8 +21,10 @@ def get_infinitesimal_perturbation(t0, sigma, amplitude):
 
 dv = .0001
 nsyn_bg = 1
+warnings.warn('change from original param: 600')
 bgfr = 600
 weight = .03
+warnings.warn('change from original param: 16')
 nsyn_recc = 16 # 16
 
 
@@ -37,8 +38,6 @@ i1_i1 = Connection(i1, i1, nsyn_recc, weights=weight, delays=0.0)
 leak_matrix = get_leak_matrix(i1, sparse=True)
 # leak_matrix = spsp.csr_matrix(leak_matrix.shape)
 synaptic_matrix, threshold_vector = get_connection_flux_matrices(b1_i1, sparse=True)
-
-
 
 
 def f(ss_fr_guess):
@@ -83,8 +82,7 @@ J = spsp.csc_matrix(leak_matrix +
                     nsyn_recc*bgfr*alpha/(1-nsyn_recc*alpha)*synaptic_matrix+
                     nsyn_recc*bgfr*M)
 
-
-w = spsp.linalg.eigs(J, 2, sigma=2+71j, return_eigenvectors=False)
+w = spsp.linalg.eigs(J, 100, sigma=0, return_eigenvectors=False)
 for wi in sorted(w):
     print wi
 plt.plot(np.real(w), np.imag(w), '.')
