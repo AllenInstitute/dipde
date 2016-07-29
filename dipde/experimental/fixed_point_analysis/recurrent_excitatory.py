@@ -24,7 +24,7 @@ dv = .0001
 nsyn_bg = 1
 bgfr = 600
 weight = .03
-nsyn_recc = 16 # 16
+nsyn_recc = 30 # 16
 
 
 # Components:
@@ -42,58 +42,55 @@ synaptic_matrix, threshold_vector = get_connection_flux_matrices(b1_i1, sparse=T
 
 
 def f(ss_fr_guess):
-     
+      
     A = leak_matrix + (nsyn_bg*bgfr+nsyn_recc*ss_fr_guess)*synaptic_matrix
-     
+      
     A[0,:] = 1
-     
+      
     b = np.zeros(A.shape[0])
     b[0]=1
-      
+       
     # Solve for steady state:
     try:
         p_star = npla.solve(A,b)
     except npla.linalg.LinAlgError:
-         
+          
         p_star = spsp.linalg.spsolve(A,b)
-         
-    
+          
+     
     # Steady state firing rate
     return np.dot(p_star, (bgfr*nsyn_bg+nsyn_recc*ss_fr_guess)*threshold_vector)
-  
-  
+    
 ss_fr = sopt.fixed_point(f, 12)
-
 A = leak_matrix + (nsyn_bg*bgfr+nsyn_recc*ss_fr)*synaptic_matrix
 A[0,:] = 1
 b = np.zeros(A.shape[0])
 b[0]=1
 p_star = spsp.linalg.spsolve(A,b)
-
-
-alpha = np.dot(p_star, threshold_vector)
-
-f0 = synaptic_matrix.dot(p_star)
-f1 = threshold_vector/((1-nsyn_recc*alpha)**2)
-
-M = np.outer(f0,f1)
-
-J = spsp.csc_matrix(leak_matrix + 
-                    bgfr*synaptic_matrix+
-                    nsyn_recc*bgfr*alpha/(1-nsyn_recc*alpha)*synaptic_matrix+
-                    nsyn_recc*bgfr*M)
-
-
-w = spsp.linalg.eigs(J, 2, sigma=2+71j, return_eigenvectors=False)
-for wi in sorted(w):
-    print wi
-plt.plot(np.real(w), np.imag(w), '.')
-print 'DONE'
-plt.show()
-  
-# print type(A)
-#   
-
+ 
+ 
+# alpha = np.dot(p_star, threshold_vector)
+#  
+# # print 1-nsyn_recc*alpha
+# # 
+# # sys.exit()
+# f0 = synaptic_matrix.dot(p_star)
+# f1 = threshold_vector/((1-nsyn_recc*alpha)**2)  
+# M = np.outer(f0,f1)
+# J = spsp.csc_matrix(leak_matrix + 
+#                     bgfr*synaptic_matrix+
+#                     nsyn_recc*bgfr*alpha/(1-nsyn_recc*alpha)*synaptic_matrix+
+#                     nsyn_recc*bgfr*M)
+#  
+# w, ev = spsp.linalg.eigs(J, 201, sigma=0, return_eigenvectors=True)
+# for wi in sorted(w):
+#     print wi
+# plt.plot(np.real(w), np.imag(w), '.')
+# print 'DONE'
+# plt.show()
+   
+   
+   
 # A = spsp.csc_matrix(leak_matrix + 600.0*synaptic_matrix)
 # w, _ = spsp.linalg.eigs(A, 10, sigma=0)
 #  
@@ -106,20 +103,20 @@ plt.show()
 #         w_new, vl_new = spsp.linalg.eigs(A, 1, sigma=wi)
 #      
 #     print w_new, npla.norm(A.dot(vl_new[:,0])-(w_new[0])*vl_new[:,0])
-    
+     
 #     if npla.norm(A.dot(vl_new[:,0])-(w_new[0])*vl_new[:,0]) < 1e-10:
 #         eigval_list.append(w_new[0])
 #     else:
 #         raise Exception
 #      
 # print sorted(eigval_list)
-
-#     print w_new
  
+#     print w_new
+  
 #     print 
 #     for delta in [0,1j,2j]:
 #         print npla.norm(A.dot(vi)-(wi+delta)*vi)
-     
+      
 # print sorted(w, reverse=True, key=lambda wi:np.real(wi))
 
 
@@ -158,21 +155,22 @@ plt.show()
 # i_tmp.initialize()
 #  
 #  
-# b1 = ExternalPopulation(bgfr, record=False)
+b1 = ExternalPopulation(bgfr, record=False)
+i1 = InternalPopulation(tau_m=.05, v_min=0, v_max=1, dv=dv, update_method = 'gmres')
 # i1 = InternalPopulation(tau_m=.05, v_min=0, v_max=1, dv=dv, update_method = 'gmres', p0=(i_tmp.edges.tolist(), p0), initial_firing_rate=f0)
-# b1_i1 = Connection(b1, i1, nsyn_bg, weights=weight, delays=0.0)
-# i1_i1 = Connection(i1, i1, nsyn_recc, weights=weight, delays=0.0)
+b1_i1 = Connection(b1, i1, nsyn_bg, weights=weight, delays=0.0)
+i1_i1 = Connection(i1, i1, nsyn_recc, weights=weight, delays=0.0)
 # 
 # be  = ExternalPopulation(get_infinitesimal_perturbation(.1,.0005,.001), record=False)
 # be_i1 = Connection(be, i1, 1, weights=weight, delays=0.0)
 # 
 # 
-# def chirp_fcn(n):
-#     print n.t, ss_fr, n.population_list[1].curr_firing_rate
-# network = Network([b1, i1, be], [b1_i1, i1_i1, be_i1], update_callback=chirp_fcn)
-# network.run(tf=5, dt=.0001)
-# i1.plot()
-# plt.show()
+def chirp_fcn(n):
+    print n.t, ss_fr, n.population_list[1].curr_firing_rate
+network = Network([b1, i1], [b1_i1, i1_i1], update_callback=chirp_fcn)
+network.run(tf=5, dt=.0001)
+i1.plot()
+plt.show()
 
 
 # def chirp(n):
