@@ -46,7 +46,7 @@ bgfr = 200
 weight_bg = .1
 weight_recc = -.1
 nsyn_recc = 20
-delay = .09  # (.08 , .09)
+delay = .01  # (.08 , .09)
 # 
 # 
 # # Components:
@@ -117,14 +117,11 @@ A0 = leak_matrix + nsyn_bg*bgfr*synaptic_matrix_bg + nsyn_recc*nsyn_bg*bgfr*np.d
 A1 = nsyn_bg*nsyn_recc*bgfr*np.outer(synaptic_matrix_recc.dot(p_star), threshold_vector_bg)
 
 n = A0.shape[0]
-
-N=10
+N=20
 D=-cheb(N-1)*2/delay
-
 tmp1 = np.kron(D[:N-1,:], np.eye(n))
 tmp2 = np.hstack((A1,np.zeros((n,(N-2)*n)), A0))
 tmp3 = spsp.csr_matrix(np.vstack((tmp1, tmp2)))
-
 w = spsp.linalg.eigs(tmp3, 100, sigma=0, return_eigenvectors=False)
 for wi in sorted(w):
     print wi
@@ -132,6 +129,15 @@ plt.plot(np.real(w), np.imag(w), '.')
 print 'DONE'
 plt.show()
 
+# tmp3 = spsp.csr_matrix(A0+A1)
+# w = spsp.linalg.eigs(tmp3, 100, sigma=0, return_eigenvectors=False)
+# for wi in sorted(w):
+#     print wi
+# plt.plot(np.real(w), np.imag(w), '.')
+# print 'DONE'
+# plt.show()
+
+ 
 
 
 # print tmp2.shape
