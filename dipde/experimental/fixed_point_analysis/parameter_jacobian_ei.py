@@ -22,8 +22,11 @@ np.set_printoptions(linewidth=200, formatter={'float':'{:10.5f}'.format})
 dv = .001
 we = .1
 wi = -.1
-bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay = 40, 5, 5, 5, 2, 20, .035
+bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay = 40, 5, 5, 5, 2, 20, .035  # .035 stable,, .035 unstable
 
+# bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay = np.array([bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay]) + .5*np.array([  -0.00025,   -0.00198,    0.00455,    0.00470,   -0.00160,   -0.00145,    0.00361]) 
+# bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay = np.array([bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay]) + 1.*np.array([  -0.00001,   -0.00009,    0.00024,    0.00022,    0.00002,   -0.00005,    0.00000])
+bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay = np.array([bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay]) + .5*np.array([   0.00002,    0.00018,    0.28188,   -0.29071,   -0.09889,    0.09314,   -0.00031])
 # 
 # # Components:
 # b0 = ExternalPopulation(bgfr, record=True)
@@ -122,25 +125,29 @@ def cheb(N):
 leak_matrix = get_leak_matrix(i1, sparse=False)
 synaptic_matrix_bg, threshold_vector_bg = get_connection_flux_matrices(b1_i1, sparse=False)
 synaptic_matrix_recc, _ = get_connection_flux_matrices(i1_i1, sparse=False)
-# A = L + (nsyn_bg*bgfr+nsyn_01*f0_ss)*Se + nsyn_11*f1_ss*Si     
-# A[0,:] = 1       
-# b = np.zeros(A.shape[0])
-# b[0]=1
-# p_star = npla.solve(A,b)
-# A0 = leak_matrix + (nsyn_bg*bgfr+nsyn_01*f0_ss)*synaptic_matrix_bg + nsyn_11*(nsyn_bg*bgfr+nsyn_01*f0_ss)*np.dot(p_star,threshold_vector_bg)*synaptic_matrix_recc
-# A1 = (nsyn_bg*bgfr+nsyn_01*f0_ss)*nsyn_11*np.outer(synaptic_matrix_recc.dot(p_star), threshold_vector_bg)
-# n = A0.shape[0]
-# N=6
-# D=-cheb(N-1)*2/delay
-# tmp1 = np.kron(D[:N-1,:], np.eye(n))
-# tmp2 = np.hstack((A1,np.zeros((n,(N-2)*n)), A0))
-# tmp3 = spsp.csr_matrix(np.vstack((tmp1, tmp2)))
-# t0 = time.time()
-# w, v = spsp.linalg.eigs(tmp3, 5, return_eigenvectors=True, which='LR', ncv=150)
-# print delay, time.time() - t0
-# w_list = [(wi, vi) for wi, vi in zip(w,v.T) if np.abs(wi) > 1e-8]
-# eig_list_sorted = sorted(w_list, key=lambda x:np.real(x[0]), reverse=True)
-# w_crit, v_crit = eig_list_sorted[0]
+A = L + (nsyn_bg*bgfr+nsyn_01*f0_ss)*Se + nsyn_11*f1_ss*Si     
+A[0,:] = 1       
+b = np.zeros(A.shape[0])
+b[0]=1
+p_star = npla.solve(A,b)
+A0 = leak_matrix + (nsyn_bg*bgfr+nsyn_01*f0_ss)*synaptic_matrix_bg + nsyn_11*(nsyn_bg*bgfr+nsyn_01*f0_ss)*np.dot(p_star,threshold_vector_bg)*synaptic_matrix_recc
+A1 = (nsyn_bg*bgfr+nsyn_01*f0_ss)*nsyn_11*np.outer(synaptic_matrix_recc.dot(p_star), threshold_vector_bg)
+n = A0.shape[0]
+N=6
+D=-cheb(N-1)*2/delay
+tmp1 = np.kron(D[:N-1,:], np.eye(n))
+tmp2 = np.hstack((A1,np.zeros((n,(N-2)*n)), A0))
+tmp3 = spsp.csr_matrix(np.vstack((tmp1, tmp2)))
+t0 = time.time()
+w, v = spsp.linalg.eigs(tmp3, 5, return_eigenvectors=True, which='LR', ncv=150)
+print delay, time.time() - t0
+w_list = [(wi, vi) for wi, vi in zip(w,v.T) if np.abs(wi) > 1e-8]
+eig_list_sorted = sorted(w_list, key=lambda x:np.real(x[0]), reverse=True)
+w_crit, v_crit = eig_list_sorted[0]
+
+print f0_ss, f1_ss, w_crit
+sys.exit()
+
 # w_crit = [w_crit]
 # w_v_dict = {}
 # for curr_delay in np.arange(.04, .02, -.001):
@@ -212,6 +219,9 @@ def get_jacobian(xk, nk):
 
 
 J = get_jacobian(np.array([bgfr, nsyn_bg, nsyn_00, nsyn_01, nsyn_10, nsyn_11, delay]), 4)
+
+np.save('J.npy', J)
+
 print J
 print
 
