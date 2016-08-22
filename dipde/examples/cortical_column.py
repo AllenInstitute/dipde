@@ -21,7 +21,7 @@ from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
 import itertools
 import logging
-from brian.neurongroup import network
+# from brian.neurongroup import network
 logging.disable(logging.CRITICAL) # pragma: no cover
 
 def get_network(dv = .0001):
