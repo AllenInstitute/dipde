@@ -1,3 +1,5 @@
+.idea
+.cache
 update.sh
 doc
 .DS_Store
