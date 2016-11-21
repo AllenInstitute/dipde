@@ -48,16 +48,17 @@ def example(show=True, save=False):
     
     # Visualize:
     i1 = simulation.population_list[1]
-    plt.figure(figsize=(3,3))
-    plt.plot(i1.t_record, i1.firing_rate_record)
-    plt.xlim([0,tf])
-    plt.ylim(ymin=0)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Firing Rate (Hz)')
-    plt.tight_layout()
+    if show == True:
+        plt.figure(figsize=(3,3))
+        plt.plot(i1.t_record, i1.firing_rate_record)
+        plt.xlim([0,tf])
+        plt.ylim(ymin=0)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Firing Rate (Hz)')
+        plt.tight_layout()
 
-    if save == True: plt.savefig('./singlepop_recurrent.png')
-    if show == True: plt.show()
+        if save == True: plt.savefig('./singlepop_recurrent.png')
+        plt.show()
     
     return i1.t_record, i1.firing_rate_record
     

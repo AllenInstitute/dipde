@@ -45,20 +45,23 @@ def example(show=True, save=False):
     # Run simulation:
     simulation = get_simulation(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     simulation.run(dt=dt, tf=tf, t0=t0)
-    
-    # Visualize:
-    plt.figure(figsize=(3,3))
+
     i1 = simulation.population_list[1]
-    plt.plot(i1.t_record, i1.firing_rate_record)
-    plt.plot([tf],[8.6687760498], 'r*')
-    plt.xlim([0,tf])
-    plt.ylim(ymin=0, ymax=10)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Firing Rate (Hz)')
-    plt.tight_layout()
-    
-    if save == True: plt.savefig('./singlepop_exponential_distribution.png')
-    if show == True: plt.show()
+    if show == True:
+
+        # Visualize:
+        plt.figure(figsize=(3,3))
+        plt.plot(i1.t_record, i1.firing_rate_record)
+        plt.plot([tf],[8.6687760498], 'r*')
+        plt.xlim([0,tf])
+        plt.ylim(ymin=0, ymax=10)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Firing Rate (Hz)')
+        plt.tight_layout()
+
+        if save == True: plt.savefig('./singlepop_exponential_distribution.png')
+        plt.show()
+
     
     return i1.t_record, i1.firing_rate_record
 

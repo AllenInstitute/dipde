@@ -158,29 +158,40 @@ def example(show=False, save=False, network=None):
     
     # Visualize:
     y_label_dict = {23:'2/3', 4:'4', 5:'5', 6:'6'}
-    fig, axes = plt.subplots(nrows=4, ncols=1, **{'figsize':(4,8)})
+
     result_dict = {}
     for row_ind, layer in enumerate([23, 4, 5, 6]):
         for plot_color, celltype in zip(['r', 'b'],['e', 'i']):
             curr_population = internal_population_dict[layer, celltype]
-            axes[row_ind].plot(curr_population.t_record, curr_population.firing_rate_record, plot_color)
             result_dict[layer, celltype] = curr_population.firing_rate_record[-1]
-#             print '(%s,\'%s\'):%s,' % (layer, celltype, result_dict[layer, celltype]) 
        
-        axes[row_ind].set_xlim([0,tf])
-        axes[row_ind].set_ylim(ymin=0)
-        axes[row_ind].set_ylabel('Layer %s\nfiring rate (Hz)' % y_label_dict[layer])
-        if layer == 5: axes[row_ind].legend(['Excitatory', 'Inhibitory'], prop={'size':10}, loc=4)
+
        
-    axes[3].set_xlabel('Time (seconds)')
-    fig.tight_layout()
+
       
-    if save == True: plt.savefig('./cortical_column.png')
+
 
     if show == True:  # pragma: no cover
-        fig = plt.gcf()  # pragma: no cover
+
+        fig, axes = plt.subplots(nrows=4, ncols=1, **{'figsize': (4, 8)})
+        for row_ind, layer in enumerate([23, 4, 5, 6]):
+            for plot_color, celltype in zip(['r', 'b'], ['e', 'i']):
+                curr_population = internal_population_dict[layer, celltype]
+                axes[row_ind].plot(curr_population.t_record, curr_population.firing_rate_record, plot_color)
+
+
+            axes[row_ind].set_xlim([0,tf])
+            axes[row_ind].set_ylim(ymin=0)
+            axes[row_ind].set_ylabel('Layer %s\nfiring rate (Hz)' % y_label_dict[layer])
+            if layer == 5: axes[row_ind].legend(['Excitatory', 'Inhibitory'], prop={'size':10}, loc=4)
+
+        axes[3].set_xlabel('Time (seconds)')
+        fig.tight_layout()
         window = fig.canvas.manager.window  # pragma: no cover
         window.raise_()  # pragma: no cover
+
+        if save == True: plt.savefig('./cortical_column.png')
+
         plt.show()  # pragma: no cover
 
     # if show == True: plt.show()

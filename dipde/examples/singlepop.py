@@ -46,26 +46,25 @@ def example(show=False, save=False):
     # Run simulation:
     network = get_network(dv=dv, update_method=update_method, approx_order=approx_order, tol=tol)
     network.run(dt=dt, tf=tf, t0=t0)
-    
-     
 
-    # Visualize:
     i1 = network.population_list[1]
-    
-    fig, ax = plt.subplots(figsize=(3,3))
-    
-    i1.plot(ax=ax)
-    plt.xlim([0,tf])
-    plt.ylim(ymin=0)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Firing Rate (Hz)')
-    fig.tight_layout()
-    if save == True: plt.savefig('./singlepop.png')
-    
-    
-
     if show == True:                        # pragma: no cover
-        fig = plt.gcf()                     # pragma: no cover
+
+
+        # Visualize:
+
+
+        fig, ax = plt.subplots(figsize=(3, 3))
+
+        i1.plot(ax=ax)
+        plt.xlim([0, tf])
+        plt.ylim(ymin=0)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Firing Rate (Hz)')
+        fig.tight_layout()
+
+        if save == True: plt.savefig('./singlepop.png')
+
         window = fig.canvas.manager.window  # pragma: no cover
         window.raise_()                     # pragma: no cover
         plt.show()                          # pragma: no cover
