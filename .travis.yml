@@ -3,7 +3,7 @@ matrix:
   include:
 
     - python: 2.7
-      env: NUMPY=1.9 SCIPY=0.18.1
+      env: NUMPY=1.11.1 SCIPY=0.18.1
 
 before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
