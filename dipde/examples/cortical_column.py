@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
+import matplotlib
+matplotlib.use('Qt4Agg')
 import copy
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
@@ -123,7 +125,12 @@ def get_network(dv = .0001):
     
     # Create simulation:
     population_list = background_population_dict.values() + internal_population_dict.values()
-    network = Network(population_list, connection_list)
+
+    def f(n):
+        print 't:', n.t
+        # if n.t%.001 < 1e-10:
+        #     print 't:', n.t
+    network = Network(population_list, connection_list, update_callback=f)
     
     return network
     
@@ -131,9 +138,9 @@ def example(show=False, save=False, network=None):
     
     # Simulation settings:
     t0 = 0.
-    dt = .0001
+    dt = .0002
     tf = .1
-    dv = .0001
+    dv = .0002
     
     if network is None:
         network = get_network(dv)
@@ -143,11 +150,11 @@ def example(show=False, save=False, network=None):
         if isinstance(p, InternalPopulation):
             layer = p.metadata['layer']
             celltype = p.metadata['celltype']
-            internal_population_dict[layer, celltype] = p 
+            internal_population_dict[layer, celltype] = p
     
     # Run simulation:
     network.run(dt=dt, tf=tf, t0=t0)
-    print network.run_time
+    print 'Run Time:', network.run_time
     
     # Visualize:
     y_label_dict = {23:'2/3', 4:'4', 5:'5', 6:'6'}
@@ -169,8 +176,14 @@ def example(show=False, save=False, network=None):
     fig.tight_layout()
       
     if save == True: plt.savefig('./cortical_column.png')
-      
-    if show == True: plt.show()
+
+    if show == True:  # pragma: no cover
+        fig = plt.gcf()  # pragma: no cover
+        window = fig.canvas.manager.window  # pragma: no cover
+        window.raise_()  # pragma: no cover
+        plt.show()  # pragma: no cover
+
+    # if show == True: plt.show()
     
     return result_dict
     
