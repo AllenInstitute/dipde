@@ -19,5 +19,5 @@ install:
   - source activate test
   - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pytest setuptools sympy pip pandas=$PANDAS pyzmq mpi4py
   - pip install .
-# Command to run tests: 
+# Command to run tests:  
 script: "py.test ."
