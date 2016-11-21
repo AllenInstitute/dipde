@@ -6,6 +6,7 @@ matrix:
       env: NUMPY=1.11.1 SCIPY=0.18.1 PANDAS=0.18.1
 
 before_install:
+  - sudo apt-get install libqt4-dev qt4-qmake
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
