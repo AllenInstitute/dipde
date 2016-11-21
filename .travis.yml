@@ -3,7 +3,7 @@ matrix:
   include:
 
     - python: 2.7
-      env: NUMPY=1.11.1 SCIPY=0.18.1 PANDAS=0.18.1
+      env: NUMPY=1.11.1 SCIPY=0.18.1 PANDAS=0.18.1 PYQT=4.11.4
 
 before_install:
   - sudo apt-get install libqt4-dev qt4-qmake
@@ -17,7 +17,7 @@ install:
 
   - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
-  - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pytest setuptools sympy pip pandas=$PANDAS pyzmq mpi4py pyqt
+  - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pytest setuptools sympy pip pandas=$PANDAS pyzmq mpi4py pyqt=$PYQT
   - pip install .
 # Command to run tests:
 script: "py.test ."
