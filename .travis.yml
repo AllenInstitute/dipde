@@ -26,4 +26,4 @@ install:
   - pip install .
 
 script:
-  script: "py.test ."
+  - "py.test ."
