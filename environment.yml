@@ -1,0 +1,13 @@
+name: dipde_0.2.1
+dependencies:
+  - matplotlib=1.5.*
+  - python=2.7.*
+  - numpy=1.10.*
+  - pytest=2.8.*
+  - pytest-cov=2.2.*
+  - setuptools=7.*
+  - scipy=0.16.*
+  - sympy=1.0.*
+  - pandas=0.16.*
+  - pyzmq=15.2.*
+  - mpi4py::mpi4py=2.0.0=py27_mpich_2
