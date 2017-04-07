@@ -13,6 +13,15 @@ build:
 requirements:
   build:
     - python
+    - setuptools
+    - numpy
+    - scipy
+    - sympy
+    - pandas
+    - pyzmq
+
+  run:
+    - python
     - matplotlib
     - numpy
     - scipy
@@ -20,9 +29,7 @@ requirements:
     - pandas
     - pyzmq
     - mpi4py
-
-  run:
-    - python
+    
 
 test:
   requires:
