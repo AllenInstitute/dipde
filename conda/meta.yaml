@@ -22,7 +22,7 @@ requirements:
 
   run:
     - python
-    - matplotlib
+    - matplotlib >=1.0,<1.5.3
     - numpy
     - scipy
     - sympy
