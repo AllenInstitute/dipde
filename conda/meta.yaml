@@ -5,7 +5,7 @@ package:
 
 source:
   git_url: https://github.com/nicain/dipde_dev.git
-  git_rev: bug/1
+  git_rev: v0.2.1
 
 build:
   number: 1
