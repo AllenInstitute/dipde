@@ -1,0 +1,45 @@
+
+package:
+  name: dipde
+  version: 0.2.1
+
+source:
+  git_url: https://github.com/nicain/dipde_dev.git
+  git_rev: bug/1
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - python
+    - matplotlib
+    - numpy
+    - scipy
+    - sympy
+    - pandas
+    - pyzmq
+    - mpi4py
+
+  run:
+    - python
+
+test:
+  requires:
+    - numpy
+    - scipy
+    - sympy
+    - pandas
+    - pyzmq
+    - mpi4py
+
+  imports:
+    - dipde
+
+
+
+
+
+
+about:
+  summary: https://github.com/nicain/dipde_dev/blob/master/README.md
