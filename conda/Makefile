@@ -1,13 +1,13 @@
-build:
+build :
 	conda config --set anaconda_upload no
 	conda build .
-
-upload:
-	conda config --set anaconda_upload yes
-	conda build .
-	conda config --set anaconda_upload no
 	conda convert `conda build . --output` -p all -o ./build
+
+upload :
 	find ./build -type f | xargs anaconda upload
 
-purge:
+all : clean build upload
+
+clean:
+	rm -rf build
 	conda build purge
