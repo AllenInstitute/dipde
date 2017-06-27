@@ -14,8 +14,8 @@
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import matplotlib
-matplotlib.use('Qt4Agg')
+# import matplotlib
+# matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
