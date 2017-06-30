@@ -1,3 +1,5 @@
+conda/build
+*~
 .idea
 nicholasc
 .cache
