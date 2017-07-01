@@ -5,33 +5,35 @@ package:
 
 source:
   git_url: https://github.com/nicain/dipde_dev.git
-  git_rev: v0.2.1
+  git_rev: v0.2.1 [py2k]
+  git_rev: python3_v0.2.1 [py3k]
 
 build:
-  number: 1
+  number: 3
 
 requirements:
   build:
     - python
-    - setuptools
     - numpy
-    - scipy
-    - sympy
-    - pandas
-    - pyzmq
-
-  run:
-    - python
-    - matplotlib >=1.0,<1.5.3
-    - numpy
+    - matplotlib
     - scipy
     - sympy
     - pandas
     - pyzmq
     - mpi4py
-    
+
+  run:
+    - python
+    - numpy
+    - matplotlib
+    - scipy
+    - sympy
+    - pandas
+    - pyzmq
+    - mpi4py
 
 test:
+
   requires:
     - numpy
     - scipy
@@ -39,14 +41,8 @@ test:
     - pandas
     - pyzmq
     - mpi4py
-
-  imports:
-    - dipde
-
-
-
-
-
+    - pytest
+    - matplotlib
 
 about:
   summary: https://github.com/nicain/dipde_dev/blob/master/README.md
