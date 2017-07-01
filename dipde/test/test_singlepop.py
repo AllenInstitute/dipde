@@ -120,10 +120,9 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
         simulation_configuration = SimulationConfiguration(dt, tf, t0=t0)
     simulation = Simulation(network=network, simulation_configuration=simulation_configuration)
     simulation.run()
-    b1.plot()
-    
-    i1.plot_probability_distribution()
-    i1.plot()
+    b1.plot(show=False, close=True)
+    i1.plot_probability_distribution(show=False, close=True)
+    i1.plot(show=False, close=True)
     assert i1.n_edges == i1.n_bins+1 
 
     # Test steady-state:    
@@ -131,13 +130,13 @@ def singlepop(steady_state, tau_m=.02, p0=((0.,),(1.,)), weights={'distribution'
 
     
 if __name__ == "__main__":          # pragma: no cover 
-    test_zmq_callback()             # pragma: no cover
+    # test_zmq_callback()             # pragma: no cover
     test_basic()                    # pragma: no cover
-    test_tau_normal()               # pragma: no cover
-    test_p0()                       # pragma: no cover
-    test_weight()                   # pragma: no cover
-    test_drive()                    # pragma: no cover
-    test_zmq_drive_bind_server()    # pragma: no cover
-    test_gmres()                    # pragma: no cover
-    test_checkpoint_simulation()    # pragma: no cover
+    # test_tau_normal()               # pragma: no cover
+    # test_p0()                       # pragma: no cover
+    # test_weight()                   # pragma: no cover
+    # test_drive()                    # pragma: no cover
+    # test_zmq_drive_bind_server()    # pragma: no cover
+    # test_gmres()                    # pragma: no cover
+    # test_checkpoint_simulation()    # pragma: no cover
 

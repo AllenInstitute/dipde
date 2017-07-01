@@ -384,7 +384,7 @@ class InternalPopulation(object):
     def gid(self):
         return self.simulation.gid_dict[self]
     
-    def plot_probability_distribution(self, ax=None):
+    def plot_probability_distribution(self, ax=None, **kwargs):
         '''Convenience method to plot voltage distribution.
         
         Parameters
@@ -395,12 +395,23 @@ class InternalPopulation(object):
         '''
         
         import matplotlib.pyplot as plt
+
+        show = kwargs.pop('show',False)
+        close = kwargs.pop('close', False)
         
         if ax == None:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
             
-        ax.plot(self.edges[:-1], self.pv)
+        ax.plot(self.edges[:-1], self.pv, **kwargs)
+
+        if show == True:
+            plt.show()
+
+        if close == True:
+            plt.close()
+
+
         return ax
     
     def plot(self, ax=None, **kwargs):
@@ -415,6 +426,7 @@ class InternalPopulation(object):
         
         import matplotlib.pyplot as plt
         show = kwargs.pop('show',False)
+        close = kwargs.pop('close', False)
         
         if ax == None:
             fig = plt.figure()
@@ -426,6 +438,12 @@ class InternalPopulation(object):
         ax.set_ylim(bottom=0, top=np.max(self.firing_rate_record)*1.1)
         if show == True:
             plt.show()
+
+        if show == True:
+            plt.show()
+
+        if close == True:
+            plt.close()
         
         return ax
     

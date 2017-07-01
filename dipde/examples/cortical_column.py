@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
-import matplotlib
-matplotlib.use('Qt4Agg')
 import copy
 import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation

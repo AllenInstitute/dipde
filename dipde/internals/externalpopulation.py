@@ -205,6 +205,7 @@ class ExternalPopulation(object):
         
         import matplotlib.pyplot as plt
         show = kwargs.pop('show',False)
+        close = kwargs.pop('close', False)
         
         if ax == None:
             fig = plt.figure()
@@ -216,6 +217,9 @@ class ExternalPopulation(object):
         
         if show == True:
             plt.show()
+
+        if close == True:
+            plt.close()
 
         return ax
     
