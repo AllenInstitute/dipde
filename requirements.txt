@@ -5,4 +5,4 @@ setuptools>=7.0
 scipy>=0.14.0
 sympy>=0.7.6
 pip>=1.5.2
-sphinx>1.5
+sphinx>1.6
