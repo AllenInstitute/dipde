@@ -1,0 +1,224 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples (dipde.examples) &#8212; DiPDE  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Core functionality (dipde.internals)" href="dipde.internals.html" />
+    <link rel="prev" title="Packages" href="dipde.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="examples-dipde-examples">
+<span id="ref-examples"></span><h1>Examples (dipde.examples)<a class="headerlink" href="#examples-dipde-examples" title="Permalink to this headline">¶</a></h1>
+<p>These quick-start examples demonstrate the configuration, simulation, and plotting of simple dipde networks.</p>
+<p>A preamble imports the classes necessary for simulation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">dipde.internals.internalpopulation</span> <span class="kn">import</span> <span class="n">InternalPopulation</span>
+<span class="kn">from</span> <span class="nn">dipde.internals.externalpopulation</span> <span class="kn">import</span> <span class="n">ExternalPopulation</span>
+<span class="kn">from</span> <span class="nn">dipde.internals.simulation</span> <span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">from</span> <span class="nn">dipde.internals.connection</span> <span class="kn">import</span> <span class="n">Connection</span> <span class="k">as</span> <span class="n">Connection</span>
+</pre></div>
+</div>
+<p>Each of the example simulations below use the same general settings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Settings:</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="o">.</span><span class="mo">0001</span>
+<span class="n">dv</span> <span class="o">=</span> <span class="o">.</span><span class="mo">0001</span>
+<span class="n">tf</span> <span class="o">=</span> <span class="o">.</span><span class="mi">1</span>
+<span class="n">update_method</span> <span class="o">=</span> <span class="s1">&#39;approx&#39;</span>
+<span class="n">approx_order</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-14</span>
+<span class="n">verbose</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>Here dt defines the time step of the simulation (in seconds), dv defines the granularity of the voltage domain of the Internal populations (in volts), and tf defines the total duration of the simulation (in seconds).
+The update method allows the user to change the time-stepping method for the forward evolution of the time domain of each Internal population.
+The approx_order and tol options fine-tune the time stepping, to provide a tradeoff between simulation time and numerical precision when the time evolution method is ‘approx,’ as opposed to ‘exact.’
+Setting verbose to True causes the Simulation to print the current time after the evaluation of each time step.</p>
+<div class="section" id="singlepop">
+<h2>Singlepop<a class="headerlink" href="#singlepop" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">singlepop.py</span></code></p>
+<p>The singlepop simulation provides a simple feedforward topology that uses every major class in the core library.
+A single 100 Hz External population population (here specified as a string, although a floating point or integer specification will work also) provides excitatory input.
+This is connected to an Internal population (modeled as a population density pde) via a delta-distributed synaptic weight distribution, with 5 mV strength.
+The in-degree (nsyn) of this Connection is set to 1 for this example; in general, this serves as a multiplier of the input firing rate of the source population.
+The internal population has a linearly binned voltage domain from v_min to v_max.
+No negative bins (i.e. v_min &lt; 0) are required here, because no negative synaptic inputs (‘weights’ in the Connection object) are defined.</p>
+<dl class="docutils">
+<dt>The mean firing rate of the Internal population resulting from this simulation is</dt>
+<dd>plotted below, along with the code used to generate the plot:</dd>
+</dl>
+<a class="reference internal image-reference" href="singlepop.png"><img alt="singlepop.png" src="singlepop.png" style="width: 45%;" /></a>
+</div>
+<div class="section" id="singlepop-recurrent">
+<h2>Singlepop (recurrent)<a class="headerlink" href="#singlepop-recurrent" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">singlepop_recurrent.py</span></code></p>
+<p>The next example is identical to the singlepop example, with the exception of an additional recurrent connection from the internal population to itself.
+This demonstrates that the Connection object is used to connect both Internal and External population sources to an Internal target population.
+Attempting to create a Connection with an External population as a target will result in an AttributeError.
+The additional excitatory input resulting from the extra recurrent connection results in a slightly increased steady-state firing rate.</p>
+<a class="reference internal image-reference" href="singlepop_recurrent.png"><img alt="singlepop_recurrent.png" src="singlepop_recurrent.png" style="width: 45%;" /></a>
+</div>
+<div class="section" id="excitatory-inhibitory">
+<h2>Excitatory/Inhibitory<a class="headerlink" href="#excitatory-inhibitory" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">excitatory_inhibitory.py</span></code></p>
+<p>Inhibitory connections are formed the same as excitatory connections, except the sign of the connection weight distribution is changed.
+In this example, the background External population is connected to the Internal population with two connections, one excitatory and one inhibitory.
+Because of this negative input, negative voltage values are possible, requiring that v_min&lt;0.</p>
+<a class="reference internal image-reference" href="excitatory_inhibitory.png"><img alt="excitatory_inhibitory.png" src="excitatory_inhibitory.png" style="width: 45%;" /></a>
+</div>
+<div class="section" id="singlepop-sine">
+<h2>Singlepop (sine)<a class="headerlink" href="#singlepop-sine" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">singlepop_sine.py</span></code></p>
+<p>By modifying the argument to the ExternalPopulation constructor, we can define a time-varying external input.
+This input is parsed by Sympy using the lambdify module; any lambdify-able expression with the independent variable ‘t’ is acceptable.
+Negative values of the firing rate function will throw an Exception.</p>
+<a class="reference internal image-reference" href="singlepop_sine.png"><img alt="singlepop_sine.png" src="singlepop_sine.png" style="width: 45%;" /></a>
+</div>
+<div class="section" id="singlepop-exponential">
+<h2>Singlepop (exponential)<a class="headerlink" href="#singlepop-exponential" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">singlepop_exponential_distribution.py</span></code></p>
+<p>Up until now, each connection object was defined with a single synaptic weight.
+However, connection objects are fundamentally defined by synaptic weight distributions (See Iyer et al. 2013 <a class="footnote-reference" href="#id4" id="id1">[1]</a>).
+Here we consider the effect of an exponentially distributed synaptic weight distribution with mean equal to 5 mV.
+The steady state firing rate under this stimulus is significantly higher than the delta-distributed example (singlepop, above).
+In general, any Continuous synaptic weight distribution can be defined using scipy.stats module; however it will be discretized into a finite set of input weights.
+Discrete distributions can be specified directly, and will be used exactly.</p>
+<a class="reference internal image-reference" href="singlepop_exponential_distribution.png"><img alt="singlepop_exponential_distribution.png" src="singlepop_exponential_distribution.png" style="width: 45%;" /></a>
+<p>In general, the special case of exponentially distributed synaptic weights admits an analytical steady-state firing rate solution (see Richardson and Swarbrick, 2010 <a class="footnote-reference" href="#id5" id="id2">[2]</a>, and Iyer et al. 2014 <a class="footnote-reference" href="#id6" id="id3">[3]</a>).
+The figure above includes the mean firing rate computed for the internal population, as well as a ‘*’ indicating a semi-analytic prediction (~8.669 Hz) of the steady-state firing rate for the model.
+This steady state prediction is computed with the code below, plotted above with an ‘*’.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.integrate</span> <span class="kn">as</span> <span class="nn">spint</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">R_e</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">a_e</span> <span class="o">=</span> <span class="o">.</span><span class="mo">005</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span>
+<span class="n">v_th</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span>
+<span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a_e</span><span class="o">*</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">R_e</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">v_th</span><span class="o">*</span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a_e</span><span class="o">*</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spint</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.</span><span class="o">/</span><span class="n">a_e</span><span class="p">)</span>
+<span class="n">steady_state_prediction</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>    <span class="c1"># &gt;&gt;&gt; 8.6687760498</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Iyer, R., Menon, V., Buice, M., Koch, C., &amp; Mihalas, S. (2013). The Influence of Synaptic Weight Distribution on Neuronal Population Dynamics. <em>PLoS Computational Biology</em>, 9(10), e1003248. doi:10.1371/journal.pcbi.1003248</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Richardson, Magnus J. E. &amp; Swarbrick, Rupert (2010). Firing-Rate Response of a Neuron Receiving Excitatory and Inhibitory Synaptic Shot Noise. Phys. Rev. Lett., 105, 178102.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Iyer, R., Cain, N., &amp; Mihalas, S. (2014). Dynamics of excitatory-inhibitory neuronal networks with exponential synaptic weight distributions. Cosyne Abstracts 2014, Salt Lake City USA.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples (dipde.examples)</a><ul>
+<li><a class="reference internal" href="#singlepop">Singlepop</a></li>
+<li><a class="reference internal" href="#singlepop-recurrent">Singlepop (recurrent)</a></li>
+<li><a class="reference internal" href="#excitatory-inhibitory">Excitatory/Inhibitory</a></li>
+<li><a class="reference internal" href="#singlepop-sine">Singlepop (sine)</a></li>
+<li><a class="reference internal" href="#singlepop-exponential">Singlepop (exponential)</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="dipde.html">Packages</a><ul>
+      <li>Previous: <a href="dipde.html" title="previous chapter">Packages</a></li>
+      <li>Next: <a href="dipde.internals.html" title="next chapter">Core functionality (dipde.internals)</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dipde.examples.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Nicholas Cain.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/dipde.examples.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
