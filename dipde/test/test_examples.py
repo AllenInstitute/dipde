@@ -40,7 +40,7 @@ def test_excitatory_inhibitory():
 def test_potjans_diesmann():
     from dipde.examples.cortical_column import example
 
-    result_dict = example(show=False)
+    result_dict, simulation = example(show=False)
 
     true_ans_dict = {(23,'e'):0.373293157534,
                      (23,'i'):3.18198990435,

@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
+from dipde.internals.simulation import Simulation
+from dipde.internals.simulationconfiguration import SimulationConfiguration
 from dipde.internals.connection import Connection as Connection
 import itertools
 import logging
@@ -92,7 +94,7 @@ def get_network(dv = .0001):
     background_population_dict = {}
     internal_population_dict = {}
     for layer, celltype in itertools.product([23, 4, 5, 6], ['e', 'i']):    
-        background_population_dict[layer, celltype] = ExternalPopulation('Heaviside(t)*%s' % background_firing_rate, record=False, metadata={'layer':layer, 'celltype':celltype})
+        background_population_dict[layer, celltype] = ExternalPopulation('Heaviside(t)*%s' % background_firing_rate, record=True, metadata={'layer':layer, 'celltype':celltype})
         curr_population_settings = copy.copy(internal_population_settings)
         x_pos, y_pos, z_pos = position_dict[layer, celltype]
         metadata={'layer':layer, 'celltype':celltype, 'x':x_pos, 'y':y_pos, 'z':z_pos,}
@@ -151,7 +153,9 @@ def example(show=False, save=False, network=None):
             internal_population_dict[layer, celltype] = p
     
     # Run simulation:
-    network.run(dt=dt, tf=tf, t0=t0)
+    simulation_configuration = SimulationConfiguration(dt, tf, t0=t0)
+    simulation = Simulation(network=network, simulation_configuration=simulation_configuration)
+    simulation.run()
     print 'Run Time:', network.run_time
     
     # Visualize:
@@ -162,12 +166,6 @@ def example(show=False, save=False, network=None):
         for plot_color, celltype in zip(['r', 'b'],['e', 'i']):
             curr_population = internal_population_dict[layer, celltype]
             result_dict[layer, celltype] = curr_population.firing_rate_record[-1]
-       
-
-       
-
-      
-
 
     if show == True:  # pragma: no cover
 
@@ -185,16 +183,13 @@ def example(show=False, save=False, network=None):
 
         axes[3].set_xlabel('Time (seconds)')
         fig.tight_layout()
-        window = fig.canvas.manager.window  # pragma: no cover
-        window.raise_()  # pragma: no cover
 
         if save == True: plt.savefig('./cortical_column.png')
 
         plt.show()  # pragma: no cover
 
-    # if show == True: plt.show()
+    return result_dict, simulation
     
-    return result_dict
-    
-if __name__ == "__main__": example(show=True)        # pragma: no cover
+if __name__ == "__main__":
+    result_dict, simulation = example(show=True)        # pragma: no cover
 
