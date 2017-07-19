@@ -278,6 +278,7 @@ def approx_update_method_order(J, pv, dt=.0001, approx_order=2):
     return pv_new
 
 def get_pv_from_p0(p0, edges):
+    '''Returns the discrete probability vector from an initial distribution, and a edge vector.'''
     
     pv = p0.cdf(edges[1:]) - p0.cdf(edges[:-1]) 
     pv[0] += p0.cdf(edges[0])
