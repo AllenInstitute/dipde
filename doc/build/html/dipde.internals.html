@@ -26,6 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cortical Column Model" href="dipde.column.html" />
     <link rel="prev" title="Examples (dipde.examples)" href="dipde.examples.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -53,71 +54,24 @@
 <p>External (i.e. background) source for connections to Internal Populations.</p>
 <p>This class provides a background drive to internal population.  
 It is used as the source argument to a connection, in order to provide background drive.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>firing_rate</strong> : numeric, str</p>
-<blockquote>
-<div><p>Output firing rate of the population.  If numeric type, this defines a constant background generator; if str, it is interpreted as a SymPy function with independent variable ‘t’.</p>
-</div></blockquote>
-<p><strong>record</strong> : bool (default=False)</p>
-<blockquote>
-<div><p>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</p>
-</div></blockquote>
-<p><strong>**kwargs</strong></p>
-<blockquote class="last">
-<div><p>Any additional keyword args are stored as metadata (metadata attribute).</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="22%" />
-<col width="78%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>self.firing_rate_string</td>
-<td>(str) String representation of firing_rate input parameter.</td>
-</tr>
-<tr class="row-even"><td>self.metadata</td>
-<td>(dict) Dictonary of metadata, constructed by kwargs not parsed during construction.</td>
-</tr>
-<tr class="row-odd"><td>self.firing_rate_record</td>
-<td>(list) List of firing rates recorded during Simulation.</td>
-</tr>
-<tr class="row-even"><td>self.t_record</td>
-<td>(list) List of times that firing rates were recorded during Simulation.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.externalpopulation.ExternalPopulation.firing_rate" title="dipde.internals.externalpopulation.ExternalPopulation.firing_rate"><code class="xref py py-obj docutils literal"><span class="pre">firing_rate</span></code></a>(t)</td>
-<td>Firing rate of the population at time t (Hz).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.externalpopulation.ExternalPopulation.initialize" title="dipde.internals.externalpopulation.ExternalPopulation.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
-<td>Initialize the population at the beginning of a simulation.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder" title="dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder"><code class="xref py py-obj docutils literal"><span class="pre">initialize_firing_rate_recorder</span></code></a>()</td>
-<td>Initialize recorder at the beginning of a simulation.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.externalpopulation.ExternalPopulation.update" title="dipde.internals.externalpopulation.ExternalPopulation.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>()</td>
-<td>Update the population one time step.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder" title="dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder"><code class="xref py py-obj docutils literal"><span class="pre">update_firing_rate_recorder</span></code></a>()</td>
-<td>Record current time and firing rate, if record==True.</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>firing_rate <span class="classifier-delimiter">:</span> <span class="classifier">numeric, str</span></dt>
+<dd>Output firing rate of the population.  If numeric type, this defines a constant background generator; if str, it is interpreted as a SymPy function with independent variable ‘t’.</dd>
+<dt>record <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
+<dd>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs</dt>
+<dd>Any additional keyword args are stored as metadata (metadata attribute).</dd>
+</dl>
+<dl class="docutils">
+<dt>self.firing_rate_string <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>String representation of firing_rate input parameter.</dd>
+<dt>self.metadata <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>Dictonary of metadata, constructed by kwargs not parsed during construction.</dd>
+<dt>self.firing_rate_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of firing rates recorded during Simulation.</dd>
+<dt>self.t_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of times that firing rates were recorded during Simulation.</dd>
+</dl>
 <dl class="attribute">
 <dt id="dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate">
 <code class="descname">curr_firing_rate</code><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate" title="Permalink to this definition">¶</a></dt>
@@ -184,127 +138,42 @@ connections.  The voltage (spatial) domain discretization is defined by
 linear binning from v_min to v_max, in steps of dv (All in units of volts).
 The probability densities on this grid are recorded pv, and must always sum
 to 1.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>tau_m</strong> : float (default=.02)</p>
-<blockquote>
-<div><p>Time constant (unit: 1/sec) of neuronal population.</p>
-</div></blockquote>
-<p><strong>v_min</strong> : float (default=-.1)</p>
-<blockquote>
-<div><p>Minimum of voltage domain (unit: volt).</p>
-</div></blockquote>
-<p><strong>v_max</strong> : float (default=.02)</p>
-<blockquote>
-<div><p>Maximum of voltage domain (Absorbing boundary), i.e spiking threshold (unit: volt).</p>
-</div></blockquote>
-<p><strong>dv</strong> : float (default=.0001)</p>
-<blockquote>
-<div><p>Voltage domain discritization size (unit: volt).</p>
-</div></blockquote>
-<p><strong>record</strong> : bool (default=False)</p>
-<blockquote>
-<div><p>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</p>
-</div></blockquote>
-<p><strong>curr_firing_rate</strong> : float (default=0.0</p>
-<blockquote>
-<div><p>Initial/Current firing rate of the population (unit: Hz).</p>
-</div></blockquote>
-<p><strong>update_method</strong> : str ‘approx’ or ‘exact’ (default=’approx’)</p>
-<blockquote>
-<div><p>Method to update pv (exact can be quite slow).</p>
-</div></blockquote>
-<p><strong>approx_order</strong> : int or None (default=None)</p>
-<blockquote>
-<div><p>Maximum Taylor series expansion order to use when computing update to pv.</p>
-</div></blockquote>
-<p><strong>tol</strong> : float (default=1e-12)</p>
-<blockquote>
-<div><p>Error tolerance used when computing update to pv.</p>
-</div></blockquote>
-<p><strong>norm</strong> : non-zero int, np.inf, -np.inf, or ‘fro’ (default=np.inf)</p>
-<blockquote>
-<div><p>Vector norm used in computation of tol.</p>
-</div></blockquote>
-<p><strong>**kwargs</strong></p>
-<blockquote class="last">
-<div><p>Any additional keyword args are stored as metadata (metadata attribute).</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="79%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>self.edges</td>
-<td>(np.array) Vector defining the boundaries of voltage bins.</td>
-</tr>
-<tr class="row-even"><td>self.pv</td>
-<td>(np.array) Vector defining the probability mass in each voltage bin (self.pv.sum() = 1).</td>
-</tr>
-<tr class="row-odd"><td>self.firing_rate_record</td>
-<td>(list) List of firing rates recorded during Simulation.</td>
-</tr>
-<tr class="row-even"><td>self.t_record</td>
-<td>(list) List of times that firing rates were recorded during Simulation.</td>
-</tr>
-<tr class="row-odd"><td>self.leak_flux_matrix</td>
-<td>(np.array) Matrix that defines the flux between voltage bins.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix" title="dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix"><code class="xref py py-obj docutils literal"><span class="pre">get_total_flux_matrix</span></code></a>()</td>
-<td>Create a total flux matrix by summing presynaptic inputs and the leak matrix.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.initialize" title="dipde.internals.internalpopulation.InternalPopulation.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
-<td>Initialize the population at the beginning of a simulation.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_edges" title="dipde.internals.internalpopulation.InternalPopulation.initialize_edges"><code class="xref py py-obj docutils literal"><span class="pre">initialize_edges</span></code></a>()</td>
-<td>Initialize self.edges and self.leak_flux_matrix attributes.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder" title="dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder"><code class="xref py py-obj docutils literal"><span class="pre">initialize_firing_rate_recorder</span></code></a>()</td>
-<td>Initialize recorder at the beginning of a simulation.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_probability" title="dipde.internals.internalpopulation.InternalPopulation.initialize_probability"><code class="xref py py-obj docutils literal"><span class="pre">initialize_probability</span></code></a>()</td>
-<td>Initialize self.pv to delta-distribution at v=0.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict" title="dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict"><code class="xref py py-obj docutils literal"><span class="pre">initialize_total_input_dict</span></code></a>()</td>
-<td>Initialize dictionary of presynaptic inputs at beginning of simulation</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution" title="dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution"><code class="xref py py-obj docutils literal"><span class="pre">plot_probability_distribution</span></code></a>([ax])</td>
-<td>Convenience method to plot voltage distribution.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.update" title="dipde.internals.internalpopulation.InternalPopulation.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>()</td>
-<td>Update the population one time step.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate" title="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate"><code class="xref py py-obj docutils literal"><span class="pre">update_firing_rate</span></code></a>()</td>
-<td>Update curr_firing_rate attribute based on the total flux of probability mass across threshold.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder" title="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder"><code class="xref py py-obj docutils literal"><span class="pre">update_firing_rate_recorder</span></code></a>()</td>
-<td>Record current time and firing rate, if record==True.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.update_propability_mass" title="dipde.internals.internalpopulation.InternalPopulation.update_propability_mass"><code class="xref py py-obj docutils literal"><span class="pre">update_propability_mass</span></code></a>()</td>
-<td>Create a total flux matrix, and propogate self.pv one time-step.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict" title="dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict"><code class="xref py py-obj docutils literal"><span class="pre">update_total_input_dict</span></code></a>()</td>
-<td>Update the input dictionary based on the current firing rates of presynaptic populations.</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>tau_m <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.02)</span></dt>
+<dd>Time constant (unit: 1/sec) of neuronal population.</dd>
+<dt>v_min <span class="classifier-delimiter">:</span> <span class="classifier">float (default=-.1)</span></dt>
+<dd>Minimum of voltage domain (unit: volt).</dd>
+<dt>v_max <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.02)</span></dt>
+<dd>Maximum of voltage domain (Absorbing boundary), i.e spiking threshold (unit: volt).</dd>
+<dt>dv <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.0001)</span></dt>
+<dd>Voltage domain discritization size (unit: volt).</dd>
+<dt>record <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
+<dd>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</dd>
+<dt>curr_firing_rate <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.0</span></dt>
+<dd>Initial/Current firing rate of the population (unit: Hz).</dd>
+<dt>update_method <span class="classifier-delimiter">:</span> <span class="classifier">str ‘approx’ or ‘exact’ (default=’approx’)</span></dt>
+<dd>Method to update pv (exact can be quite slow).</dd>
+<dt>approx_order <span class="classifier-delimiter">:</span> <span class="classifier">int or None (default=None)</span></dt>
+<dd>Maximum Taylor series expansion order to use when computing update to pv.</dd>
+<dt>tol <span class="classifier-delimiter">:</span> <span class="classifier">float (default=1e-12)</span></dt>
+<dd>Error tolerance used when computing update to pv.</dd>
+<dt>norm <span class="classifier-delimiter">:</span> <span class="classifier">non-zero int, np.inf, -np.inf, or ‘fro’ (default=np.inf)</span></dt>
+<dd>Vector norm used in computation of tol.</dd>
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt>
+<dd>Any additional keyword args are stored as metadata (metadata attribute).</dd>
+</dl>
+<dl class="docutils">
+<dt>self.edges <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Vector defining the boundaries of voltage bins.</dd>
+<dt>self.pv <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Vector defining the probability mass in each voltage bin (self.pv.sum() = 1).</dd>
+<dt>self.firing_rate_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of firing rates recorded during Simulation.</dd>
+<dt>self.t_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of times that firing rates were recorded during Simulation.</dd>
+<dt>self.leak_flux_matrix <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Matrix that defines the flux between voltage bins.</dd>
+</dl>
 <dl class="method">
 <dt id="dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix">
 <code class="descname">get_total_flux_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix" title="Permalink to this definition">¶</a></dt>
@@ -376,18 +245,10 @@ its own.  It creates a dictionary of synaptic inputs to the population.</p>
 <dt id="dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution">
 <code class="descname">plot_probability_distribution</code><span class="sig-paren">(</span><em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience method to plot voltage distribution.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : None or matplotlib.pyplot.axes object (default=None)</p>
-<blockquote class="last">
-<div><p>Axes object to plot distribution on.  If None specified, a figure and axes object will be created.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>ax <span class="classifier-delimiter">:</span> <span class="classifier">None or matplotlib.pyplot.axes object (default=None)</span></dt>
+<dd>Axes object to plot distribution on.  If None specified, a figure and axes object will be created.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -456,71 +317,23 @@ InternalPopulation) and a target population (dipde InternalPopulation).
 Handles delay information via a delay queue that is rolled on each timestep,
 and reuses connection information by using a ConnectionDistribution object
 with a specific signature to avoid duplication among identical connections.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>source</strong> : InternalPopulation or ExternalPopulation</p>
-<blockquote class="last">
-<div><blockquote>
-<div><p>Source population for connection.</p>
-</div></blockquote>
-<dl class="docutils">
+<blockquote>
+<div><dl class="docutils">
+<dt>source <span class="classifier-delimiter">:</span> <span class="classifier">InternalPopulation or ExternalPopulation</span></dt>
+<dd>Source population for connection.</dd>
 <dt>target <span class="classifier-delimiter">:</span> <span class="classifier">InternalPopulation</span></dt>
-<dd><p class="first last">Target population for connection.</p>
-</dd>
+<dd>Target population for connection.</dd>
 <dt>nsyn <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd><p class="first last">In-degree of connectivity from source to target.</p>
-</dd>
+<dd>In-degree of connectivity from source to target.</dd>
 <dt>weights <span class="classifier-delimiter">:</span> <span class="classifier">list </span></dt>
-<dd><p class="first last">Weights defining synaptic distribution (np.ndarray).</p>
-</dd>
+<dd>Weights defining synaptic distribution (np.ndarray).</dd>
 <dt>probs <span class="classifier-delimiter">:</span> <span class="classifier">list (same length as weights, and sums to 1) </span></dt>
-<dd><p class="first last">Probabilities corresponding to weights.</p>
-</dd>
+<dd>Probabilities corresponding to weights.</dd>
 <dt>delay: float (default=0) </dt>
-<dd><p class="first last">Transmission delay (units: sec).</p>
-</dd>
+<dd>Transmission delay (units: sec).</dd>
 </dl>
 <p>metadata: Connection metadata, all other kwargs</p>
 </div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.connection.Connection.curr_delayed_firing_rate" title="dipde.internals.connection.Connection.curr_delayed_firing_rate"><code class="xref py py-obj docutils literal"><span class="pre">curr_delayed_firing_rate</span></code></a></td>
-<td>Current firing rate of the source (float).</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.connection.Connection.initialize" title="dipde.internals.connection.Connection.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
-<td>Initialize the connection at the beginning of a simulation.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.connection.Connection.initialize_connection_distribution" title="dipde.internals.connection.Connection.initialize_connection_distribution"><code class="xref py py-obj docutils literal"><span class="pre">initialize_connection_distribution</span></code></a>()</td>
-<td>Create connection distribution, if necessary.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.connection.Connection.initialize_delay_queue" title="dipde.internals.connection.Connection.initialize_delay_queue"><code class="xref py py-obj docutils literal"><span class="pre">initialize_delay_queue</span></code></a>()</td>
-<td>Initialiaze a delay queue for the connection.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.connection.Connection.update" title="dipde.internals.connection.Connection.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>()</td>
-<td>Update Connection,  called once per timestep.</td>
-</tr>
-</tbody>
-</table>
 <dl class="attribute">
 <dt id="dipde.internals.connection.Connection.curr_delayed_firing_rate">
 <code class="descname">curr_delayed_firing_rate</code><a class="headerlink" href="#dipde.internals.connection.Connection.curr_delayed_firing_rate" title="Permalink to this definition">¶</a></dt>
@@ -591,56 +404,24 @@ to the descretization of the target voltage distribution, and the specific
 synaptic weight distribution of the connection.  Therefore, whenever
 possible, a ConnectionDistribution object is reused for multiple connections
 with identical signatures, to reduce memory consumption.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>edges: np.ndarray</strong></p>
-<blockquote>
-<div><blockquote>
-<div><p>Voltage bin discretization of target population.</p>
-</div></blockquote>
 <dl class="docutils">
+<dt>edges: np.ndarray</dt>
+<dd><blockquote class="first">
+<div>Voltage bin discretization of target population.</div></blockquote>
+<dl class="last docutils">
 <dt>weights: np.ndarray </dt>
-<dd><p class="first last">Weights defining the discrete synaptic distribution.</p>
-</dd>
+<dd>Weights defining the discrete synaptic distribution.</dd>
 </dl>
-</div></blockquote>
-<p><strong>probs</strong> : np.ndarray</p>
-<blockquote class="last">
-<div><p>Probabilities corresponding to weights.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="31%" />
-<col width="69%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>self.threshold_flux_vector</td>
-<td>(np.ndarray) Vector used to compute over-threshold flux.</td>
-</tr>
-<tr class="row-even"><td>self.flux_matrix</td>
-<td>(np.ndarray) Matrix used to propagate voltage distribution.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.connectiondistribution.ConnectionDistribution.initialize" title="dipde.internals.connectiondistribution.ConnectionDistribution.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
-<td>Initialize connection distribution.</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt>probs <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Probabilities corresponding to weights.</dd>
+</dl>
+<dl class="docutils">
+<dt>self.threshold_flux_vector <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Vector used to compute over-threshold flux.</dd>
+<dt>self.flux_matrix <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Matrix used to propagate voltage distribution.</dd>
+</dl>
 <dl class="method">
 <dt id="dipde.internals.connectiondistribution.ConnectionDistribution.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution.initialize" title="Permalink to this definition">¶</a></dt>
@@ -673,72 +454,6 @@ memory efficiency of the simulation. To facilitate this, each simulation
 creates a ConnectionDistributionCollection object that indexes the
 ConnectionDistribution objects according to their signature, and re-uses the
 for multiple connections.</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution" title="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution"><code class="xref py py-obj docutils literal"><span class="pre">add_connection_distribution</span></code></a>(cd)</td>
-<td>Try and add a ConnectionDistribution object, if signature not already used.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;D.)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code>(()&nbsp;-&gt;&nbsp;a&nbsp;shallow&nbsp;copy&nbsp;of&nbsp;D)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">fromkeys</span></code>(…)</td>
-<td>v defaults to None.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">get</span></code>((k[,d])&nbsp;-&gt;&nbsp;D[k]&nbsp;if&nbsp;k&nbsp;in&nbsp;D,&nbsp;…)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">has_key</span></code>((k)&nbsp;-&gt;&nbsp;True&nbsp;if&nbsp;D&nbsp;has&nbsp;a&nbsp;key&nbsp;k,&nbsp;else&nbsp;False)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">items</span></code>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D’s&nbsp;(key,&nbsp;value)&nbsp;pairs,&nbsp;…)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;(key,&nbsp;…)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;keys&nbsp;of&nbsp;D)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code>(…)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D’s&nbsp;keys)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;…)</td>
-<td>If key is not found, d is returned if given, otherwise KeyError is raised</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code>(()&nbsp;-&gt;&nbsp;(k,&nbsp;v),&nbsp;…)</td>
-<td>2-tuple; but raise KeyError if D is empty.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;…)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">update</span></code>(([E,&nbsp;…)</td>
-<td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">values</span></code>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D’s&nbsp;values)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">viewitems</span></code>(…)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">viewkeys</span></code>(…)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">viewvalues</span></code>(…)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <dl class="method">
 <dt id="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution">
 <code class="descname">add_connection_distribution</code><span class="sig-paren">(</span><em>cd</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution" title="Permalink to this definition">¶</a></dt>
@@ -760,59 +475,24 @@ objects, and provides a convenience time stepping loop to drive a network
 simulation.  Typical usage involves the create of populations and
 connections, construction of a simulation object, and then call to
 simulation.run()</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>population_list</strong> : list of ExternalPopulation, InternalPopulation objects</p>
-<blockquote>
-<div><p>List of populations to include in simulation.</p>
-</div></blockquote>
-<p><strong>connection_list</strong> : list of Connection objects</p>
-<blockquote>
-<div><p>List of connections to include in simulation.</p>
-</div></blockquote>
-<p><strong>verbose</strong> : bool (default=True)</p>
-<blockquote class="last">
-<div><p>Setting True prints current time-step at each update evaluation.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#dipde.internals.simulation.Simulation.initialize" title="dipde.internals.simulation.Simulation.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>([t0])</td>
-<td>Initialize simulation, populations, and connections.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#dipde.internals.simulation.Simulation.run" title="dipde.internals.simulation.Simulation.run"><code class="xref py py-obj docutils literal"><span class="pre">run</span></code></a>([t0,&nbsp;dt,&nbsp;tf])</td>
-<td>Main iteration control loop for simulation</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>population_list <span class="classifier-delimiter">:</span> <span class="classifier">list of ExternalPopulation, InternalPopulation objects</span></dt>
+<dd>List of populations to include in simulation.</dd>
+<dt>connection_list <span class="classifier-delimiter">:</span> <span class="classifier">list of Connection objects</span></dt>
+<dd>List of connections to include in simulation.</dd>
+<dt>verbose <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
+<dd>Setting True prints current time-step at each update evaluation.</dd>
+</dl>
 <dl class="method">
 <dt id="dipde.internals.simulation.Simulation.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><em>t0=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.simulation.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize simulation, populations, and connections.</p>
 <p>This function is typically called by the self.run() method, however can
 be called independently if defining a new time stepping loop.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>t0</strong> : float (default=0.)</p>
-<blockquote class="last">
-<div><p>Simulation start time (unit=seconds).</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>t0 <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.)</span></dt>
+<dd>Simulation start time (unit=seconds).</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -822,26 +502,14 @@ be called independently if defining a new time stepping loop.</p>
 <p>The time step selection must be approximately of the same order as dv
 for the internal populations, if the ‘approx’ time stepping method is
 selected.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>t0</strong> : float (default=0.)</p>
-<blockquote>
-<div><p>Simulation start time (unit=seconds), passed to initialize call.</p>
-</div></blockquote>
-<p><strong>tf</strong> : float (default=.1)</p>
-<blockquote>
-<div><p>Simulation end time (unit=seconds).</p>
-</div></blockquote>
-<p><strong>dt</strong> : float (default=0.001)</p>
-<blockquote class="last">
-<div><p>Time step (unit=seconds).</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="docutils">
+<dt>t0 <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.)</span></dt>
+<dd>Simulation start time (unit=seconds), passed to initialize call.</dd>
+<dt>tf <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.1)</span></dt>
+<dd>Simulation end time (unit=seconds).</dd>
+<dt>dt <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.001)</span></dt>
+<dd>Time step (unit=seconds).</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -932,9 +600,7 @@ to overlapping bins in A. Assumes that A and B contain monotonically increasing 
 <li><a class="reference internal" href="#">Core functionality (dipde.internals)</a><ul>
 <li><a class="reference internal" href="#module-dipde.internals.externalpopulation">External Population</a></li>
 <li><a class="reference internal" href="#module-dipde.internals.internalpopulation">Internal Population</a></li>
-<li><a class="reference internal" href="#module-dipde.internals.connection">Connection</a><ul>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-dipde.internals.connection">Connection</a></li>
 <li><a class="reference internal" href="#module-dipde.internals.connectiondistribution">Connection Distribution</a></li>
 <li><a class="reference internal" href="#module-dipde.internals.connectiondistributioncollection">Connection Distribution Collection</a></li>
 <li><a class="reference internal" href="#module-dipde.internals.simulation">Simulation</a></li>
@@ -948,6 +614,7 @@ to overlapping bins in A. Assumes that A and B contain monotonically increasing 
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="dipde.html">Packages</a><ul>
       <li>Previous: <a href="dipde.examples.html" title="previous chapter">Examples (dipde.examples)</a></li>
+      <li>Next: <a href="dipde.column.html" title="next chapter">Cortical Column Model</a></li>
   </ul></li>
   </ul></li>
 </ul>
