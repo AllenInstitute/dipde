@@ -1,0 +1,659 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Core functionality (dipde.internals) &#8212; DiPDE  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cortical Column Model" href="dipde.column.html" />
+    <link rel="prev" title="Examples (dipde.examples)" href="dipde.examples.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="core-functionality-dipde-internals">
+<span id="ref-internals"></span><h1>Core functionality (dipde.internals)<a class="headerlink" href="#core-functionality-dipde-internals" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-dipde.internals.externalpopulation">
+<span id="external-population"></span><h2>External Population<a class="headerlink" href="#module-dipde.internals.externalpopulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation">
+<em class="property">class </em><code class="descclassname">dipde.internals.externalpopulation.</code><code class="descname">ExternalPopulation</code><span class="sig-paren">(</span><em>firing_rate</em>, <em>record=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>External (i.e. background) source for connections to Internal Populations.</p>
+<p>This class provides a background drive to internal population.  
+It is used as the source argument to a connection, in order to provide background drive.</p>
+<dl class="docutils">
+<dt>firing_rate <span class="classifier-delimiter">:</span> <span class="classifier">numeric, str</span></dt>
+<dd>Output firing rate of the population.  If numeric type, this defines a constant background generator; if str, it is interpreted as a SymPy function with independent variable ‘t’.</dd>
+<dt>record <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
+<dd>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs</dt>
+<dd>Any additional keyword args are stored as metadata (metadata attribute).</dd>
+</dl>
+<dl class="docutils">
+<dt>self.firing_rate_string <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>String representation of firing_rate input parameter.</dd>
+<dt>self.metadata <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>Dictonary of metadata, constructed by kwargs not parsed during construction.</dd>
+<dt>self.firing_rate_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of firing rates recorded during Simulation.</dd>
+<dt>self.t_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of times that firing rates were recorded during Simulation.</dd>
+</dl>
+<dl class="attribute">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate">
+<code class="descname">curr_firing_rate</code><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.curr_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property that accesses the current firing rate of the population (Hz).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.firing_rate">
+<code class="descname">firing_rate</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Firing rate of the population at time t (Hz).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the population at the beginning of a simulation.</p>
+<p>Calling this method resets the recorder that tracks firing rate during a
+simulation. This method is called by the Simulation object (
+initialization method), but can also be called by a user when defining
+an alternative time stepping loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder">
+<code class="descname">initialize_firing_rate_recorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.initialize_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize recorder at the beginning of a simulation.</p>
+<p>This method is typically called by the initialize method rather than on 
+its own.  It resets the lists that track the firing rate during 
+execution of the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the population one time step.</p>
+<p>This method is called by the Simulation object to update the population 
+one time step.  In turn, this method calls the 
+update_firing_rate_recorder method to register the current firing rate 
+with the recorder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder">
+<code class="descname">update_firing_rate_recorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.externalpopulation.ExternalPopulation.update_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record current time and firing rate, if record==True.</p>
+<p>This method is called once per time step.  If record is True, calling 
+this method will append the current time and firing rate to the firing 
+rate recorder.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.internalpopulation">
+<span id="internal-population"></span><h2>Internal Population<a class="headerlink" href="#module-dipde.internals.internalpopulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.internalpopulation.InternalPopulation">
+<em class="property">class </em><code class="descclassname">dipde.internals.internalpopulation.</code><code class="descname">InternalPopulation</code><span class="sig-paren">(</span><em>tau_m=0.02</em>, <em>v_min=-0.1</em>, <em>v_max=0.02</em>, <em>dv=0.0001</em>, <em>record=True</em>, <em>curr_firing_rate=0.0</em>, <em>update_method=’approx’</em>, <em>approx_order=None</em>, <em>tol=1e-12</em>, <em>norm=inf</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Population density class</p>
+<p>This class encapulates all the details necessary to propagate a population
+density equation driven by a combination of recurrent and background
+connections.  The voltage (spatial) domain discretization is defined by
+linear binning from v_min to v_max, in steps of dv (All in units of volts).
+The probability densities on this grid are recorded pv, and must always sum
+to 1.</p>
+<dl class="docutils">
+<dt>tau_m <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.02)</span></dt>
+<dd>Time constant (unit: 1/sec) of neuronal population.</dd>
+<dt>v_min <span class="classifier-delimiter">:</span> <span class="classifier">float (default=-.1)</span></dt>
+<dd>Minimum of voltage domain (unit: volt).</dd>
+<dt>v_max <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.02)</span></dt>
+<dd>Maximum of voltage domain (Absorbing boundary), i.e spiking threshold (unit: volt).</dd>
+<dt>dv <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.0001)</span></dt>
+<dd>Voltage domain discritization size (unit: volt).</dd>
+<dt>record <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
+<dd>If True, a history of the output firing rate is recorded (firing_rate_record attribute).</dd>
+<dt>curr_firing_rate <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.0</span></dt>
+<dd>Initial/Current firing rate of the population (unit: Hz).</dd>
+<dt>update_method <span class="classifier-delimiter">:</span> <span class="classifier">str ‘approx’ or ‘exact’ (default=’approx’)</span></dt>
+<dd>Method to update pv (exact can be quite slow).</dd>
+<dt>approx_order <span class="classifier-delimiter">:</span> <span class="classifier">int or None (default=None)</span></dt>
+<dd>Maximum Taylor series expansion order to use when computing update to pv.</dd>
+<dt>tol <span class="classifier-delimiter">:</span> <span class="classifier">float (default=1e-12)</span></dt>
+<dd>Error tolerance used when computing update to pv.</dd>
+<dt>norm <span class="classifier-delimiter">:</span> <span class="classifier">non-zero int, np.inf, -np.inf, or ‘fro’ (default=np.inf)</span></dt>
+<dd>Vector norm used in computation of tol.</dd>
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt>
+<dd>Any additional keyword args are stored as metadata (metadata attribute).</dd>
+</dl>
+<dl class="docutils">
+<dt>self.edges <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Vector defining the boundaries of voltage bins.</dd>
+<dt>self.pv <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Vector defining the probability mass in each voltage bin (self.pv.sum() = 1).</dd>
+<dt>self.firing_rate_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of firing rates recorded during Simulation.</dd>
+<dt>self.t_record <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>List of times that firing rates were recorded during Simulation.</dd>
+<dt>self.leak_flux_matrix <span class="classifier-delimiter">:</span> <span class="classifier">np.array</span></dt>
+<dd>Matrix that defines the flux between voltage bins.</dd>
+</dl>
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix">
+<code class="descname">get_total_flux_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.get_total_flux_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a total flux matrix by summing presynaptic inputs and the leak matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the population at the beginning of a simulation.</p>
+<p>In turn, this method:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Initializes the voltage edges (self.edges) and probability mass in each bin (self.pv),</li>
+<li>Creates an initial dictionary of inputs into the population, and</li>
+<li>Resets the recorder that tracks firing rate during a simulation.</li>
+</ol>
+</div></blockquote>
+<p>This method is called by the Simulation object (initialization method),
+but can also be called by a user when defining an alternative time
+stepping loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_edges">
+<code class="descname">initialize_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.edges and self.leak_flux_matrix attributes.</p>
+<p>This method initializes the self.edges attribute based on the v_min,
+v_max, and dv settings, and creates a corresponding leak flux matrix
+based on this voltage discretization.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder">
+<code class="descname">initialize_firing_rate_recorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize recorder at the beginning of a simulation.</p>
+<p>This method is typically called by the initialize method rather than on 
+its own.  It resets the lists that track the firing rate during 
+execution of the simulation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_probability">
+<code class="descname">initialize_probability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_probability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.pv to delta-distribution at v=0.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict">
+<code class="descname">initialize_total_input_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.initialize_total_input_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize dictionary of presynaptic inputs at beginning of simulation</p>
+<p>This method is typically called by the initialize method rather than on 
+its own.  It creates a dictionary of synaptic inputs to the population.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.n_bins">
+<code class="descname">n_bins</code><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.n_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of probability mass bins.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.n_edges">
+<code class="descname">n_edges</code><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.n_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of probability mass bin edges.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution">
+<code class="descname">plot_probability_distribution</code><span class="sig-paren">(</span><em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.plot_probability_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method to plot voltage distribution.</p>
+<dl class="docutils">
+<dt>ax <span class="classifier-delimiter">:</span> <span class="classifier">None or matplotlib.pyplot.axes object (default=None)</span></dt>
+<dd>Axes object to plot distribution on.  If None specified, a figure and axes object will be created.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.source_connection_list">
+<code class="descname">source_connection_list</code><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.source_connection_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all connections that are a source for this population.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the population one time step.</p>
+<p>This method is called by the Simulation object to update the population 
+one time step.  In turn, this method:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Calls the update_total_input_dict method to gather the current strengths of presynaptic input populations,</li>
+<li>Calls the update_propability_mass method to propagate self.pv one time-step,</li>
+<li>Calls the update_firing_rate method to compute the firing rate of the population based on flux over threshold, and</li>
+<li>Calls the update_firing_rate_recorder method to register the current firing rate with the recorder.</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate">
+<code class="descname">update_firing_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update curr_firing_rate attribute based on the total flux of probability mass across threshold.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder">
+<code class="descname">update_firing_rate_recorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_firing_rate_recorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record current time and firing rate, if record==True.</p>
+<p>This method is called once per time step.  If record is True, calling 
+this method will append the current time and firing rate to the firing 
+rate recorder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_propability_mass">
+<code class="descname">update_propability_mass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_propability_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a total flux matrix, and propogate self.pv one time-step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict">
+<code class="descname">update_total_input_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.internalpopulation.InternalPopulation.update_total_input_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the input dictionary based on the current firing rates of presynaptic populations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.connection">
+<span id="connection"></span><h2>Connection<a class="headerlink" href="#module-dipde.internals.connection" title="Permalink to this headline">¶</a></h2>
+<p>Module containing Connection class, connections between source and target populations.</p>
+<dl class="class">
+<dt id="dipde.internals.connection.Connection">
+<em class="property">class </em><code class="descclassname">dipde.internals.connection.</code><code class="descname">Connection</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>nsyn</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connection.Connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class that connects dipde source population to dipde target population.</p>
+<p>The Connection class handles all of the details of propogating connection
+information between a source population (dipde ExtermalPopulation or
+InternalPopulation) and a target population (dipde InternalPopulation).
+Handles delay information via a delay queue that is rolled on each timestep,
+and reuses connection information by using a ConnectionDistribution object
+with a specific signature to avoid duplication among identical connections.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>source <span class="classifier-delimiter">:</span> <span class="classifier">InternalPopulation or ExternalPopulation</span></dt>
+<dd>Source population for connection.</dd>
+<dt>target <span class="classifier-delimiter">:</span> <span class="classifier">InternalPopulation</span></dt>
+<dd>Target population for connection.</dd>
+<dt>nsyn <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>In-degree of connectivity from source to target.</dd>
+<dt>weights <span class="classifier-delimiter">:</span> <span class="classifier">list </span></dt>
+<dd>Weights defining synaptic distribution (np.ndarray).</dd>
+<dt>probs <span class="classifier-delimiter">:</span> <span class="classifier">list (same length as weights, and sums to 1) </span></dt>
+<dd>Probabilities corresponding to weights.</dd>
+<dt>delay: float (default=0) </dt>
+<dd>Transmission delay (units: sec).</dd>
+</dl>
+<p>metadata: Connection metadata, all other kwargs</p>
+</div></blockquote>
+<dl class="attribute">
+<dt id="dipde.internals.connection.Connection.curr_delayed_firing_rate">
+<code class="descname">curr_delayed_firing_rate</code><a class="headerlink" href="#dipde.internals.connection.Connection.curr_delayed_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current firing rate of the source (float).</p>
+<p>Property that accesses the firing rate at the top of the delay queue,
+from the source population.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connection.Connection.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the connection at the beginning of a simulation.</p>
+<p>Calling this method:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Initializes a delay queue used to store values of inputs in a last-in-first-out rolling queue.</li>
+<li>Creates a connection_distribution object for the connection, if a suitable object is not already registered with the  simulation-level connection distribution collection.</li>
+</ol>
+</div></blockquote>
+<p>This method is called by the Simulation object (initialization method),
+but can also be called by a user when defining an alternative time
+stepping loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.initialize_connection_distribution">
+<code class="descname">initialize_connection_distribution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connection.Connection.initialize_connection_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create connection distribution, if necessary.</p>
+<p>If the signature of this connection is already registered to the
+simulation-level connection distribution collection, it is associated
+with self.  If not, it adds the connection distribution to the
+collection, and associates it with self.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.initialize_delay_queue">
+<code class="descname">initialize_delay_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connection.Connection.initialize_delay_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialiaze a delay queue for the connection.</p>
+<p>The delay attribute of the connection defines the transmission delay of
+the signal from the souce to the target.  Firing rate values from the
+source population are held in a queue, discretized by the timestep, that
+is rolled over once per timestep.  if source is an ExternalPopulation,
+the queue is initialized to the firing rate at t=0; if the source is an
+InternalPopulation, the queue is initialized to zero.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.connection.Connection.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connection.Connection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update Connection,  called once per timestep.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.connectiondistribution">
+<span id="connection-distribution"></span><h2>Connection Distribution<a class="headerlink" href="#module-dipde.internals.connectiondistribution" title="Permalink to this headline">¶</a></h2>
+<p>Module containing ConnectionDistribution class, organizing connection details.</p>
+<dl class="class">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution">
+<em class="property">class </em><code class="descclassname">dipde.internals.connectiondistribution.</code><code class="descname">ConnectionDistribution</code><span class="sig-paren">(</span><em>edges</em>, <em>weights</em>, <em>probs</em>, <em>sparse=True</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Container for matrix that computes element flux, and associated methods.</p>
+<p>A ConnectionDistribution object contains a matrix used to compute the time
+propogation of the voltage probability distribution, and a vector used to
+compute the flux over threshold at the end of the timestep. It is unique up
+to the descretization of the target voltage distribution, and the specific
+synaptic weight distribution of the connection.  Therefore, whenever
+possible, a ConnectionDistribution object is reused for multiple connections
+with identical signatures, to reduce memory consumption.</p>
+<dl class="docutils">
+<dt>edges: np.ndarray</dt>
+<dd><blockquote class="first">
+<div>Voltage bin discretization of target population.</div></blockquote>
+<dl class="last docutils">
+<dt>weights: np.ndarray </dt>
+<dd>Weights defining the discrete synaptic distribution.</dd>
+</dl>
+</dd>
+<dt>probs <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Probabilities corresponding to weights.</dd>
+</dl>
+<dl class="docutils">
+<dt>self.threshold_flux_vector <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Vector used to compute over-threshold flux.</dd>
+<dt>self.flux_matrix <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray</span></dt>
+<dd>Matrix used to propagate voltage distribution.</dd>
+</dl>
+<dl class="method">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize connection distribution.</p>
+<p>Initialization creates the flux_matrix and threshold_flux_vector.
+Implemented lazily via a try catch when flux matrix is requested, that
+does not exist.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dipde.internals.connectiondistribution.ConnectionDistribution.signature">
+<code class="descname">signature</code><a class="headerlink" href="#dipde.internals.connectiondistribution.ConnectionDistribution.signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique key used to organize ConnectionDistributions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.connectiondistributioncollection">
+<span id="connection-distribution-collection"></span><h2>Connection Distribution Collection<a class="headerlink" href="#module-dipde.internals.connectiondistributioncollection" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection">
+<em class="property">class </em><code class="descclassname">dipde.internals.connectiondistributioncollection.</code><code class="descname">ConnectionDistributionCollection</code><a class="headerlink" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+<p>Container that organizes connection components for a simulation, to reduce redundancy.</p>
+<p>In a simulation, connections that share the same weights and probabilities,
+as well as the same target bin edges, can make use of the same flux_matrix
+and threshold_flux_vector.  This can significantly improve the overall
+memory efficiency of the simulation. To facilitate this, each simulation
+creates a ConnectionDistributionCollection object that indexes the
+ConnectionDistribution objects according to their signature, and re-uses the
+for multiple connections.</p>
+<dl class="method">
+<dt id="dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution">
+<code class="descname">add_connection_distribution</code><span class="sig-paren">(</span><em>cd</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.connectiondistributioncollection.ConnectionDistributionCollection.add_connection_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try and add a ConnectionDistribution object, if signature not already used.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.simulation">
+<span id="simulation"></span><h2>Simulation<a class="headerlink" href="#module-dipde.internals.simulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dipde.internals.simulation.Simulation">
+<em class="property">class </em><code class="descclassname">dipde.internals.simulation.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>population_list</em>, <em>connection_list</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.simulation.Simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Initialize and run a dipde simulation.</p>
+<p>The Simulation class handles the initialization of population and connection
+objects, and provides a convenience time stepping loop to drive a network
+simulation.  Typical usage involves the create of populations and
+connections, construction of a simulation object, and then call to
+simulation.run()</p>
+<dl class="docutils">
+<dt>population_list <span class="classifier-delimiter">:</span> <span class="classifier">list of ExternalPopulation, InternalPopulation objects</span></dt>
+<dd>List of populations to include in simulation.</dd>
+<dt>connection_list <span class="classifier-delimiter">:</span> <span class="classifier">list of Connection objects</span></dt>
+<dd>List of connections to include in simulation.</dd>
+<dt>verbose <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
+<dd>Setting True prints current time-step at each update evaluation.</dd>
+</dl>
+<dl class="method">
+<dt id="dipde.internals.simulation.Simulation.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><em>t0=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.simulation.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize simulation, populations, and connections.</p>
+<p>This function is typically called by the self.run() method, however can
+be called independently if defining a new time stepping loop.</p>
+<dl class="docutils">
+<dt>t0 <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.)</span></dt>
+<dd>Simulation start time (unit=seconds).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dipde.internals.simulation.Simulation.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>t0=0.0</em>, <em>dt=0.001</em>, <em>tf=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.simulation.Simulation.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main iteration control loop for simulation</p>
+<p>The time step selection must be approximately of the same order as dv
+for the internal populations, if the ‘approx’ time stepping method is
+selected.</p>
+<dl class="docutils">
+<dt>t0 <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.)</span></dt>
+<dd>Simulation start time (unit=seconds), passed to initialize call.</dd>
+<dt>tf <span class="classifier-delimiter">:</span> <span class="classifier">float (default=.1)</span></dt>
+<dd>Simulation end time (unit=seconds).</dd>
+<dt>dt <span class="classifier-delimiter">:</span> <span class="classifier">float (default=0.001)</span></dt>
+<dd>Time step (unit=seconds).</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dipde.internals.utilities">
+<span id="utilities"></span><h2>Utilities<a class="headerlink" href="#module-dipde.internals.utilities" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dipde.internals.utilities.approx_update_method_order">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">approx_update_method_order</code><span class="sig-paren">(</span><em>J</em>, <em>pv</em>, <em>dt=0.0001</em>, <em>approx_order=2</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate the effect of a matrix exponential, truncating Taylor series at order ‘approx_order’.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.approx_update_method_tol">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">approx_update_method_tol</code><span class="sig-paren">(</span><em>J</em>, <em>pv</em>, <em>tol=2.2e-16</em>, <em>dt=0.0001</em>, <em>norm=’inf’</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.approx_update_method_tol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate the effect of a matrix exponential, with residual smaller than tol.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.assert_probability_mass_conserved">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">assert_probability_mass_conserved</code><span class="sig-paren">(</span><em>pv</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.assert_probability_mass_conserved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that probability mass in control nodes sums to 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.descretize">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">descretize</code><span class="sig-paren">(</span><em>distribution</em>, <em>N</em>, <em>loc=0</em>, <em>scale=1</em>, <em>shape=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.descretize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a discrete approzimation to a scipy.stats continuous distribution.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.exact_update_method">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">exact_update_method</code><span class="sig-paren">(</span><em>J</em>, <em>pv</em>, <em>dt=0.0001</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.exact_update_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a flux matrix, pdate probabilty vector by computing the matrix exponential.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.flux_matrix">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">flux_matrix</code><span class="sig-paren">(</span><em>v</em>, <em>w</em>, <em>lam</em>, <em>p=1</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.flux_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a flux matrix for voltage bins v, weight w, firing rate lam, and probability p.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.fraction_overlap">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">fraction_overlap</code><span class="sig-paren">(</span><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.fraction_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fractional overlap between range (a1,a2) and (b1,b2).</p>
+<p>Used to compute a reallocation of probability mass from one set of bins to
+another, assuming linear interpolation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.get_v_edges">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">get_v_edges</code><span class="sig-paren">(</span><em>v_min</em>, <em>v_max</em>, <em>dv</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.get_v_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct voltage edegs, linear discretization.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.get_zero_bin_list">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">get_zero_bin_list</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.get_zero_bin_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of indices that map flux back to the zero bin.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.leak_matrix">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">leak_matrix</code><span class="sig-paren">(</span><em>v</em>, <em>tau</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.leak_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of edges, construct a leak matrix with time constant tau.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dipde.internals.utilities.redistribute_probability_mass">
+<code class="descclassname">dipde.internals.utilities.</code><code class="descname">redistribute_probability_mass</code><span class="sig-paren">(</span><em>A</em>, <em>B</em><span class="sig-paren">)</span><a class="headerlink" href="#dipde.internals.utilities.redistribute_probability_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes two ‘edge’ vectors and returns a 2D matrix mapping each ‘bin’ in B
+to overlapping bins in A. Assumes that A and B contain monotonically increasing edge values.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Core functionality (dipde.internals)</a><ul>
+<li><a class="reference internal" href="#module-dipde.internals.externalpopulation">External Population</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.internalpopulation">Internal Population</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connection">Connection</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connectiondistribution">Connection Distribution</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.connectiondistributioncollection">Connection Distribution Collection</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.simulation">Simulation</a></li>
+<li><a class="reference internal" href="#module-dipde.internals.utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="dipde.html">Packages</a><ul>
+      <li>Previous: <a href="dipde.examples.html" title="previous chapter">Examples (dipde.examples)</a></li>
+      <li>Next: <a href="dipde.column.html" title="next chapter">Cortical Column Model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dipde.internals.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Nicholas Cain.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/dipde.internals.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

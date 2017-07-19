@@ -18,6 +18,7 @@
 import numpy as np
 from dipde.internals import utilities as util
 from dipde.internals import ConnectionDistribution
+import collections
 
 class Connection(object):
     '''Class that connects dipde source population to dipde target population.
@@ -127,11 +128,13 @@ class Connection(object):
         else:
             raise Exception('Unrecognized source type: "%s"' % self.source.type)    # pragma: no cover
 
+        self.delay_queue = collections.deque(self.delay_queue)
+
     def update(self):
         """Update Connection,  called once per timestep."""
 
         self.delay_queue[0] = self.source.curr_firing_rate
-        self.delay_queue = np.core.numeric.roll(self.delay_queue, -1)
+        self.delay_queue.rotate(-1)
 
     @property
     def curr_delayed_firing_rate(self):
