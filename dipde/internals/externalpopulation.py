@@ -18,7 +18,6 @@ from sympy.utilities.lambdify import lambdify
 from sympy.abc import t as sym_t
 from sympy import Piecewise
 
-
 class ExternalPopulation(object):
     '''External (i.e. background) source for connections to Internal Populations.
     
@@ -48,9 +47,15 @@ class ExternalPopulation(object):
     
     def __init__(self, firing_rate, record=False, **kwargs):
         
-        self.firing_rate_string = str(firing_rate)
-        self.closure = lambdify(sym_t, symp.parse_expr(self.firing_rate_string, local_dict={'Heaviside': lambda x: Piecewise((0, x < 0), (1, x > 0), (.5, True))}))
-        
+        if isinstance(firing_rate, str):
+            self.firing_rate_string = str(firing_rate)
+            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string, local_dict={'Heaviside':lambda x: Piecewise((0,x<0), (1,x>0),(.5,True))}))
+        elif hasattr(firing_rate, "__call__"):
+            self.closure = firing_rate
+        else:
+            self.firing_rate_string = str(firing_rate)
+            self.closure = lambdify(sym_t,symp.parse_expr(self.firing_rate_string))
+
         self.record = record
         self.type = "external"
         
@@ -58,8 +63,7 @@ class ExternalPopulation(object):
         self.metadata = kwargs
         
     def firing_rate(self, t):
-        '''Firing rate of the population at time t (Hz).''' 
-        
+        '''Firing rate of the population at time t (Hz).'''
         curr_firing_rate = self.closure(t)
         if curr_firing_rate < 0:
             raise RuntimeError("negative firing rate requested: %s, at t=%s" % (self.firing_rate_string, t)) # pragma: no cover

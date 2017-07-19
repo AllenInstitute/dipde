@@ -1,0 +1,61 @@
+User Guide
+==========
+This guide is a resource for installing the dipde package.
+It is maintained by the `Allen Institute for Brain Science <http://www.alleninstitute.org/>`_.
+
+Quick Start Install Using Pip
+-------------------------------------
+
+ #. Pip install for a single user:
+    
+    .. code-block:: bash
+     
+    	pip install git+http://stash.corp.alleninstitute.org/scm/~nicholasc/dipde2.git --user
+    	
+
+
+Install Using Setup Tools
+-------------------------
+
+ #. Download the distribution.
+ 
+    .. code-block:: bash
+     
+    	TODO
+ 
+ #. Unpack the distribution.
+     
+    .. code-block:: bash
+     
+    	tar xvzf dipde-0.1.1.tar.gz
+
+ #. Install using setuptools
+     
+    .. code-block:: bash
+     
+    	cd dipde-0.1.1 python setup.py install --user
+        
+Uninstall
+---------
+
+ #. Simply use pip.
+      
+    .. code-block:: bash
+     
+    	pip uninstall dipde
+
+       
+
+ 		 
+Required Dependencies
+---------------------
+
+ * `NumPy <http://wiki.scipy.org/Tentative_NumPy_Tutorial>`_
+ * `SciPy <http://www.scipy.org/>`_
+ * `MatPlotLib <http://matplotlib.org/>`_ 
+ * `SymPy <http://www.sympy.org/>`_
+
+Software License
+----------------
+The source code for dipde is released as an open source python package under the GNU General Public License, Version 3 (GPLv3).  Please see `https://github.com/AllenInstitute/dipde/blob/master/COPYING <https://github.com/AllenInstitute/dipde/blob/master/COPYING>`_ for more information.
+  

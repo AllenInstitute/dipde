@@ -1,5 +1,8 @@
-.idea
+conda
+dipde/nicholasc
+docker
 .cache
+.idea
 update.sh
 doc
 .DS_Store
