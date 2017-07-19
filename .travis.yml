@@ -3,7 +3,7 @@ addons:
   apt:
     packages:
       - gfortran
-      - libgfortran3
+      - libgfortran
       - liblapack-dev
       - libatlas-dev
 
