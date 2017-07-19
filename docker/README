@@ -1,0 +1,12 @@
+This version of dipde supports docker images for Fedora 24 and Ubuntu 16.  Other OS versions may work, but are not currently tested; if you need a docker image that is not supported email the MAINTAINER for help.
+
+To build the docker images:
+   1) Install docker: https://docs.docker.com/engine/installation/
+   2) cd to the dipde docker directory
+   3) Run: 
+      3a) Fedora: docker build --tag alleninstitute/dipde:fedora24 -f ./fedora_24_python.dockerfile .
+      3b) Ubuntu: docker build --tag alleninstitute/dipde:ubuntu16 -f ./ubuntu_16.04_python.dockerfile .
+   4) Run the dipde tests to validate the installation:
+      export DIPDEDIR=`pwd`'/../'
+      4a) Fedora: docker run -v $DIPDEDIR:/python/dipde -t -i alleninstitute/dipde:fedora24 python setup.py test
+      4b) Ubuntu: docker run -v $DIPDEDIR:/python/dipde -t -i alleninstitute/dipde:ubuntu16 python setup.py test

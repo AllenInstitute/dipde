@@ -134,7 +134,6 @@ class Connection(object):
         """Update Connection,  called once per timestep."""
 
         self.delay_queue[0] = self.source.curr_firing_rate
-#         self.delay_queue = np.core.numeric.roll(self.delay_queue, -1)
         self.delay_queue.rotate(-1)
 
     @property

@@ -48,6 +48,9 @@ def test_delay_doublepop():
     true_ans = np.array([0, 0.0, 0.0, 0.0, 1.9089656152757652e-13, 1.9787511418980406e-10, 9.5007650186649266e-09, 1.3334881090883857e-07, 1.0103767575651715e-06, 5.3604521936092067e-06, 2.2383604753409621e-05])
     np.testing.assert_almost_equal(i2.firing_rate_record, true_ans, 12)
 
-    
+if __name__ == "__main__":  # pragma: no cover
+    test_delay_singlepop()  # pragma: no cover
+    test_delay_doublepop()  # pragma: no cover
+
 
 
