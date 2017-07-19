@@ -25,7 +25,7 @@ install:
   - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
   - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pytest setuptools sympy pip
-  - conda install nomkl
+  - conda install --yes nomkl
   - pip install .
 # Command to run tests:
 script: "py.test ."
