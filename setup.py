@@ -79,9 +79,9 @@ setup(
     package_data={'':['*.md', '*.txt', '*.cfg']},
     platforms='any',
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
-        'License :: Apache Software License :: 2.0',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
