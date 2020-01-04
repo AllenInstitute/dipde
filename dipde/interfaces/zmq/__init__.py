@@ -21,7 +21,7 @@ class PublishCallback(object):
 class PublishCallbackConnect(PublishCallback):
     
     def __init__(self, port, topic, message_callback):
-        super(self.__class__, self).__init__(port, topic, message_callback)
+        super(PublishCallbackConnect, self).__init__(port, topic, message_callback)
         self.socket.connect("tcp://localhost:%s" % self.port)
         
 
@@ -41,7 +41,7 @@ class CallbackSubscriber(object):
         
         if receive_callback is None:
             def receive_callback(received_message):
-                print received_message
+                print(received_message)
         self.receive_callback = receive_callback 
 
     def run(self):     
@@ -53,7 +53,7 @@ class CallbackSubscriber(object):
 
 class CallbackSubscriberThread(threading.Thread): 
     def __init__(self, port): 
-        super(self.__class__, self).__init__() 
+        super(CallbackSubscriberThread, self).__init__()
         self.daemon = True 
         self.port = port  
 

@@ -13,17 +13,21 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
-
 import bisect
 import numpy as np
 import scipy.stats as sps
 import json
-from dipde.interfaces.pandas import to_df
-from dipde.internals import utilities as util
 import logging
-logger = logging.getLogger(__name__)
 import scipy.sparse as sps
 import scipy.sparse.linalg as spsla
+from functools import reduce
+
+from dipde.interfaces.pandas import to_df
+from dipde.internals import utilities as util
+
+
+logger = logging.getLogger(__name__)
+
 
 class InternalPopulation(object):
     """Population density class
@@ -109,6 +113,8 @@ class InternalPopulation(object):
         self.initialize_callback = initialize_callback
         self.firing_rate_record = [x for x in firing_rate_record]
         self.t_record = [x for x in t_record]
+        self._simulation = None
+
         assert len(self.firing_rate_record) == len(self.t_record)
         if tol is None:
             if self.update_method == 'gmres':
@@ -129,7 +135,15 @@ class InternalPopulation(object):
         
         for key in kwargs.keys():
             assert key in ['class', 'module']
-        
+
+    @property
+    def simulation(self):
+        return self._simulation
+
+    @simulation.setter
+    def simulation(self, sim_obj):
+        self._simulation = sim_obj
+
     def initialize(self):
         '''Initialize the population at the beginning of a simulation.
         

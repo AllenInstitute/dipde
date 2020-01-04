@@ -54,7 +54,7 @@ def test_potjans_diesmann():
     for layer in [23, 4, 5, 6]:
         for celltype in ['e', 'i']:
 
-            print result_dict[layer, celltype], true_ans_dict[layer, celltype]
+            print(result_dict[layer, celltype], true_ans_dict[layer, celltype])
             np.testing.assert_almost_equal(result_dict[layer, celltype], true_ans_dict[layer, celltype],3)
 
     

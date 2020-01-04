@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
-import matplotlib.pyplot as plt 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
 from dipde.internals.network import Network
 from dipde.internals.connection import Connection as Connection
+
 
 def get_simulation(dv=.001, update_method='approx', tol=1e-8):
     import scipy.stats as sps
@@ -34,7 +34,6 @@ def get_simulation(dv=.001, update_method='approx', tol=1e-8):
 
 
 def example(show=True, save=False):
-
     # Settings:
     t0 = 0.
     dt = .0001
@@ -48,7 +47,8 @@ def example(show=True, save=False):
     simulation.run(dt=dt, tf=tf, t0=t0)
 
     i1 = simulation.population_list[2]
-    if show == True:
+    if show:
+        import matplotlib.pyplot as plt
 
         # Visualize:
         plt.figure(figsize=(3,3))
@@ -61,12 +61,14 @@ def example(show=True, save=False):
         plt.ylabel('Firing Rate (Hz)')
         plt.tight_layout()
 
-        if save == True:
+        if save:
             plt.savefig('./singlepop_exponential_distribution.png')
 
-        print i1.firing_rate_record[len(i1.firing_rate_record) - 1]
+        print(i1.firing_rate_record[len(i1.firing_rate_record) - 1])
         plt.show()
 
     return i1.t_record, i1.firing_rate_record
 
-if __name__ == "__main__": example()        # pragma: no cover
+
+if __name__ == "__main__":
+    example()        # pragma: no cover

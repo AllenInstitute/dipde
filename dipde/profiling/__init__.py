@@ -1,9 +1,12 @@
 import re
-from dipde.internals.network import Network
 import cProfile
 import pstats
-import StringIO
 import logging as logging_module
+try:
+    from io import StringIO
+except:
+    import StringIO
+
 
 
 def profile_network(network, run_dict, sort_stats='cumulative', print_stats=20, logging=True):

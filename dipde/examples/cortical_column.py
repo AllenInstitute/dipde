@@ -127,7 +127,7 @@ def get_network(dv = .0001):
     population_list = background_population_dict.values() + internal_population_dict.values()
 
     def f(n):
-        print 't:', n.t
+        print('t:', n.t)
         # if n.t%.001 < 1e-10:
         #     print 't:', n.t
     network = Network(population_list, connection_list, update_callback=f)
@@ -156,7 +156,7 @@ def example(show=False, save=False, network=None):
     simulation_configuration = SimulationConfiguration(dt, tf, t0=t0)
     simulation = Simulation(network=network, simulation_configuration=simulation_configuration)
     simulation.run()
-    print 'Run Time:', network.run_time
+    print('Run Time:', network.run_time)
     
     # Visualize:
     y_label_dict = {23:'2/3', 4:'4', 5:'5', 6:'6'}

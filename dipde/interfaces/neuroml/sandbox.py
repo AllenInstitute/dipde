@@ -49,16 +49,16 @@ def create_internal_population(id, component):
     
 
 root = create_root(id='dipde_root_id')
-print root.attrib
+print(root.attrib)
 
 network = create_network(id='dipde_network_id')
-print network.attrib
+print(network.attrib)
 
 internal_population_type = create_internal_population_type(id='internal_population_type_1', v_max=.015, tau_m=.02)
-print internal_population_type.attrib
+print(internal_population_type.attrib)
 
 internal_population = create_internal_population(id='internal_population_type_1', component='yeah')
-print internal_population.attrib
+print(internal_population.attrib)
 
 
 

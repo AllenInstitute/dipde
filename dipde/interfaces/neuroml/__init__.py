@@ -18,7 +18,7 @@ def network_to_neuroml(network, output_file_name, **kwargs):
     
     # Create neuroml doc:
     nml_doc = nml.NeuroMLDocument(id=doc_id)
-    print nml_doc
+    print(nml_doc)
     
     validate_neuroml2(nml_doc)
     
