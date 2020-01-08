@@ -1,7 +1,7 @@
 language: python
 matrix:
   include:
-    - python 3.6
+    - python: 3.6
     - python: 2.7
 
 before_install:
@@ -15,7 +15,7 @@ before_install:
 install:
   - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
-  - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pytest setuptools sympy pip pandas=$PANDAS pyzmq mpi4py pyqt=$PYQT
+  - conda install --yes numpy scipy matplotlib pytest setuptools sympy pip pandas pyzmq mpi4py pyqt
   - pip install .
 
 script:
