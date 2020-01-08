@@ -3,6 +3,7 @@ import logging
 import os
 import numpy as np
 import scipy.stats as sps
+import pytest
 
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.internals.externalpopulation import ExternalPopulation
@@ -35,7 +36,9 @@ def test_tau_normal():
 def test_p0():
     p0 = sps.norm(0.01,.001)
     singlepop(5.4319721344676637, p0=p0)
-    
+
+
+@pytest.mark.skip()
 def test_gmres():
     singlepop(5.0693643281797707, update_method='gmres', tol=1e-5)
     

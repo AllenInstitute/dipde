@@ -322,7 +322,7 @@ class InternalPopulation(object):
         if len(np.where(self.pv<0)[0]) != 0 or np.abs(np.abs(self.pv).sum() - 1) > 1e-15:
             self.pv[np.where(self.pv<0)] = 0
             self.pv /= self.pv.sum()
-            logger.critical('Normalizing Probability Mass')
+            # logger.critical('Normalizing Probability Mass')
          
     def update_propability_mass_backward_euler(self, solver):
 
