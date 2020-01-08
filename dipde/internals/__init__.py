@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
 
-import utilities
-from connectiondistribution import ConnectionDistribution
-from connection import Connection
+from . import utilities
+from .connectiondistribution import ConnectionDistribution
+from .connection import Connection
 
-from connectiondistributioncollection import ConnectionDistributionCollection
-from externalpopulation import ExternalPopulation
-from internalpopulation import InternalPopulation
+from .connectiondistributioncollection import ConnectionDistributionCollection
+from .externalpopulation import ExternalPopulation
+from .internalpopulation import InternalPopulation
 from dipde.internals.network import Network

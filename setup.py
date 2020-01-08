@@ -1,4 +1,4 @@
-# Copyright 2013 Allen Institute
+# Copyright 2019 Allen Institute
 # This file is part of dipde
 # dipde is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+
 def read(*filenames, **kwargs):
     encoding = kwargs.get('encoding', 'utf-8')
     sep = kwargs.get('sep', '\n')
@@ -32,11 +33,9 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
-#long_description = read('README.md')
 
 def prepend_find_packages(*roots):
-    ''' Recursively traverse nested packages under the root directories
-    '''
+    """Recursively traverse nested packages under the root directories"""
     packages = []
     
     for root in roots:
@@ -44,6 +43,7 @@ def prepend_find_packages(*roots):
         packages += [root + '.' + s for s in find_packages(root)]
         
     return packages
+
 
 class PyTest(TestCommand):
     def finalize_options(self):
@@ -62,7 +62,6 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 
-
 setup(
     name='dipde',
     version=dipde.__version__,
@@ -79,13 +78,15 @@ setup(
     package_data={'':['*.md', '*.txt', '*.cfg']},
     platforms='any',
     classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable ',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        ],
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7'
+    ],
     extras_require={
         'testing': ['pytest'],
     }

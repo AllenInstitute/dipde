@@ -16,4 +16,4 @@ for nproc in nproc_list:
         result = run_benchmark(nproc,scale)
         curr_nproc_result_list.append(result['run_time'])
     nproc_result_dict[nproc] = curr_nproc_result_list
-    print nproc, nproc_result_dict[nproc]
+    print(nproc, nproc_result_dict[nproc])

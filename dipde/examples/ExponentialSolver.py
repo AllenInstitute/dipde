@@ -89,7 +89,7 @@ def get_firing_rates(firingRateExt, ampDistInt, ampDistExt, tau, vth, nsynInt, n
                 A[p, j] = spint.quad(funclist[j], 1./positiveInputs[p-1], 1./positiveInputs[p])[0]
         b = np.zeros((len(positiveInputs), 1))
         b[0,0] = 1
-        print (A, i)
+        print((A, i))
         x = npla.solve(A, b)
         return x.sum()
     def zero_func(rates):
@@ -122,8 +122,8 @@ def predict(network):
             externalConnections.append(c)
         if isinstance(p, InternalPopulation):
             internalConnections.append(c)
-    print len(internalList)
-    print len(externalList)
+    print(len(internalList))
+    print(len(externalList))
     pop_to_ind_ext = {}
     for ii, p in enumerate(externalList):
         pop_to_ind_ext[p] = ii
@@ -154,11 +154,11 @@ def predict(network):
         nsynExt[i, j] = c.nsyn
         amp = c.synaptic_weight_distribution.mean()
         ampDistExt[i, j] = amp
-    print ampDistExt
-    print firingRateExt
-    print ampDistInt
-    print nsynInt
-    print nsynExt
+    print(ampDistExt)
+    print(firingRateExt)
+    print(ampDistInt)
+    print(nsynInt)
+    print(nsynExt)
     rates = get_firing_rates(firingRateExt, ampDistInt, ampDistExt, tau, vth, nsynInt, nsynExt)
     return rates
     # print rates

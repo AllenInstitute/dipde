@@ -12,19 +12,22 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with dipde.  If not, see <http://www.gnu.org/licenses/>.
-
-from dipde.internals.connectiondistributioncollection import ConnectionDistributionCollection
 import time
-from dipde.internals import utilities
 import json
 import importlib
 import pandas as pd
+import logging
+
 from dipde.internals.firingrateorganizer import FiringRateOrganizer
 from dipde.internals.internalpopulation import InternalPopulation
 from dipde.interfaces.pandas import reorder_df_columns
-import logging
+from dipde.internals import utilities
 from dipde.internals.externalpopulation import ExternalPopulation
+from dipde.internals.connectiondistributioncollection import ConnectionDistributionCollection
+
+
 logger = logging.getLogger(__name__)
+
 
 class Network(object):
     '''Initialize and run a dipde simulation.
@@ -48,7 +51,6 @@ class Network(object):
     def __init__(self, 
                  population_list=[], 
                  connection_list=[],
-                 metadata={},
                  run_callback=lambda s: None,
                  update_callback=lambda s: None,
                  **kwargs):
@@ -76,11 +78,9 @@ class Network(object):
                 if c.nsyn != 0:
                     self.connection_list.append(c)
 
-
         self.gid_dict = dict((population, ii) for ii, population in enumerate(self.population_list))
-        for key, val in self.gid_dict.items():
-            self.gid_dict[val] = key
-        
+        self.gid_dict.update({ii: pop for pop, ii in self.gid_dict.items()})
+
         # Initialize:
         self.connection_distribution_collection = ConnectionDistributionCollection()
         
@@ -96,9 +96,7 @@ class Network(object):
     def rank(self):
         return self.synchronization_harness.rank
 
-        
     def run(self, dt, tf, t0=0., synchronization_harness=None):
-
         '''Main iteration control loop for simulation
         
         The time step selection must be approximately of the same order as dv
@@ -146,25 +144,20 @@ class Network(object):
             except AttributeError:
                 pass
 
-        
         # Initialize connections:    
         for c in self.connection_list:
             c.initialize()
         self.initialization_time = time.time() - start_time
-        
-        
-        
+
         # Run
         start_time = time.time()
         while self.t < self.tf:
             self.update()
             
         self.run_time = time.time() - start_time
-        
 
         self.synchronization_harness.finalize()
 
-        
         self.run_callback(self)
         
     @property
@@ -174,7 +167,7 @@ class Network(object):
 
         self.firing_rate_organizer.drop(self.ti)
         self.ti += 1
-        logger.info( 'time: %s' % self.t)
+        logger.info('time: %s' % self.t)
         
         for gid, p in enumerate(self.population_list):
 
@@ -197,19 +190,17 @@ class Network(object):
 
         if organization == 'sparse_adjacency_matrix':
 
-            data_dict = {'population_list':population_list,
-                         'connection_list':connection_list,
-                         'class':self.__class__.__name__,
-                         'module':__name__}
+            data_dict = {'population_list': population_list,
+                         'connection_list': connection_list,
+                         'class': self.__class__.__name__,
+                         'module': __name__}
             
             return data_dict
         
         else:
             
             raise NotImplementedError
-            
-            
-        
+
     def to_json(self, fh=None, **kwargs):
         '''Save the contents of the InternalPopultion to json'''
         
@@ -226,7 +217,7 @@ class Network(object):
         return Network(**self.to_dict())
     
     def get_curr_firing_rate(self, gid):
-        return self.firing_rate_organizer.pull(self.ti,gid)
+        return self.firing_rate_organizer.pull(self.ti, gid)
         
     def get_firing_rate(self, gid, t):
         return self.population_list[gid].firing_rate(t)

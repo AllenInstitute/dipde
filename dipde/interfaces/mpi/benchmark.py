@@ -107,7 +107,7 @@ if __name__ == '__main__':
         result_dict = copy.copy(network.firing_rate_organizer.firing_rate_dict_internal)[network.ti]        # pragma: no cover
         result_dict['run_time'] = run_time          # pragma: no cover
 
-        print json.dumps(result_dict)       # pragma: no cover
+        print(json.dumps(result_dict))       # pragma: no cover
             
             
 

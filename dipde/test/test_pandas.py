@@ -22,8 +22,9 @@ def test_network_df():
     p4 = InternalPopulation(v_min=0, v_max=.01, metadata={'X':0})
     n1 = Network(population_list=[p1, p2, p3, p4])
     
-    print n1.to_df()
-    
+    print(n1.to_df())
+
+
 if __name__ == "__main__":              # pragma: no cover
     test_internalpopulation_df()      # pragma: no cover
     test_enternalpopulation_df()      # pragma: no cover

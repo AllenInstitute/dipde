@@ -7,7 +7,9 @@ logger = logging.getLogger(__name__)
 
 class PopulationInterface(object):
     '''Abstract Base Class for source populations'''
-    
+    def __init__(self):
+        self.simulation = None
+
     def initialize(self):
         '''Override with behavior that sets an initial value'''
         self.set_curr_firing_rate(None)

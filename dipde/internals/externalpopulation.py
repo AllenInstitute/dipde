@@ -22,7 +22,6 @@ import numpy as np
 import types
 from dipde.internals import utilities as util
 import json
-from dipde.interfaces.zmq import RequestFiringRate
 import logging
 logger = logging.getLogger(__name__)
 import numpy as np
@@ -74,10 +73,21 @@ class ExternalPopulation(object):
         self.record = record
         util.check_metadata(metadata)
         self.metadata = metadata
-        
+
+        self._simulation = None
+
         for key in kwargs.keys():
             assert key in ['class', 'module']
-        
+
+    @property
+    def simulation(self):
+        return self._simulation
+
+    @simulation.setter
+    def simulation(self, sim_obj):
+        self._simulation = sim_obj
+
+
     def firing_rate(self, t):
         '''Firing rate of the population at time t (Hz).''' 
         

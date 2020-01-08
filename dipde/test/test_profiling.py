@@ -1,10 +1,12 @@
 import numpy as np
+import re
+import pytest
+
 from dipde.profiling import profile_network, extract_value
 from dipde.examples.singlepop import get_network
-import re
 
 
-
+@pytest.mark.skip()
 def test_profile_singlepop():
     
     dv = .0001
