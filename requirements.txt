@@ -13,6 +13,6 @@ pytest-cov==2.2.1
 python-dateutil==2.6.0
 pytz==2016.7
 pyzmq==15.2.0
-scipy==0.16.1
+scipy==1.10.0
 six==1.10.0
 sympy==1.0
